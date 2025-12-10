@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroShot | Diseño de Rutinas y Anclas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <style>
+        :root {
+            --gold: #fbbf24;
+            --gold-dim: #b45309;
+            --dark: #0f172a;
+            --panel: #1e293b;
+            --surface: #334155;
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --success: #10b981;
+            --accent: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--dark);
+            color: var(--text);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        header {
+            padding: 15px 25px;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(251, 191, 36, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+
+        .brand {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .brand span {
+            color: var(--gold);
+        }
+
+        .btn-academy {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-academy:hover {
+            background: var(--gold);
+            color: black;
+        }
+
+        /* LAYOUT */
+        main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            gap: 20px;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        /* PANELS */
+        .panel {
+            background: var(--panel);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        .panel-header {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-weight: 600;
+            color: var(--gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* LIBRARY */
+        .library-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .library-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-top: 15px;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .item-card {
+            background: var(--surface);
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: move;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .item-card:hover {
+            transform: translateX(4px);
+            border-left-color: var(--gold);
+            background: #475569;
+        }
+
+        .item-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .item-desc {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+
+        /* WORKSPACE */
+        .workspace-area {
+            flex: 1;
+            background: #151f30;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .routine-step {
+            background: var(--panel);
+            border: 1px solid var(--surface);
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .step-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .step-number {
+            background: var(--gold);
+            color: black;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .step-inputs {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input.duration-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--surface);
+            color: var(--gold);
+            width: 50px;
+            text-align: center;
+            border-radius: 4px;
+            padding: 5px;
+            font-family: inherit;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+
+        .delete-btn:hover {
+            opacity: 1;
+        }
+
+        /* SIMULATOR */
+        .simulator-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background: black;
+        }
+
+        .screen {
+            flex: 1;
+            border: 1px solid #333;
+            border-radius: 12px;
+            background: #0a0a0a;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .main-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .sub-display {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-top: 10px;
+            z-index: 10;
+        }
+
+        .breath-circle {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid var(--gold);
+            opacity: 0.3;
+            transform: scale(0.5);
+            transition: transform 0.1s linear, opacity 0.3s;
+        }
+
+        .breath-circle.active {
+            opacity: 0.6;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            background: var(--gold);
+            color: black;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-reset {
+            background: var(--surface);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* ACADEMY MODAL */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.open {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--panel);
+            width: 600px;
+            max-width: 90%;
+            max-height: 80vh;
+            border-radius: 16px;
+            padding: 30px;
+            overflow-y: auto;
+            border: 1px solid var(--gold);
+        }
+
+        .modal h2 {
+            color: var(--gold);
+            margin-top: 0;
+        }
+
+        .modal h3 {
+            border-bottom: 1px solid var(--surface);
+            padding-bottom: 5px;
+            margin-top: 20px;
+        }
+
+        .modal p {
+            line-height: 1.6;
+            color: var(--text-dim);
+        }
+
+        .highlight {
+            color: #feebc8;
+            font-weight: 600;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--surface);
+            border-radius: 3px;
+        }
+
+        /* Helper Classes */
+        .total-time-display {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .empty-msg {
+            text-align: center;
+            color: var(--text-dim);
+            margin-top: 50px;
+            font-style: italic;
+        }
+
+        .empty-msg {
+            text-align: center;
+            color: var(--text-dim);
+            margin-top: 50px;
+            font-style: italic;
+        }
+
+        /* NEW UTILITIES */
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .flex-gap-5 {
+            display: flex;
+            gap: 5px;
+        }
+
+        .text-c-sm {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+
+        .preset-container {
+            margin-top: 10px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-preset {
+            flex: 1;
+            background: var(--surface);
+            border: none;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            padding: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="brand">NEURO<span>SHOT</span> LAB</div>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <button class="btn-academy" onclick="toggleAcademy()">
+                🎓 Academy Mode
+            </button>
+            <a href="../../toolkit_index.html" class="btn-academy" style="text-decoration:none;">✕ Salir</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- LIBRARY PANEL -->
+        <div class="panel">
+            <div class="panel-header">Biblioteca de Recursos</div>
+            <div class="library-content">
+
+                <div class="library-section-title">Respiración (Control de Activación)</div>
+                <div id="lib-breath">
+                    <div class="item-card" data-type="breath" data-mode="4-4-8" data-duration="16">
+                        <div class="item-title">🌬️ Ratio 4-4-8</div>
+                        <div class="item-desc">Inspirar 4s, Retener 4s, Exhalar 8s.</div>
+                    </div>
+                    <div class="item-card" data-type="breath" data-mode="dolphin" data-duration="12">
+                        <div class="item-title">🐬 Respiración Delfín</div>
+                        <div class="item-desc">Doble exhalación (In 4s, Ex 8s).</div>
+                    </div>
+                    <div class="item-card" data-type="breath" data-mode="box" data-duration="16">
+                        <div class="item-title">📦 Cuadrada (Box)</div>
+                        <div class="item-desc">4-4-4-4 (Estabilización).</div>
+                    </div>
+                </div>
+
+                <div class="library-section-title">Anclas Mentales</div>
+                <div id="lib-mental">
+                    <div class="item-card" data-type="anchor" data-duration="3">
+                        <div class="item-title">⚓ Palabra Clave</div>
+                        <div class="item-desc">"SÓLIDO", "FLUYE", "AHORA".</div>
+                    </div>
+                    <div class="item-card" data-type="visual" data-duration="5">
+                        <div class="item-title">👁️ Visualización</div>
+                        <div class="item-desc">Ver la ejecución perfecta.</div>
+                    </div>
+                </div>
+
+                <div class="library-section-title">Técnica</div>
+                <div id="lib-tech">
+                    <div class="item-card" data-type="action" data-duration="3">
+                        <div class="item-title">🏃 Gesto Técnico</div>
+                        <div class="item-desc">Movimiento de subida controlado.</div>
+                    </div>
+                    <div class="item-card" data-type="action" data-duration="3">
+                        <div class="item-title">🤝 Agarre</div>
+                        <div class="item-desc">Presión y consistencia del Grip.</div>
+                    </div>
+                    <div class="item-card" data-type="action" data-duration="2">
+                        <div class="item-title">👆 Dedo (Contacto)</div>
+                        <div class="item-desc">Ubicación correcta de la falange.</div>
+                    </div>
+                    <div class="item-card" data-type="complex_posture" data-duration="4">
+                        <div class="item-title">🧘 Postura (Segmentos)</div>
+                        <div class="item-desc">Chequeo específico (Cabeza, Pies...).</div>
+                    </div>
+                    <div class="item-card" data-type="action" data-duration="3">
+                        <div class="item-title">🔫 Alineación</div>
+                        <div class="item-desc">Verificar miras niveladas.</div>
+                    </div>
+                    <div class="item-card" data-type="action" data-duration="3">
+                        <div class="item-title">🕒 Tercer Tiempo</div>
+                        <div class="item-desc">Fase final de presión (Ejecución).</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- WORKSPACE PANEL -->
+        <div class="panel">
+            <div class="panel-header">
+                <span>Tu Secuencia</span>
+                <span id="totalTimeDisplay" class="total-time-display">0s</span>
+            </div>
+            <div class="workspace-area" id="routineList">
+                <div class="empty-msg" id="emptyMsg">
+                    Arrastra elementos aquí para construir tu rutina.
+                </div>
+            </div>
+        </div>
+
+        <!-- SIMULATOR PANEL -->
+        <div class="panel">
+            <div class="panel-header justify-between">
+                <span>Simulador & Auditor</span>
+                <div class="flex-gap-5">
+                    <button class="mode-btn" id="btn-mode-visual" onclick="trainer.setMode('visual')"
+                        title="Modo Visual">👁️</button>
+                    <button class="mode-btn" id="btn-mode-audio" onclick="trainer.setMode('audio')"
+                        title="Entrenador Audio">🎧</button>
+                    <button class="mode-btn" id="btn-mode-pressure" onclick="trainer.setMode('pressure')"
+                        title="Presión (Ruido)">🔥</button>
+                    <button class="mode-btn" id="btn-mode-analyzer" onclick="trainer.setMode('analyzer')"
+                        title="Auditor de Ritmo">📊</button>
+                </div>
+                <style>
+                    .mode-btn {
+                        background: transparent;
+                        border: 1px solid var(--surface);
+                        color: var(--text);
+                        cursor: pointer;
+                        padding: 5px;
+                        border-radius: 4px;
+                    }
+
+                    .mode-btn:hover {
+                        background: var(--surface);
+                    }
+
+                    .active-btn {
+                        background: #ef4444 !important;
+                        border-color: #ef4444 !important;
+                        animation: pulse 1s infinite;
+                    }
+
+                    @keyframes pulse {
+                        0% {
+                            opacity: 1;
+                        }
+
+                        50% {
+                            opacity: 0.8;
+                        }
+
+                        100% {
+                            opacity: 1;
+                        }
+                    }
+                </style>
+            </div>
+            <div class="simulator-content">
+                <p class="text-c-sm">
+                    Selecciona un modo arriba. "Audio" permite entrenar con auriculares.
+                </p>
+                <div class="screen">
+                    <div id="breathVisual" class="breath-circle"></div>
+                    <div class="main-display" id="simText">READY</div>
+                    <div class="sub-display" id="simSub">Esperando inicio...</div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" id="playBtn" onclick="trainer.toggle()">▶ INICIAR</button>
+                    <button class="btn-reset" onclick="trainer.stop()">⏹️</button>
+                </div>
+
+                <div class="preset-container">
+                    <button onclick="loadPreset('precision')" class="btn-preset">Cargar
+                        Preset Precisión</button>
+                    <button onclick="loadPreset('rapid')" class="btn-preset">Cargar
+                        Preset Rápido</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ACADEMY MODAL -->
+    <div id="academyModal" class="modal" onclick="if(event.target === this) toggleAcademy()">
+        <div class="modal-content">
+            <h2>🎓 NeuroShot Academy: Rutinas</h2>
+
+            <h3>¿Qué es una Rutina Pre-Disparo?</h3>
+            <p>Es una secuencia ordenada de pensamientos y acciones que realizas antes de cada tiro. Su objetivo no es
+                la "suerte", sino la <span class="highlight">consistencia mental</span>. Al ocupar tu mente con tareas
+                específicas, evitas que entren la duda o el miedo.</p>
+
+            <h3>La Ciencia de la Respiración</h3>
+            <p>El control respiratorio es el "interruptor" de tu sistema nervioso.</p>
+            <ul>
+                <li><span class="highlight">Ratio 4-4-8 (Relajación):</span> Al exhalar el doble de tiempo y retener,
+                    estimulas el nervio vago, bajando pulsaciones rápidamente. Ideal para momentos de estrés.</li>
+                <li><span class="highlight">Delfín (Recuperación):</span> Basada en mamíferos marinos, maximiza el
+                    intercambio de CO2. Exhalar el doble vacía completamente los pulmones, permitiendo aire fresco y
+                    oxigenado.</li>
+            </ul>
+
+            <h3>Anclas Mentales</h3>
+            <p>Un ancla es un estímulo (palabra, gesto, imagen) asociado a un estado emocional. Al decir "CALMA", tu
+                cerebro recupera la sensación de calma que has entrenado previamente.</p>
+        </div>
+    </div>
+
+    <script>
+        // --- PRESETS ---
+        function loadPreset(type) {
+            const presets = {
+                "precision": [
+                    { title: "🌬️ Respiración (Baja)", type: "breath", mode: "4-4-8", duration: 16 },
+                    { title: "👁️ Visualización", type: "visual", duration: 5 },
+                    { title: "💪 Levantar", type: "tech", duration: 3 },
+                    { title: "🔫 Disparo", type: "action", duration: 4 }
+                ],
+                "rapid": [
+                    { title: "😤 Activación", type: "breath", mode: "dolphin", duration: 4 },
+                    { title: "👀 Foco Externo", type: "visual", duration: 2 },
+                    { title: "⚡ Reacción", type: "action", duration: 2 }
+                ]
+            };
+
+            const list = document.getElementById('routineList');
+            list.innerHTML = ""; // Clear
+            document.getElementById('emptyMsg').style.display = 'none';
+
+            (presets[type] || []).forEach(step => {
+                const div = document.createElement('div');
+                div.className = 'routine-step';
+                div.setAttribute('data-type', step.type);
+                div.setAttribute('data-mode', step.mode || '');
+                div.innerHTML = `
+                    <div class="step-info">
+                        <div class="step-number">0</div>
+                        <div>
+                            <div style="font-weight:600;">${step.title}</div>
+                            <div style="font-size:0.75rem; color:#94a3b8;">Preset: ${type}</div>
+                        </div>
+                    </div>
+                    <div class="step-inputs">
+                        <input type="number" class="duration-input" value="${step.duration}" min="1" onchange="updateIndexes()">
+                        <span style="font-size:0.8rem;">seg</span>
+                        <button class="delete-btn" onclick="this.parentNode.parentNode.remove(); updateIndexes();">✕</button>
+                    </div>`;
+                list.appendChild(div);
+            });
+            updateIndexes();
+        }
+
+        // --- DRAG & DROP LOGIC ---
+        const sources = ['lib-breath', 'lib-mental', 'lib-tech'].map(id => document.getElementById(id));
+        const target = document.getElementById('routineList');
+
+        sources.forEach(src => {
+            new Sortable(src, {
+                group: { name: 'shared', pull: 'clone', put: false },
+                sort: false,
+                animation: 150
+            });
+        });
+
+        new Sortable(target, {
+            group: 'shared',
+            animation: 150,
+            onAdd: function (evt) {
+                const item = evt.item;
+                const type = item.getAttribute('data-type');
+                const mode = item.getAttribute('data-mode') || '';
+                const title = item.querySelector('.item-title').innerText;
+                const defaultDur = item.getAttribute('data-duration');
+
+                const div = document.createElement('div');
+                div.className = 'routine-step';
+                div.setAttribute('data-type', type);
+                div.setAttribute('data-mode', mode);
+
+                div.innerHTML = `
+                    <div class="step-info">
+                        <div class="step-number">0</div>
+                        <div>
+                            <div style="font-weight:600;">${title}</div>
+                            <div style="font-size:0.75rem; color:#94a3b8;">${mode ? 'Modo: ' + mode : 'Acción'}</div>
+                        </div>
+                    </div>
+                    <div class="step-inputs">
+                        <input type="number" class="duration-input" value="${defaultDur}" min="1" onchange="updateIndexes()">
+                        <span style="font-size:0.8rem;">seg</span>
+                        <button class="delete-btn" onclick="this.closest('.routine-step').remove(); updateIndexes();">✕</button>
+                    </div>
+                `;
+
+                item.parentNode.replaceChild(div, item);
+                updateIndexes();
+            },
+            onUpdate: updateIndexes
+        });
+
+        function updateIndexes() {
+            const steps = document.querySelectorAll('#routineList .routine-step');
+            const emptyMsg = document.getElementById('emptyMsg');
+            if (steps.length > 0) emptyMsg.style.display = 'none';
+            else emptyMsg.style.display = 'block';
+
+            let total = 0;
+            steps.forEach((step, index) => {
+                step.querySelector('.step-number').innerText = index + 1;
+                const dur = parseInt(step.querySelector('input').value) || 0;
+                total += dur;
+            });
+            document.getElementById('totalTimeDisplay').innerText = total + "s";
+        }
+
+        // --- ACTIVE TRAINER ENGINE ---
+        const trainer = {
+            isRunning: false,
+            queue: [],
+            idx: 0,
+            mode: 'visual', // visual, audio, pressure
+            synth: window.speechSynthesis,
+
+            // Audio elements (DISABLED - Path broken)
+            // pressureAudio: new Audio("../99_RECURSOS_MULTIMEDIA/Audio/MP4/Fernando dos..mp4"),
+
+            toggle: function () {
+                if (this.isRunning) this.stop();
+                else this.start();
+            },
+
+            setMode: function (m) {
+                this.mode = m;
+                document.querySelectorAll('.mode-btn').forEach(b => b.style.opacity = '0.5');
+                document.getElementById('btn-mode-' + m).style.opacity = '1';
+
+                // UI Feedback
+                const screen = document.querySelector('.screen');
+                if (m === 'audio') {
+                    screen.innerHTML = `<div style="text-align:center;">🎧<br>MODO AUDIO<br><span style="font-size:0.8rem; color:#94a3b8;">Cierra los ojos. Escucha al entrenador.</span></div>`;
+                } else if (m === 'analyzer') {
+                    screen.innerHTML = `
+                        <div id="tapZone" onclick="trainer.registerTap()" style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer;">
+                            <div style="font-size:3rem;">👆</div>
+                            <div style="font-size:1.5rem; font-weight:bold; color:var(--gold);">TAP PARA INICIAR</div>
+                            <div id="analyzerStats" style="font-size:0.8rem; margin-top:10px; color:#94a3b8;">Registra tus fases</div>
+                        </div>`;
+                } else {
+                    screen.innerHTML = `<div id="breathVisual" class="breath-circle"></div><div class="main-display" id="simText">READY</div><div class="sub-display" id="simSub">Esperando inicio...</div>`;
+                }
+            },
+
+            start: function () {
+                if (this.mode === 'analyzer') {
+                    this.startAnalyzer();
+                    return;
+                }
+
+                // Build Queue
+                const steps = document.querySelectorAll('#routineList .routine-step');
+                if (steps.length === 0) return alert("Define tu rutina primero.");
+
+                this.queue = [];
+                steps.forEach(step => {
+                    this.queue.push({
+                        title: step.querySelector('.step-info div').innerText.split('\n')[0],
+                        type: step.getAttribute('data-type'),
+                        duration: parseInt(step.querySelector('input').value)
+                    });
+                });
+
+                this.isRunning = true;
+                this.idx = 0;
+                document.getElementById('playBtn').innerText = "⬛ STOP";
+                document.getElementById('playBtn').classList.add('active-btn'); // Add red style
+
+                if (this.mode === 'pressure') {
+                    this.pressureAudio.volume = 0.3;
+                    this.pressureAudio.currentTime = 60; // Skip intro
+                    this.pressureAudio.loop = true;
+                    this.pressureAudio.play();
+                }
+
+                this.runStep();
+            },
+
+            stop: function () {
+                this.isRunning = false;
+                this.pressureAudio.pause();
+                this.synth.cancel();
+                clearTimeout(this.timer);
+
+                document.getElementById('playBtn').innerText = "▶ INICIAR";
+                document.getElementById('playBtn').classList.remove('active-btn');
+
+                if (this.mode === 'analyzer') this.stopAnalyzer();
+                else document.getElementById('simText').innerText = "PAUSA";
+            },
+
+            runStep: function () {
+                if (!this.isRunning) return;
+                if (this.idx >= this.queue.length) {
+                    this.finish();
+                    return;
+                }
+
+                const step = this.queue[this.idx];
+
+                // VISUAL UPDATE
+                if (this.mode !== 'audio') {
+                    const txt = document.getElementById('simText');
+                    if (txt) txt.innerText = step.title;
+                    const sub = document.getElementById('simSub');
+                    if (sub) sub.innerText = `Paso ${this.idx + 1}`;
+                }
+
+                // AUDIO COACH
+                if (this.mode === 'audio' || this.mode === 'pressure') {
+                    this.speak(step.title);
+                }
+
+                // TIME
+                this.timer = setTimeout(() => {
+                    this.idx++;
+                    this.runStep();
+                }, step.duration * 1000);
+            },
+
+            speak: function (text) {
+                if (this.synth.speaking) this.synth.cancel();
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.lang = 'es-ES';
+                utter.rate = 1.1;
+                this.synth.speak(utter);
+            },
+
+            finish: function () {
+                this.stop();
+                if (this.mode !== 'analyzer') {
+                    if (this.mode === 'audio') this.speak("Secuencia terminada. Fuego.");
+                    else document.getElementById('simText').innerHTML = "<span style='color:#10b981'>¡LISTO!</span>";
+                }
+            },
+
+            // --- ANALYZER LOGIC ---
+            analyzerState: 'idle', // idle, running
+            analyzerStartTime: 0,
+            analyzerLaps: [],
+
+            startAnalyzer: function () {
+                this.isRunning = true;
+                this.analyzerState = 'idle';
+                this.analyzerLaps = [];
+                document.getElementById('playBtn').innerText = "⬛ STOP";
+                document.getElementById('tapZone').innerHTML = `
+                    <div style="font-size:3rem; color:white;">⏳</div>
+                    <div style="font-size:1.5rem; font-weight:bold;">PREPARADO</div>
+                    <div style="font-size:0.9rem; margin-top:10px;">Pulsa para INICIAR RUTINA</div>
+                `;
+            },
+
+            registerTap: function () {
+                if (!this.isRunning) return;
+
+                const now = Date.now();
+                const zone = document.getElementById('tapZone');
+
+                if (this.analyzerState === 'idle') {
+                    // START
+                    this.analyzerState = 'running';
+                    this.analyzerStartTime = now;
+                    this.analyzerLaps = [];
+                    zone.innerHTML = `
+                        <div style="font-size:4rem; color:#10b981;">🟢</div>
+                        <div style="font-size:1.5rem;">RUTINA EN MARCHA</div>
+                        <div style="font-size:0.9rem; color:#94a3b8;">Pulsa al LEVANTAR</div>
+                    `;
+                } else if (this.analyzerLaps.length === 0) {
+                    // LIFT
+                    const time = (now - this.analyzerStartTime) / 1000;
+                    this.analyzerLaps.push({ phase: "Preparación", time: time });
+                    zone.innerHTML = `
+                        <div style="font-size:4rem; color:#f59e0b;">💪</div>
+                        <div style="font-size:1.5rem;">FOCALIZANDO</div>
+                        <div style="font-size:0.9rem; color:#94a3b8;">Pulsa al DISPARAR</div>
+                    `;
+                } else {
+                    // SHOT (FINISH)
+                    const time = (now - this.analyzerStartTime) / 1000;
+                    const prevTime = this.analyzerLaps[0].time;
+                    this.analyzerLaps.push({ phase: "Ejecución", time: time - prevTime });
+
+                    this.showAnalysis();
+                    this.isRunning = false;
+                    document.getElementById('playBtn').innerText = "▶ REINICIAR";
+                }
+            },
+
+            showAnalysis: function () {
+                const prep = this.analyzerLaps[0].time.toFixed(2);
+                const exec = this.analyzerLaps[1].time.toFixed(2);
+                const total = (parseFloat(prep) + parseFloat(exec)).toFixed(2);
+
+                let evalHtml = "";
+                // Hardcoded Elite Benchmarks (Example)
+                if (Math.abs(parseFloat(exec) - 4.5) < 1.0) evalHtml = "<span style='color:#10b981'>✅ Ritmo Élite (Fase Ejecutiva óptima)</span>";
+                else evalHtml = "<span style='color:#ef4444'>⚠️ Ritmo Irregular (Ajusta a 4-5s)</span>";
+
+                document.getElementById('tapZone').innerHTML = `
+                    <div style="text-align:left; width:100%;">
+                        <div style="margin-bottom:10px; font-weight:bold; color:var(--gold);">📊 ANÁLISIS DE RITMO</div>
+                        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #333; padding:5px;">
+                            <span>Preparación:</span> <span>${prep}s</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #333; padding:5px;">
+                            <span>Ejecución:</span> <span>${exec}s</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; padding:5px; font-weight:bold; color:white;">
+                            <span>TOTAL:</span> <span>${total}s</span>
+                        </div>
+                        <div style="margin-top:10px; font-size:0.9rem; text-align:center;">${evalHtml}</div>
+                        <button onclick="trainer.startAnalyzer()" style="width:100%; margin-top:15px; padding:10px; background:var(--surface); border:none; color:white; border-radius:5px; cursor:pointer;">OTRO DISPARO ↻</button>
+                    </div>
+                `;
+            },
+
+            stopAnalyzer: function () {
+                this.isRunning = false;
+                document.getElementById('playBtn').innerText = "▶ INICIAR";
+                this.setMode('analyzer'); // Reset UI
+            }
+        };
+
+        // Init
+        // simulator.setMode('visual'); // visual default
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroShot | Biblioteca Maestra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --neuro-gold: #fbbf24;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #f8fafc;
+            font-family: 'Outfit', sans-serif;
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--neuro-gold);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .file-card {
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-card:hover {
+            border-color: var(--neuro-gold);
+            transform: translateY(-2px);
+        }
+
+        .icon {
+            font-size: 1.5rem;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-yellow-400">📚 Biblioteca NeuroShot</h1>
+            <p class="text-slate-400">Repositorio Central de Conocimiento y Multimedia</p>
+        </header>
+
+        <h2 class="section-title">📘 Curso Maestro (Markdown)</h2>
+        <div class="file-grid">
+            <div class="file-card"><span class="icon">📄</span><a href="../../BIBLIOTECA/CURSO_MAESTRO/">Explorar
+                    Carpeta del Curso</a></div>
+            <!-- Generating generic links since browsers block directory listing, user can drag/drop or use explorer -->
+            <div class="p-4 bg-slate-800 rounded col-span-full">
+                <p class="text-sm text-gray-400">📂 Archivos disponibles en:
+                    <code>NEUROSHOT_APP_BUNDLE/BIBLIOTECA/CURSO_MAESTRO</code></p>
+                <ul class="list-disc ml-5 mt-2 text-sm text-gray-300">
+                    <li>Capitulo 01: Fundamentos</li>
+                    <li>Capitulo 02: Variables</li>
+                    <li>Capitulo 03: Activación</li>
+                    <li>Manual NeuroShot V3</li>
+                    <li>Libro Maestro</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 class="section-title">🎧 Audioteca (Podcasts & Audios)</h2>
+        <div class="file-grid">
+            <div class="file-card"><span class="icon">🎵</span><a href="../../BIBLIOTECA/AUDIOTECA/">Explorar Carpeta de
+                    Audio</a></div>
+            <div class="p-4 bg-slate-800 rounded col-span-full">
+                <p class="text-sm text-gray-400">📂 Archivos disponibles en:
+                    <code>NEUROSHOT_APP_BUNDLE/BIBLIOTECA/AUDIOTECA</code></p>
+                <ul class="list-disc ml-5 mt-2 text-sm text-gray-300">
+                    <li>Neurociencia y SCATT del tirador élite</li>
+                    <li>Escáner Corporal: Tu brújula interna</li>
+                    <li>Silencio y Calma: Anatomía del tirador</li>
+                    <li>Visualización y Neurociencia</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 class="section-title">🎬 Videoteca (Técnica & Mental)</h2>
+        <div class="file-grid">
+            <div class="file-card"><span class="icon">🎥</span><a href="../../BIBLIOTECA/VIDEOTECA/">Explorar Carpeta de
+                    Video</a></div>
+            <div class="p-4 bg-slate-800 rounded col-span-full">
+                <p class="text-sm text-gray-400">📂 Archivos disponibles en:
+                    <code>NEUROSHOT_APP_BUNDLE/BIBLIOTECA/VIDEOTECA</code></p>
+                <ul class="list-disc ml-5 mt-2 text-sm text-gray-300">
+                    <li>El Secreto del Disparo Perfecto</li>
+                    <li>Anatomía de un Atleta de Élite</li>
+                    <li>La Mente del Tirador</li>
+                    <li>Diseñando a un Campeón</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 class="section-title">📂 Documentos y Extras</h2>
+        <div class="file-grid">
+            <div class="file-card"><span class="icon">📁</span><a href="../../BIBLIOTECA/DOCUMENTOS/">Explorar
+                    Documentos</a></div>
+        </div>
+
+        <div class="mt-8 text-center">
+            <a href="../../toolkit_index.html" class="inline-block px-6 py-2 bg-slate-700 rounded hover:bg-slate-600">⬅️
+                Volver al Toolkit</a>
+        </div>
+    </div>
+</body>
+
+</html>

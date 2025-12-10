@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroShot | Monitor de Burnout</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* USAGE GUIDE (COMENTARIOS DE USO)
+           ----------------------------------------------------
+           NOMBRE: Monitor de Burnout (Fatiga Cognitiva)
+           USO: Prevenir el sobreentrenamiento y el agotamiento mental.
+           
+           CÓMO UTILIZAR:
+           1. Esta herramienta funciona ZOLAMENTE con datos. 
+           2. El deportista debe rellenar el Diario Móvil (Sueño y Cansancio).
+           3. El gráfico muestra la "Carga Acumulada".
+           4. ALERTA: Si la línea entra en la ZONA ROJA, hay que dar descanso obligatorio.
+           ----------------------------------------------------
+        */
+        :root {
+            --bg: #0f172a;
+            --text: #f8fafc;
+            --danger: #ef4444;
+            --safe: #10b981;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: sans-serif;
+            padding: 2rem;
+        }
+
+        .monitor-card {
+            background: #1e293b;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 900px;
+            margin: 0 auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .status-badge {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* NEW UTILITIES FOR CLEANUP */
+        .monitor-title {
+            margin: 0;
+        }
+
+        .monitor-subtitle {
+            color: #94a3b8;
+        }
+
+        .status-badge-initial {
+            background: #334155;
+            color: #94a3b8;
+        }
+
+        .advice-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-left: 4px solid #334155;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-close {
+            margin-top: 20px;
+            width: 100%;
+            padding: 10px;
+            background: #475569;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position:fixed; top:10px; right:10px; z-index:9999;">
+        <a href="../../toolkit_index.html"
+            style="background:#ef4444; color:white; padding:8px 15px; border-radius:6px; text-decoration:none; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.3);">✕
+            Cerrar</a>
+    </div>
+
+    <div class="monitor-card">
+        <div class="status-header">
+            <div>
+                <h1 class="monitor-title">📉 Monitor de Fatiga</h1>
+                <span class="monitor-subtitle">Análisis de Carga de los últimos 30 reportes</span>
+            </div>
+            <div id="statusBadge" class="status-badge status-badge-initial">
+                DATOS INSUFICIENTES
+            </div>
+        </div>
+
+        <canvas id="burnoutChart"></canvas>
+
+        <div id="adviceDisplay" class="advice-box">
+            Esperando datos...
+        </div>
+
+        <button onclick="window.close()" class="btn-close">Cerrar Monitor</button>
+    </div>
+
+    <script>
+        const db = JSON.parse(localStorage.getItem('neuroshot_global_db') || '[]');
+
+        // Process Data: Strain = Tiredness (0-10) + (IdealSleep - ActualSleepQuality)
+        // Sleep in DB is 'low', 'mid', 'high' usually. Let's map.
+        // Map Sleep: high=10 (Good), mid=5, low=0 (Bad).
+        // Strain Formula: Tiredness (0-10) + (10 - SleepScore). Max Strain = 20.
+
+        const recentData = db.slice(-30); // Last 30 entries
+
+        const labels = recentData.map(d => new Date(d.timestamp).toLocaleDateString());
+        const dataPoints = recentData.map(d => {
+            let sleepScore = 5;
+            if (d.sleep === 'high') sleepScore = 10;
+            if (d.sleep === 'low') sleepScore = 0;
+
+            let tiredness = parseInt(d.tiredness) || 0;
+
+            // Inverted Sleep logic: Low sleep quality adds to strain
+            let sleepStrain = 10 - sleepScore;
+
+            return tiredness + sleepStrain; // Range 0 to 20
+        });
+
+        // CALCULATE RISK
+        let recentAvg = 0;
+        if (dataPoints.length > 0) {
+            const sum = dataPoints.reduce((a, b) => a + b, 0);
+            recentAvg = sum / dataPoints.length;
+        }
+
+        const badge = document.getElementById('statusBadge');
+        const advice = document.getElementById('adviceDisplay');
+
+        if (dataPoints.length === 0) {
+            badge.innerText = "NO DATA";
+        } else if (recentAvg > 14) {
+            badge.innerText = "⚠️ CRÍTICO";
+            badge.style.background = '#ef4444'; // Red
+            badge.style.color = '#fff';
+            advice.innerText = "¡ALERTA! Niveles de fatiga acumulada extremos. Riesgo inminente de burnout o lesión. Se recomienda descanso total de 48h.";
+        } else if (recentAvg > 9) {
+            badge.innerText = "⚠️ ALERTA";
+            badge.style.background = '#f59e0b'; // Orange
+            badge.style.color = '#fff';
+            advice.innerText = "Niveles de fatiga elevados. Reducir volumen de entrenamiento un 30% esta semana.";
+        } else {
+            badge.innerText = "✅ ÓPTIMO";
+            badge.style.background = '#10b981'; // Green
+            badge.style.color = '#fff';
+            advice.innerText = "Carga cognitiva y física bien tolerada. Se puede mantener o incrementar intensidad.";
+        }
+
+        // CHART
+        new Chart(document.getElementById('burnoutChart'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Índice de Fatiga Acumulada (0-20)',
+                    data: dataPoints,
+                    borderColor: recentAvg > 14 ? '#ef4444' : '#10b981',
+                    tension: 0.4,
+                    fill: true,
+                    backgroundColor: recentAvg > 14 ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.1)'
+                }]
+            },
+            options: {
+                scales: {
+                    y: { min: 0, max: 20, grid: { color: 'rgba(255,255,255,0.1)' } },
+                    x: { display: false } // Hide dates to avoid clutter
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+    </script>
+</body>
+
+</html>

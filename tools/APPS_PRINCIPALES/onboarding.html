@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroShot | Onboarding</title>
+    <link rel="stylesheet" href="../../css/neuroshot_ui_kit.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neuro-gold: #fbbf24;
+            --neuro-dark: #0f172a;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--neuro-dark);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .input-box {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .btn-gold {
+            background: var(--neuro-gold);
+            color: black;
+            font-weight: bold;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+
+        .btn-gold:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- STEP 1: INVITE CODE -->
+    <div id="step1" class="glass-panel">
+        <h1 style="font-size: 2rem; margin-bottom: 10px;">NEUROSHOT</h1>
+        <p style="color: #94a3b8; margin-bottom: 20px;">Sistema de Alto Rendimiento</p>
+
+        <div style="text-align: left; margin-bottom: 5px; font-size: 0.9rem;">Código de Invitación</div>
+        <input type="text" id="inviteCode" class="input-box" placeholder="Ej: NS-2025-X">
+
+        <button onclick="verifyCode()" class="btn-gold">VALIDAR ACCESO</button>
+        <p id="errorMsg" style="color: #ef4444; font-size: 0.8rem; margin-top: 10px; display: none;">Código inválido</p>
+    </div>
+
+    <!-- STEP 2: PROFILE SETUP -->
+    <div id="step2" class="glass-panel" style="display: none;">
+        <h2 style="color: var(--neuro-gold);">¡Bienvenido!</h2>
+        <p style="margin-bottom: 20px;">Configura tu perfil de atleta</p>
+
+        <input type="text" id="regName" class="input-box" placeholder="Nombre Completo">
+        <input type="text" id="regClub" class="input-box" placeholder="Club / Federación">
+        <select id="regModality" class="input-box">
+            <option value="pistol_air">Pistola Aire 10m</option>
+            <option value="pistol_sport">Pistola Deportiva 25m</option>
+        </select>
+
+        <button onclick="completeRegistration()" class="btn-gold">COMENZAR ENTRENAMIENTO</button>
+    </div>
+
+    <script>
+        function verifyCode() {
+            const code = document.getElementById('inviteCode').value.toUpperCase();
+            // Simulation: Accept any code starting with NS
+            if (code.startsWith('NS') || code === 'DEMO') {
+                document.getElementById('step1').style.display = 'none';
+                document.getElementById('step2').style.display = 'block';
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        }
+
+        function completeRegistration() {
+            const profile = {
+                name: document.getElementById('regName').value,
+                club: document.getElementById('regClub').value,
+                modality: document.getElementById('regModality').value,
+                joined: new Date().toISOString()
+            };
+
+            // Save to LocalStorage (Simulation of Persistence)
+            localStorage.setItem('neuroshot_profile', JSON.stringify(profile));
+
+            // Redirect
+            window.location.href = 'diario.html';
+        }
+    </script>
+</body>
+
+</html>

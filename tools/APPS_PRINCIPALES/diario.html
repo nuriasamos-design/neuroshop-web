@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroShot Academy | Master System</title>
+    <style>
+        :root {
+            /* Palette - Deep Blue & Soft Green + Orange Accents */
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --primary-green: #10b981;
+            --accent-orange: #f97316;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(249, 115, 22, 0.1) 0%, transparent 20%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: var(--bg-card);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Layout */
+        header {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-close {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .btn-close:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand span {
+            color: var(--primary-green);
+        }
+
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            display: flex;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Sidebar - Profile */
+        aside {
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .profile-card {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-green), #059669);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .data-field {
+            text-align: left;
+            margin-bottom: 1rem;
+        }
+
+        .data-field label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .data-field input,
+        .data-field select {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem;
+            border-radius: 8px;
+            color: white;
+        }
+
+        /* Main Content - Diary */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .diary-input-section {
+            padding: 2rem;
+        }
+
+        .sliders-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: #334155;
+            border-radius: 5px;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-orange);
+            cursor: pointer;
+        }
+
+        .btn-generate {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(90deg, var(--accent-orange), #ea580c);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+        }
+
+        .suggestion-card {
+            margin-top: 2rem;
+            border-left: 4px solid var(--primary-green);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 1.5rem;
+            border-radius: 0 12px 12px 0;
+            display: none;
+            /* Hidden by default */
+        }
+
+        .resource-link {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--primary-green);
+            text-decoration: none;
+            border-radius: 6px;
+            border: 1px solid var(--primary-green);
+            transition: all 0.2s;
+        }
+
+        .resource-link:hover {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        /* CALENDAR & NAV STYLES */
+        .nav-btn {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-btn.active {
+            background: var(--primary-green);
+            color: #0f172a;
+            font-weight: bold;
+            border-color: var(--primary-green);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            /* Mobile optimized column */
+            gap: 20px;
+        }
+
+        .event-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .event-card.attending {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        /* ACCORDION (Collapsible) */
+        details.event-card>summary {
+            list-style: none;
+            cursor: pointer;
+            outline: none;
+        }
+
+        details.event-card>summary::-webkit-details-marker {
+            display: none;
+        }
+
+        /* ACCORDION MODIFICATIONS */
+        details.event-card>summary {
+            list-style: none;
+            cursor: pointer;
+            outline: none;
+        }
+
+        details.event-card>summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .event-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .event-date {
+            color: var(--accent-orange);
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .event-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        .logistics-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .phase-bar {
+            height: 6px;
+            background: #334155;
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .phase-fill {
+            height: 100%;
+            transition: width 0.5s;
+        }
+
+        .phase-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            margin-top: 4px;
+            color: var(--text-muted);
+        }
+
+        /* UTILITY CLASSES (Refactored from Inline) */
+        .header-slim {
+            border-radius: 0;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+        }
+
+        .text-sm-muted {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .mb-1 {
+            margin-bottom: 1rem;
+        }
+
+        .nav-container {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1rem;
+        }
+
+        .btn-save-profile {
+            width: 100%;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+
+        .mt-05 {
+            margin-top: 0.5rem;
+        }
+
+        .text-xs-muted {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .status-badges {
+            margin-top: 1rem;
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .badge-brain {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--primary-green);
+        }
+
+        .badge-audio {
+            background: rgba(249, 115, 22, 0.2);
+            color: var(--accent-orange);
+        }
+
+        /* DIARY & FORM CLASSES */
+        .card-dark {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .input-dark {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .input-highlight {
+            width: 100%;
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid var(--accent-orange);
+            padding: 0.5rem;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .grid-tech-labels {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .label-flex {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .posture-container {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .select-dark {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        /* ACTION BUTTONS */
+        .btn-whatsapp {
+            flex: 1;
+            padding: 1rem;
+            background: #25D366;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-cloud {
+            flex: 1;
+            padding: 1rem;
+            background: var(--primary-green);
+            border: none;
+            border-radius: 8px;
+            color: #022c22;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* UTILITY COLORS */
+        .color-green {
+            color: var(--primary-green);
+        }
+
+        .color-orange {
+            color: var(--accent-orange);
+        }
+
+        .color-muted {
+            color: #94a3b8;
+        }
+
+        /* FLEX UTILS */
+        .flex-between-mb05 {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .block-mb05 {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .grid-half-gap {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+
+
+        /* DYNAMIC CONTENT CLASSES */
+        .session-result-card {
+            margin-bottom: 1rem;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .list-spaced {
+            margin-bottom: 1rem;
+            padding-left: 20px;
+        }
+
+        .resource-link-sm {
+            font-size: 0.8rem;
+            padding: 2px 8px;
+        }
+
+        .mt-1 {
+            margin-top: 1rem;
+        }
+
+        .mt-2 {
+            margin-top: 2rem;
+        }
+
+        .w-100 {
+            width: 100%;
+        }
+
+        /* ADVANCED COMPONENTS */
+        .input-file-custom {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .file-preview {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: var(--primary-green);
+        }
+
+        .comp-fields-card {
+            display: none;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            margin-top: 1rem;
+        }
+
+        .manual-sync-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+            border: 1px dashed var(--glass-border);
+            text-align: center;
+        }
+
+        /* NEW REFACTORED CLASSES */
+        .color-primary-green {
+            color: var(--primary-green);
+        }
+
+        .mb-0 {
+            margin-bottom: 0;
+        }
+
+        .mb-05 {
+            margin-bottom: 0.5rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .text-sm-muted {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .line-height-16 {
+            line-height: 1.6;
+        }
+
+        .suggestion-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .suggestion-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .flex-wrap-gap10 {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .flex-center-gap05 {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-gold {
+            background: var(--neuro-gold);
+            color: black;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-outline-gold {
+            border: 1px solid var(--neuro-gold);
+            color: var(--neuro-gold);
+            padding: 10px 20px;
+            border-radius: 8px;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .p-2 {
+            padding: 2rem;
+        }
+
+        .btn-dark-sm {
+            padding: 4px 8px;
+            font-size: 0.8rem;
+            background: #334155;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* NEW REFACTOR UTILITIES */
+        .text-neutral {
+            color: var(--text-muted);
+        }
+
+        .grid-single-col {
+            grid-template-columns: 1fr !important;
+            gap: 1rem;
+        }
+
+        .flex-buttons-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 1.5rem;
+        }
+
+        .uppercase {
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="glass-panel header-slim">
+        <div class="brand">
+            <span>⚡</span> NeuroShot Academy
+        </div>
+        <div class="header-controls">
+            <a href="../../toolkit_index.html" class="btn-close">✕ Cerrar App</a>
+        </div>
+    </header>
+    <main>
+        < !-- Sidebar: Athlete Profile & Nav -->
+            <aside>
+                <div class="glass-panel profile-card">
+                    <div class="avatar" id="avatarDisplay">T</div>
+                    <h2 class="mb-1">Perfil del Tirador</h2>
+
+                    <!-- Navigation -->
+                    <div class="nav-container">
+                        <button class="nav-btn active" onclick="switchView('diary')" id="btn_diary">📝 Diario de
+                            Tiro</button>
+                        <button class="nav-btn" onclick="switchView('calendar')" id="btn_calendar">📅 Calendario
+                            2026</button>
+                    </div>
+
+                    <div class="data-field">
+                        <label>Nombre Completo</label>
+                        <input type="text" id="athleteName" placeholder="Tu nombre">
+                    </div>
+                    <div class="data-field">
+                        <label>Edad</label>
+                        <input type="number" id="athleteAge" placeholder="25">
+                    </div>
+                    <div class="data-field">
+                        <label>Nº Licencia</label>
+                        <input type="text" id="athleteLicense" placeholder="ESP-0000">
+                    </div>
+                    <div class="data-field">
+                        <label>Modalidad</label>
+                        <select id="athleteModality" title="Modalidad de Tiro">
+                            <option value="pistol_air">Pistola Aire 10m</option>
+                            <option value="pistol_sport">Pistola Deportiva</option>
+                            <option value="rifle_air">Carabina Aire</option>
+                            <option value="rapid_fire">Velocidad</option>
+                        </select>
+                    </div>
+                    <button onclick="saveProfile()" class="btn-save-profile">Guardar Perfil</button>
+                </div>
+                <div class="glass-panel profile-card text-left">
+                    <h3>Estado Actual</h3>
+                    <p class="text-xs-muted mt-05">✅ Sistema Operativo (v3.0)</p>
+                    <div class="status-badges"><span class="badge badge-brain">Cerebro: Conectado</span><span
+                            class="badge badge-audio">Audios: Listos</span></div>
+                </div>
+            </aside>
+            < !-- Main: Content Area -->
+                <section class="content-area">
+                    < !-- VIEW: DIARY -->
+                        <div id="view_diary" class="glass-panel diary-input-section">
+                            <h1>Diario de Entrenamiento</h1>
+                            <p class="text-neutral">Sistema Inteligente de Planificación Diaria</p>
+                            <div class="sliders-container grid-single-col">
+                                < !-- PHYSIOLOGICAL BLOCK -->
+                                    <div class="card-dark">
+                                        < !-- ENERGY -->
+                                            <!-- ENERGY -->
+                                            <div class="mb-1"><label class="flex-between-mb05">Energía <span
+                                                        id="valEnergy" class="color-green">5</span></label><input
+                                                    type="range" id="inputEnergy" min="1" max="10" value="5"
+                                                    oninput="updateSliders()" title="Nivel de Energía"></div>
+                                            <!-- ANXIETY -->
+                                            <div class="mb-1"><label class="flex-between-mb05">Ansiedad <span
+                                                        id="valAnxiety" class="color-orange">3</span></label><input
+                                                    type="range" id="inputAnxiety" min="1" max="10" value="3"
+                                                    oninput="updateSliders()" title="Nivel de Ansiedad"></div>
+                                            <!-- TIREDNESS -->
+                                            <div class="mb-1"><label class="flex-between-mb05">Fatiga
+                                                    <span id="valTired" class="color-muted">2</span></label><input
+                                                    type="range" id="inputTiredness" min="1" max="10" value="2"
+                                                    oninput="updateSliders()" title="Nivel de Fatiga"></div>
+                                            <!-- SLEEP -->
+                                            <div class="mb-0"><label class="block-mb05">
+                                                    Calidad de Sueño</label><select id="inputSleep"
+                                                    title="Calidad del Sueño" class="select-dark w-100">
+                                                    <option value="good">Buena (7-8h)</option>
+                                                    <option value="average">Regular (5-6h)</option>
+                                                    <option value="bad">Mala (<5h)< /option>
+                                                </select></div>
+                                    </div>
+                            </div>
+                            <!-- NEW: QUANTITATIVE DATA (Volume & Duration) -->
+                            <!-- NEW: QUANTITATIVE DATA (Volume & Duration) -->
+                            <div class="grid-half-gap">
+                                <div class="data-field"><label>Volumen (Nº Disparos)</label><input type="number"
+                                        id="inputVolume" placeholder="Ej: 60" class="input-dark w-100"></div>
+                                <div class="data-field"><label>Duración (Minutos)</label><input type="number"
+                                        id="inputDuration" placeholder="Ej: 90" class="input-dark w-100"></div>
+                            </div>
+                            <!-- UNIVERSAL FILE UPLOAD (Visible only for Competition/Control now) -->
+                            <!-- UNIVERSAL FILE UPLOAD -->
+                            <div class="data-field mt-1 hidden" id="fileInputWrapper">
+                                <label>Adjuntar Archivo (Competición: Imagen / PDF)</label>
+                                <input type="file" id="inputFile" accept="image/*,application/pdf"
+                                    onchange="handleFileUpload(this)" class="input-file-custom">
+                                <div id="filePreview" class="file-preview"></div>
+                            </div>
+
+                            <!-- COMPETITION & FILES SECTION -->
+                            <div id="compFields" class="comp-fields-card">
+                                <h4 class="color-orange mb-1">Datos de Competición</h4>
+                                <div class="grid-half-gap mt-0">
+                                    <div class="data-field">
+                                        <label>Puntuación Total</label>
+                                        <input type="number" id="inputScore" placeholder="Ej: 570" class="w-100">
+                                    </div>
+                                    <div class="data-field">
+                                        <label>X / Centros</label>
+                                        <input type="number" id="inputInnerTens" placeholder="Ej: 15" class="w-100">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="data-field"><label>Foco Técnico (Selecciona los puntos clave)</label>
+                            <div class="grid-tech-labels"><label class="label-flex"><input type="checkbox"
+                                        id="tech_stance" value="Posición">Posición </label><label
+                                    class="label-flex"><input type="checkbox" id="tech_grip" value="Agarre">Agarre
+                                </label><label class="label-flex"><input type="checkbox" id="tech_breathing"
+                                        value="Respiración">Respiración </label><label class="label-flex"><input
+                                        type="checkbox" id="tech_sights" value="Elementos de Puntería">Elementos
+                                    Puntería </label><label class="label-flex"><input type="checkbox" id="tech_trigger"
+                                        value="Dedo">Dedo </label><label class="label-flex"><input type="checkbox"
+                                        id="tech_follow" value="Follow Through">Follow Through </label><label
+                                    class="label-flex"><input type="checkbox" id="tech_gesture" value="Gesto">Gesto
+                                </label></div>
+                            <!-- Posture Dropdown -->
+                            <div class="posture-container"><label class="text-sm-muted">Postura
+                                    Corporal:</label><select id="tech_posture_detail" title="Detalle de Postura"
+                                    class="select-dark">
+                                    <option value="">-- Seleccionar foco postural --</option>
+                                    <option value="Cabeza">Cabeza</option>
+                                    <option value="Hombros">Hombros</option>
+                                    <option value="Caderas">Caderas</option>
+                                    <option value="Pies">Pies</option>
+                                </select></div>
+                        </div>
+                        <div class="data-field"><label>Sensaciones (Propiocepción / Emocional)</label><textarea
+                                id="inputSensations" rows="2" class="input-dark w-100"
+                                placeholder="Sensaciones físicas, pensamientos, estado de ánimo..."></textarea></div>
+                        <div class="data-field"><label>Notas Técnicas (Análisis de lo trabajado)</label><textarea
+                                id="inputTechnicalNotes" rows="2" class="input-dark w-100"
+                                placeholder="¿Qué has trabajado bien? ¿Qué mal?"></textarea></div>
+                        <div class="data-field">
+                            <label>Comunicación con Entrenador</label>
+                            <textarea id="inputCoachMsg" rows="2" class="input-highlight w-100"
+                                placeholder="Mensaje directo para tu entrenador..."></textarea>
+                        </div>
+
+                        <button class="btn-generate mt-2" onclick="generateSmartSession()">GENERAR SESIÓN
+                            INTELIGENTE</button>
+                        <!-- AI Suggestion Output -->
+                        <div id="aiSuggestion" class="suggestion-card">
+                            <h3 class="color-primary-green mb-05">Propuesta NeuroShot
+                            </h3>
+                            <p id="suggestionText" class="line-height-16"></p>
+                            <div class="suggestion-footer">
+                                <h4 class="suggestion-label">
+                                    Recursos Recomendados del Codex:</h4>
+                                <div id="resourceLinks" class="flex-wrap-gap10"></div>
+                            </div>
+                            <div class="flex-buttons-row">
+                                <button id="btnWhatsapp" onclick="sendReport('whatsapp')"
+                                    class="btn-whatsapp">WhatsApp</button>
+                                <button id="btnEmail" onclick="sendReport('email')" class="btn-cloud">Email</button>
+                            </div>
+                        </div>
+                        </div>
+                        <!-- SYNC / BACKUP SYSTEM UI -->
+                        <!-- SYNC / BACKUP SYSTEM UI -->
+                        <div class="manual-sync-card">
+                            <h3 class="text-sm-muted uppercase">Transferencia de Datos</h3>
+                            <p class="text-xs-muted mb-1">Exporta tu historial completo:</p>
+
+                            <div class="flex-center-gap05">
+                                <button class="btn btn-gold" onclick="exportData()">
+                                    Descargar Respaldo JSON
+                                </button>
+                                <button class="btn btn-outline-gold" onclick="triggerImport()">
+                                    Cargar Respaldo
+                                </button>
+                                <input type="file" id="importFile" class="hidden" accept=".json"
+                                    onchange="importData(this)">
+                            </div>
+                        </div>
+                        </div>
+                        </div>
+                        <!-- End View Diary -->
+                        <!-- VIEW: CALENDAR -->
+                        <div id="view_calendar" class="hidden" style="display: none;">
+                            <div class="glass-panel p-2 mb-2" style="padding:1rem; margin-bottom:1rem;">
+                                <h1>Planificación Deportiva 2026</h1>
+                                <p class="color-muted">Selecciona las competiciones y
+                                    modalidades de tu temporada.</p><button class="btn-generate btn-dark-sm"
+                                    onclick="addCustomEvent()">+Añadir
+                                    Competición Manual</button>
+                            </div>
+                            <div id="calendarContainer" class="calendar-grid">
+                                <!-- Events Injected Here by JS -->
+                            </div>
+                        </div>
+                </section>
+    </main>
+    <!-- LOGIC ENGINES -->
+    <script src="../../js/session_db.js"></script>
+    <script src="../../js/session_generator.js"></script>
+    <script src="../../sw.js"></script>
+    <!-- Service Worker Registration is handled in index usually but good to have visible logic -->
+    <script> // --- INITIALIZATION ---
+        const generator = new SessionGenerator();
+        let currentSessionPlan = null; // Store for report
+
+        function toggleCompFields(show) {
+            document.getElementById('compFields').style.display = show ? 'block' : 'none';
+            const fileWrapper = document.getElementById('fileInputWrapper');
+            if (fileWrapper) fileWrapper.style.display = show ? 'block' : 'none';
+        }
+
+        // --- CORE GENERATION LOGIC ---
+        function generateSmartSession() {
+            if (!window.NEUROSHOT_DB) {
+                alert("Error Crítico: La Base de Datos (DB) no se ha cargado. Revisa tu conexión o recarga la página.");
+                return;
+            }
+
+            try {
+                console.log("Iniciando generación de sesión...");
+
+                // 1. Gather Inputs
+                const profile = JSON.parse(localStorage.getItem('neuroshot_profile') || '{}');
+
+                const dailyState = {
+                    energy: parseInt(document.getElementById('inputEnergy').value),
+                    anxiety: parseInt(document.getElementById('inputAnxiety').value),
+                    tiredness: parseInt(document.getElementById('inputTiredness').value),
+                    sleep: document.getElementById('inputSleep').value
+                };
+
+                console.log("Estado diario capturado:", dailyState);
+
+                // Find Next Competition
+                const customEvents = JSON.parse(localStorage.getItem('neuroshot_custom_events') || '[]');
+                const nextComp = customEvents[0] || null;
+
+                // 2. Generate Session via Engine
+                const sessionPlan = generator.generate(profile, dailyState, nextComp);
+                currentSessionPlan = sessionPlan; // Save for report
+
+                console.log("Plan generado:", sessionPlan);
+
+                // 3. Render Output
+                let html = `<div class="session-result-card"><strong>Fase:</strong>${sessionPlan.metadata.phase}<br><strong>Foco:</strong>${sessionPlan.metadata.focus.toUpperCase()}</div>`;
+
+                // Warmup
+                html += `<h4 class="color-orange">Calentamiento</h4><ul class="list-spaced">`;
+
+                sessionPlan.warmup.forEach(block => {
+                    html += `<li><strong>${block.name}:</strong> ${block.desc} (${block.duration})`;
+                    if (block.file) html += ` <a href="#" class="resource-link resource-link-sm">Play</a>`;
+                    html += `</li>`;
+                });
+                html += `</ul>`;
+
+                // Main
+                html += `<h4 class="color-green">Bloque Principal</h4><ul class="list-spaced">`;
+
+                sessionPlan.main = sessionPlan.main || sessionPlan.live_fire; // Fallback for safety if property name differs
+                if (sessionPlan.live_fire) sessionPlan.main = sessionPlan.live_fire; // Correct naming mapping
+
+                sessionPlan.main.forEach(block => {
+                    html += `<li><strong>${block.name}:</strong> ${block.desc} ${block.vol > 0 ? `(${block.vol} disp)` : ''}</li>`;
+                });
+                html += `</ul>`;
+
+                // Cooldown
+                html += `<h4 class="color-muted">Vuelta a la Calma</h4><ul class="list-spaced">`;
+
+                sessionPlan.cooldown.forEach(block => {
+                    html += `<li>${block.name}: ${block.desc}</li>`;
+                });
+                html += `</ul>`;
+
+                const outputEl = document.getElementById('suggestionText');
+                if (outputEl) outputEl.innerHTML = html;
+
+                const suggestionCard = document.getElementById('aiSuggestion');
+                if (suggestionCard) suggestionCard.style.display = 'block';
+
+                // 4. Auto-Save to LocalStorage for Coach View
+                saveSessionLocally(profile, dailyState, sessionPlan);
+
+            }
+            catch (e) {
+                console.error(e);
+                alert("Error generando sesión: " + e.message);
+            }
+        }
+
+        // --- MANUAL SYNC / BACKUP SYSTEM (v3.2) ---
+        function exportData() {
+            const data = localStorage.getItem('neuroshot_global_db');
+            if (!data) return alert("❌ No hay historial para exportar.");
+
+            const blob = new Blob([data], {
+                type: 'application/json'
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+
+            a.download = `neuroshot_diario_backup_${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function triggerImport() {
+            document.getElementById('importFile').click();
+        }
+
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                try {
+                    const json = JSON.parse(e.target.result);
+
+                    if (confirm("⚠️ ¿Sobreescribir historial actual con esta copia?")) {
+                        localStorage.setItem('neuroshot_global_db', JSON.stringify(json));
+                        alert("✅ Datos restaurados. Recargando...");
+                        location.reload();
+                    }
+                }
+
+                catch (err) {
+                    alert("❌ Archivo inválido.");
+                }
+            }
+
+                ;
+            reader.readAsText(file);
+        }
+
+        // --- MANUAL REPORTING LOGIC ---
+        function sendReport(method) {
+            const profile = JSON.parse(localStorage.getItem('neuroshot_profile') || '{}');
+            const goal = "Sesión NeuroShot";
+
+            let phase = "General";
+            let focus = "Libre";
+            if (currentSessionPlan) {
+                phase = currentSessionPlan.metadata.phase;
+                focus = currentSessionPlan.metadata.focus;
+            }
+
+            const sensations = document.getElementById('inputSensations').value || "Sin observaciones";
+            const coachMsg = document.getElementById('inputCoachMsg').value || "N/A";
+
+            // Format Text
+            const text = `🏆 REPORTE NEUROSHOT - ${new Date().toLocaleDateString()}
+👤 Atleta: ${profile.name || "Atleta"}
+📊 Fase: ${phase}
+🎯 Foco: ${focus}
+📝 Sensaciones: ${sensations}
+📨 Mensaje: ${coachMsg}
+
+Generado por NeuroShot Academy System`.trim();
+
+            if (method === 'whatsapp') {
+                const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+                window.open(url, '_blank');
+            } else if (method === 'email') {
+                const subject = `Reporte Entrenamiento - ${profile.name || "Atleta"}`;
+                const url = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+                window.location.href = url;
+            }
+        }
+
+        function saveSessionLocally(profile, state, plan) {
+            const db = JSON.parse(localStorage.getItem('neuroshot_global_db') || '[]');
+
+            const newEntry = {
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                athleteName: profile.name || "Atleta",
+                state: state,
+                plan: plan,
+                status: 'generated', // coach hasn't seen it
+                alerts: [] // Filled by CoachBrain later
+            }
+                ;
+
+            // Add basic alert tag if critical
+            if (state.tiredness >= 8) newEntry.alerts.push("FATIGA_CRITICA");
+            if (state.anxiety >= 8) newEntry.alerts.push("ANSIEDAD_ALTA");
+
+            db.push(newEntry);
+            localStorage.setItem('neuroshot_global_db', JSON.stringify(db));
+        }
+
+        // --- UI UTILS ---
+        function updateSliders() {
+            document.getElementById('valEnergy').innerText = document.getElementById('inputEnergy').value;
+            document.getElementById('valAnxiety').innerText = document.getElementById('inputAnxiety').value;
+            document.getElementById('valTired').innerText = document.getElementById('inputTiredness').value;
+        }
+
+        function loadProfile() {
+            const saved = localStorage.getItem('neuroshot_profile');
+
+            if (saved) {
+                const p = JSON.parse(saved);
+                document.getElementById('athleteName').value = p.name;
+                document.getElementById('athleteModality').value = p.modality;
+                if (p.name) document.getElementById('avatarDisplay').innerText = p.name.charAt(0).toUpperCase();
+            }
+        }
+
+        // Navigation (View Switching)
+        function switchView(viewName) {
+            // Hide all
+            document.getElementById('view_diary').style.display = 'none';
+            document.getElementById('view_calendar').style.display = 'none';
+            document.getElementById('btn_diary').classList.remove('active');
+            document.getElementById('btn_calendar').classList.remove('active');
+
+            if (viewName === 'diary') {
+                document.getElementById('view_diary').style.display = 'block';
+                document.getElementById('btn_diary').classList.add('active');
+            }
+            else if (viewName === 'calendar') {
+                document.getElementById('view_calendar').style.display = 'block';
+                document.getElementById('btn_calendar').classList.add('active');
+
+                // Force Render with small delay to ensure DOM is ready
+                setTimeout(() => {
+                    renderCalendar();
+                }, 50);
+            }
+        }
+
+
+        // --- NAVIGATION LOGIC ---
+        function switchView(viewName) {
+            // Hide all views
+            document.getElementById('view_diary').style.display = 'none';
+            document.getElementById('view_calendar').style.display = 'none';
+            document.getElementById('btn_diary').classList.remove('active');
+            document.getElementById('btn_calendar').classList.remove('active');
+
+            if (viewName === 'diary') {
+                document.getElementById('view_diary').style.display = 'block';
+                document.getElementById('btn_diary').classList.add('active');
+            }
+            else if (viewName === 'calendar') {
+                document.getElementById('view_calendar').style.display = 'block';
+                document.getElementById('btn_calendar').classList.add('active');
+
+                // Force Render with small delay to ensure DOM is ready
+                setTimeout(() => {
+                    renderCalendar();
+                }, 50);
+            }
+        }
+
+        // --- CALENDAR LOGIC (v4.0 - Enhanced with Modality Selection) ---
+        function renderCalendar() {
+            const container = document.getElementById('calendarContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            // 1. Get Official Comps from DB
+            const official = window.NEUROSHOT_DB.competitions_2026 || [];
+
+            // Sort
+            const allEvents = [...official].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            if (allEvents.length === 0) {
+                container.innerHTML = '<p class="text-muted">No hay competiciones cargadas en la base de datos.</p>';
+                return;
+            }
+
+            allEvents.forEach((evt, index) => {
+                const date = new Date(evt.date);
+                const card = document.createElement('details');
+                card.className = 'glass-panel event-card';
+                card.style.padding = '1rem';
+                card.style.marginBottom = '10px';
+                card.style.borderLeft = evt.type === 'international' ? '4px solid #f97316' : '4px solid #10b981';
+
+                // Build modalities checkboxes
+                let modalitiesHTML = '';
+                if (evt.modalities && evt.modalities.length > 0) {
+                    modalitiesHTML = '<div style="margin-top:1rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.1);">';
+                    modalitiesHTML += '<h5 style="color:#94a3b8; font-size:0.9rem; margin-bottom:0.5rem;">📋 Modalidades Disponibles:</h5>';
+                    modalitiesHTML += '<div style="display:grid; grid-template-columns:1fr; gap:8px;">';
+
+                    evt.modalities.forEach((mod, modIndex) => {
+                        const checkId = `comp_${index}_mod_${modIndex}`;
+                        modalitiesHTML += `
+                    <label style="display:flex; align-items:center; gap:8px; padding:8px; background:rgba(0,0,0,0.2); border-radius:6px; cursor:pointer;">
+                        <input type="checkbox" id="${checkId}" value="${mod}" style="cursor:pointer;">
+                        <span style="color:#f8fafc; font-size:0.85rem;">${mod}</span>
+                    </label>
+                `;
+                    });
+
+                    modalitiesHTML += '</div>';
+                    modalitiesHTML += `<button class="btn-generate" style="margin-top:1rem; padding:8px 16px; font-size:0.85rem; width:100%;" onclick="selectCompetitionWithModalities('${evt.name}', '${evt.date}', ${index})">✅ Confirmar Selección</button>`;
+                    modalitiesHTML += '</div>';
+                }
+
+                card.innerHTML = `
+            <summary style="cursor:pointer; list-style:none; outline:none;">
+                <h4 style="color:#f8fafc; margin-bottom:0.5rem; display:inline-flex; align-items:center; gap:8px;">
+                    <span style="font-size:1.2rem;">▶</span> ${evt.name}
+                </h4>
+                <div style="font-size:0.9rem; color:#94a3b8; margin-top:0.3rem;">
+                    <span>📅 ${date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                    <span style="margin-left:1rem;">📍 ${evt.location}</span>
+                    <span style="margin-left:1rem; background:${evt.type === 'international' ? '#f97316' : evt.type === 'national' ? '#10b981' : '#6366f1'}; padding:2px 8px; border-radius:4px; font-size:0.75rem; color:white;">${evt.type.toUpperCase()}</span>
+                </div>
+            </summary>
+            ${modalitiesHTML}
+        `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // New function to handle modality selection
+        function selectCompetitionWithModalities(name, date, compIndex) {
+            const selectedMods = [];
+            const checkboxes = document.querySelectorAll(`input[id^="comp_${compIndex}_mod_"]:checked`);
+
+            checkboxes.forEach(cb => {
+                selectedMods.push(cb.value);
+            });
+
+            if (selectedMods.length === 0) {
+                alert("⚠️ Selecciona al menos una modalidad para esta competición.");
+                return;
+            }
+
+            // Save to localStorage
+            const selection = {
+                competition: name,
+                date: date,
+                modalities: selectedMods,
+                timestamp: new Date().toISOString()
+            };
+
+            let savedComps = JSON.parse(localStorage.getItem('neuroshot_selected_competitions') || '[]');
+            // Remove previous selection of same competition
+            savedComps = savedComps.filter(c => c.competition !== name);
+            savedComps.push(selection);
+            localStorage.setItem('neuroshot_selected_competitions', JSON.stringify(savedComps));
+
+            alert(`✅ Competición Registrada:\n\n${name}\n📅 ${new Date(date).toLocaleDateString('es-ES')}\n\nModalidades seleccionadas:\n${selectedMods.map(m => '• ' + m).join('\n')}`);
+
+            // Optionally switch back to diary view
+            // switchView('diary');
+        }
+
+        function addCustomEvent() {
+            alert("Función disponible próximamente. Por favor selecciona una competición oficial de la lista.");
+        }
+
+        function selectCompetition(name, date) {
+            const customEvents = [{ name, date, type: 'selected' }];
+            localStorage.setItem('neuroshot_custom_events', JSON.stringify(customEvents));
+            alert(`🎯 Objetivo Fijado: ${name}`);
+            switchView('diary');
+        }
+
+        window.addEventListener('DOMContentLoaded', loadProfile);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Respiración Interactiva - NeuroShot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .technique-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .technique-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px;
+            border: 2px solid #667eea;
+            background: white;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .technique-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .technique-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .breath-circle {
+            width: 300px;
+            height: 300px;
+            margin: 40px auto;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .breath-text {
+            color: white;
+            font-size: 2em;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .timer {
+            font-size: 3em;
+            color: white;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-start {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-start:hover {
+            background: #059669;
+            transform: scale(1.05);
+        }
+
+        .btn-stop {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-stop:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+
+        .stats {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f3f4f6;
+            border-radius: 15px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .stat-label {
+            color: #666;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .info-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            border-radius: 10px;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        @keyframes breathe-in {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.3);
+            }
+        }
+
+        @keyframes breathe-out {
+            from {
+                transform: scale(1.3);
+            }
+
+            to {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes breathe-hold {
+
+            0%,
+            100% {
+                transform: scale(1.3);
+            }
+
+            50% {
+                transform: scale(1.35);
+            }
+        }
+
+        .breathing-in {
+            animation: breathe-in var(--duration) ease-in-out;
+        }
+
+        .breathing-out {
+            animation: breathe-out var(--duration) ease-in-out;
+        }
+
+        .breathing-hold {
+            animation: breathe-hold var(--duration) ease-in-out;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position:fixed; top:10px; right:10px; z-index:9999;">
+        <a href="../../toolkit_index.html"
+            style="background:#ef4444; color:white; padding:8px 15px; border-radius:6px; text-decoration:none; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.3);">✕
+            Cerrar</a>
+    </div>
+
+    <div class="container">
+        <h1>🫁 Respiración NeuroShot</h1>
+        <p class="subtitle">Protocolo Bachrach - Gestión de Energía Cerebral</p>
+
+        <div class="technique-selector">
+            <button class="technique-btn active" data-technique="55">
+                5.5s<br><small>Perfecta</small>
+            </button>
+            <button class="technique-btn" data-technique="478">
+                4-7-8<br><small>Emergencia</small>
+            </button>
+            <button class="technique-btn" data-technique="box">
+                Box<br><small>Foco</small>
+            </button>
+        </div>
+
+        <div class="breath-circle" id="breathCircle">
+            <div class="breath-text">
+                <div id="breathPhase">Preparado</div>
+                <div class="timer" id="timer">0.0</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-start" id="startBtn">▶ Iniciar</button>
+            <button class="btn btn-stop" id="stopBtn" style="display:none;">⏹ Detener</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-row">
+                <span class="stat-label">Ciclos completados:</span>
+                <span class="stat-value" id="cycles">0</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Tiempo total:</span>
+                <span class="stat-value" id="totalTime">0:00</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Técnica actual:</span>
+                <span class="stat-value" id="currentTechnique">5.5 Perfecta</span>
+            </div>
+        </div>
+
+        <div class="info-box" id="infoBox">
+            <strong>Técnica 5.5 (Respiración Perfecta):</strong><br>
+            Inhala por la nariz durante 5.5 segundos, exhala por la nariz durante 5.5 segundos.
+            Esta frecuencia equilibra el sistema nervioso y duplica la energía cerebral disponible.
+        </div>
+    </div>
+
+    <script>
+        const techniques = {
+            '55': {
+                name: '5.5 Perfecta',
+                phases: [
+                    { name: 'INHALA', duration: 5.5, animation: 'breathing-in' },
+                    { name: 'EXHALA', duration: 5.5, animation: 'breathing-out' }
+                ],
+                info: 'Inhala por la nariz durante 5.5 segundos, exhala por la nariz durante 5.5 segundos. Esta frecuencia equilibra el sistema nervioso y duplica la energía cerebral disponible.'
+            },
+            '478': {
+                name: '4-7-8 Emergencia',
+                phases: [
+                    { name: 'INHALA', duration: 4, animation: 'breathing-in' },
+                    { name: 'RETÉN', duration: 7, animation: 'breathing-hold' },
+                    { name: 'EXHALA', duration: 8, animation: 'breathing-out' }
+                ],
+                info: 'Inhala 4 segundos, retén 7 segundos, exhala 8 segundos. Ideal para activación muy alta (>7/10). Activa el nervio vago y reduce cortisol rápidamente.'
+            },
+            'box': {
+                name: 'Box Foco',
+                phases: [
+                    { name: 'INHALA', duration: 4, animation: 'breathing-in' },
+                    { name: 'RETÉN', duration: 4, animation: 'breathing-hold' },
+                    { name: 'EXHALA', duration: 4, animation: 'breathing-out' },
+                    { name: 'RETÉN', duration: 4, animation: 'breathing-hold' }
+                ],
+                info: 'Respiración cuadrada: 4 segundos en cada fase. Mejora la concentración y la coherencia cardíaca. Usada por Navy SEALs.'
+            }
+        };
+
+        let currentTechnique = '55';
+        let isRunning = false;
+        let currentPhaseIndex = 0;
+        let cycleCount = 0;
+        let totalSeconds = 0;
+        let intervalId = null;
+        let phaseIntervalId = null;
+        let startTime = null;
+
+        const breathCircle = document.getElementById('breathCircle');
+        const breathPhase = document.getElementById('breathPhase');
+        const timer = document.getElementById('timer');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const cyclesDisplay = document.getElementById('cycles');
+        const totalTimeDisplay = document.getElementById('totalTime');
+        const currentTechniqueDisplay = document.getElementById('currentTechnique');
+        const infoBox = document.getElementById('infoBox');
+
+        // Technique selector
+        document.querySelectorAll('.technique-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (isRunning) return;
+
+                document.querySelectorAll('.technique-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentTechnique = btn.dataset.technique;
+                updateTechniqueInfo();
+            });
+        });
+
+        function updateTechniqueInfo() {
+            const tech = techniques[currentTechnique];
+            currentTechniqueDisplay.textContent = tech.name;
+            infoBox.innerHTML = `<strong>${tech.name}:</strong><br>${tech.info}`;
+        }
+
+        startBtn.addEventListener('click', startBreathing);
+        stopBtn.addEventListener('click', stopBreathing);
+
+        function startBreathing() {
+            isRunning = true;
+            startBtn.style.display = 'none';
+            stopBtn.style.display = 'block';
+            startTime = Date.now();
+            runPhase();
+
+            // Update total time every second
+            intervalId = setInterval(() => {
+                totalSeconds = Math.floor((Date.now() - startTime) / 1000);
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+                totalTimeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function stopBreathing() {
+            isRunning = false;
+            startBtn.style.display = 'block';
+            stopBtn.style.display = 'none';
+            clearInterval(intervalId);
+            clearInterval(phaseIntervalId);
+            breathCircle.className = 'breath-circle';
+            breathPhase.textContent = 'Detenido';
+            timer.textContent = '0.0';
+        }
+
+        function runPhase() {
+            if (!isRunning) return;
+
+            const tech = techniques[currentTechnique];
+            const phase = tech.phases[currentPhaseIndex];
+
+            breathPhase.textContent = phase.name;
+            breathCircle.className = 'breath-circle ' + phase.animation;
+            breathCircle.style.setProperty('--duration', phase.duration + 's');
+
+            let elapsed = 0;
+            const startPhaseTime = Date.now();
+
+            phaseIntervalId = setInterval(() => {
+                elapsed = (Date.now() - startPhaseTime) / 1000;
+                const remaining = Math.max(0, phase.duration - elapsed);
+                timer.textContent = remaining.toFixed(1);
+
+                if (remaining <= 0) {
+                    clearInterval(phaseIntervalId);
+                    currentPhaseIndex++;
+
+                    if (currentPhaseIndex >= tech.phases.length) {
+                        currentPhaseIndex = 0;
+                        cycleCount++;
+                        cyclesDisplay.textContent = cycleCount;
+                    }
+
+                    runPhase();
+                }
+            }, 100);
+        }
+
+        // Initialize
+        updateTechniqueInfo();
+    </script>
+</body>
+
+</html>

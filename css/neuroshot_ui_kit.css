@@ -1,0 +1,274 @@
+/* =========================================
+   NEUROSHOT UI KIT V1.0 (CONSOLIDATED)
+   ========================================= */
+
+/* --- 1. VARIABLES & THEME --- */
+:root {
+    /* Colors - Brand */
+    --neuro-gold: #fbbf24;
+    --neuro-green: #10b981;
+    --neuro-blue: #3b82f6;
+    --neuro-red: #ef4444;
+    --neuro-orange: #f97316;
+
+    /* Colors - Structural */
+    --bg-dark: #0f172a;
+    /* Main Background */
+    --bg-panel: #1e293b;
+    /* Cards/Panels */
+    --bg-input: rgba(0, 0, 0, 0.3);
+
+    /* Text */
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-dark: #0f172a;
+    /* For buttons/badges */
+
+    /* Effects */
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-glow: 0 0 15px rgba(16, 185, 129, 0.2);
+
+    /* Variables Compatibility (Aliases for Legacy Code) */
+    --primary-color: var(--text-main);
+    --accent-color: var(--neuro-green);
+    --warm-accent: var(--neuro-orange);
+    --panic-color: var(--neuro-red);
+}
+
+/* --- 2. BASE STYLES --- */
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--text-main);
+    font-weight: 700;
+    margin-top: 0;
+}
+
+h1 {
+    font-size: 2rem;
+    letter-spacing: -0.025em;
+}
+
+h2 {
+    font-size: 1.5rem;
+    color: var(--neuro-gold);
+}
+
+h3 {
+    font-size: 1.25rem;
+}
+
+a {
+    color: var(--neuro-blue);
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+a:hover {
+    color: var(--neuro-gold);
+}
+
+/* --- 3. COMPONENTS --- */
+
+/* Cards */
+.card,
+.panel {
+    background: var(--bg-panel);
+    border: var(--glass-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-glow);
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    gap: 0.5rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    background: var(--neuro-green);
+    color: #064e3b;
+    /* Dark Green Text */
+    box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.39);
+}
+
+.btn-primary:hover {
+    background: #34d399;
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.23);
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid var(--neuro-text);
+    color: var(--neuro-text);
+}
+
+.btn-secondary:hover {
+    border-color: var(--neuro-gold);
+    color: var(--neuro-gold);
+}
+
+.btn-danger {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--neuro-red);
+    color: var(--neuro-red);
+}
+
+.btn-danger:hover {
+    background: var(--neuro-red);
+    color: white;
+}
+
+.btn-fab {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    padding: 0;
+    font-size: 1.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 50;
+}
+
+/* Inputs */
+input,
+select,
+textarea {
+    background: var(--bg-input);
+    border: var(--glass-border);
+    color: var(--text-main);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--neuro-green);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Utilities */
+.text-center {
+    text-align: center;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.flex {
+    display: flex;
+}
+
+.grid {
+    display: grid;
+}
+
+.gap-4 {
+    gap: 1rem;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+.w-full {
+    width: 100%;
+}
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.badge-green {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--neuro-green);
+}
+
+.badge-gold {
+    background: rgba(251, 191, 36, 0.2);
+    color: var(--neuro-gold);
+}
+
+.badge-red {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--neuro-red);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}

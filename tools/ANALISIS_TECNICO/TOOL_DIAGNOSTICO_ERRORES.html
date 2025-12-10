@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico de Errores Mentales - NeuroShot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #dc2626;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        .error-card {
+            background: #fef2f2;
+            border: 3px solid #dc2626;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .error-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.2);
+        }
+
+        .error-card.selected {
+            background: #dc2626;
+            color: white;
+        }
+
+        .error-card h2 {
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .error-card p {
+            line-height: 1.6;
+        }
+
+        .timer-container {
+            text-align: center;
+            margin: 40px 0;
+            padding: 30px;
+            background: #f9fafb;
+            border-radius: 15px;
+        }
+
+        .timer-display {
+            font-size: 5em;
+            font-weight: bold;
+            color: #dc2626;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer-phase {
+            font-size: 1.5em;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #b91c1c;
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .antidote-box {
+            background: #ecfdf5;
+            border: 3px solid #10b981;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .antidote-box h3 {
+            color: #10b981;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .step {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #10b981;
+            border-radius: 5px;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #10b981;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .history {
+            margin-top: 40px;
+        }
+
+        .history-item {
+            background: #f9fafb;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border-left: 4px solid #dc2626;
+        }
+
+        .chart-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 15px;
+        }
+
+        canvas {
+            max-width: 100%;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position:fixed; top:10px; right:10px; z-index:9999;">
+        <a href="../../toolkit_index.html"
+            style="background:#ef4444; color:white; padding:8px 15px; border-radius:6px; text-decoration:none; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.3);">✕
+            Cerrar</a>
+    </div>
+
+    <div class="container">
+        <h1>🚨 Diagnóstico de Errores Mentales</h1>
+        <p class="subtitle">Los 3 Errores Capitales + Protocolos de Emergencia</p>
+
+        <div id="test-section">
+            <h2 style="margin-bottom: 20px; color: #333;">¿Qué error estás cometiendo?</h2>
+
+            <div class="error-card" onclick="selectError('paralisis')">
+                <h2>❌ ERROR 1: Parálisis por Análisis</h2>
+                <p><strong>Síntoma:</strong> Ves las miras perfectas pero el dedo no se mueve.</p>
+                <p><strong>Causa:</strong> Cerebro en "Modo Verificación" (Racional/Lento) en lugar de "Modo Ejecución".
+                </p>
+            </div>
+
+            <div class="error-card" onclick="selectError('dopamina')">
+                <h2>🎰 ERROR 2: Trampa de Dopamina</h2>
+                <p><strong>Síntoma:</strong> Disparas y miras desesperadamente el monitor buscando el 10.</p>
+                <p><strong>Causa:</strong> Adicción al resultado. Si es 10, placer; si es 8, cortisol.</p>
+            </div>
+
+            <div class="error-card" onclick="selectError('ego')">
+                <h2>😡 ERROR 3: Resistencia al Error (Ego)</h2>
+                <p><strong>Síntoma:</strong> Te enfadas tras un fallo.</p>
+                <p><strong>Causa:</strong> El error amenaza tu autoimagen. Respuesta emocional en lugar de técnica.</p>
+            </div>
+
+            <button class="btn btn-primary" onclick="showAntidote()" style="margin-top: 20px; width: 100%;">
+                Ver Antídoto →
+            </button>
+        </div>
+
+        <div id="antidote-section" class="hidden">
+            <div class="antidote-box" id="antidote-content">
+                <!-- Se llenará dinámicamente -->
+            </div>
+
+            <div class="timer-container" id="timer-section" style="display: none;">
+                <h3 style="margin-bottom: 20px;">Protocolo de 3 Segundos (Método Nadal)</h3>
+                <div class="timer-display" id="timer">3</div>
+                <div class="timer-phase" id="timer-phase">Listo para comenzar</div>
+                <button class="btn btn-primary" onclick="startTimer()">▶ Iniciar Protocolo</button>
+                <button class="btn btn-secondary" onclick="resetTimer()">↻ Resetear</button>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-secondary" onclick="saveToHistory()">💾 Guardar en Historial</button>
+                <button class="btn btn-secondary" onclick="backToTest()">← Volver al Test</button>
+            </div>
+        </div>
+
+        <div class="history" id="history-section">
+            <h2 style="margin-bottom: 20px; color: #333;">📊 Historial de Errores</h2>
+            <div id="history-list">
+                <p style="color: #666; text-align: center;">No hay errores registrados aún</p>
+            </div>
+
+            <div class="chart-container" id="chart-container" style="display: none;">
+                <h3 style="margin-bottom: 15px;">Evolución de Errores</h3>
+                <canvas id="errorChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedError = null;
+        let errorHistory = JSON.parse(localStorage.getItem('errorHistory') || '[]');
+        let timerInterval = null;
+        let currentPhase = 0;
+
+        const errors = {
+            paralisis: {
+                name: 'Parálisis por Análisis',
+                antidote: {
+                    title: 'Regla del "YA"',
+                    steps: [
+                        'Si en el segundo 7 no ha salido el tiro, la orden obligatoria es RENUNCIA',
+                        'Bajar el arma inmediatamente (no intentar salvar el tiro)',
+                        'Respiración 4-7-8: Inhala 4s, retén 7s, exhala 8s',
+                        'Resetear con palabra ancla (ej: "MIRAS")',
+                        'Volver a empezar desde FASE 1 de la rutina'
+                    ],
+                    prevention: 'Entrena la renuncia tanto como el disparo. En NeuroShot, premiamos al atleta que renuncia a un mal tiro más que al que mete un 10 de suerte.'
+                }
+            },
+            dopamina: {
+                name: 'Trampa de Dopamina',
+                antidote: {
+                    title: 'Predicción del Error',
+                    steps: [
+                        'ANTES de mirar el monitor, di en voz alta dónde ha ido el tiro',
+                        'Basa tu predicción en la sensación (propiocepción), no en la esperanza',
+                        'Solo DESPUÉS de predecir, mira el resultado',
+                        'Premia tu capacidad de sentir, no el número',
+                        'Registra: "Predicción correcta" vale más que "10 puntos"'
+                    ],
+                    prevention: 'Cambia la fuente de dopamina: del resultado al proceso. Si predices bien, has ganado independientemente del punto.'
+                }
+            },
+            ego: {
+                name: 'Resistencia al Error (Ego)',
+                antidote: {
+                    title: 'Regla de los 3 Segundos (Método Nadal)',
+                    steps: [
+                        'Segundo 1: "Mierda" - Reconoce la emoción sin juzgarla',
+                        'Segundo 2: Respiración profunda - Activa el parasimpático',
+                        'Segundo 3: Palabra Ancla "MIRAS" - Reseteo mental completo'
+                    ],
+                    prevention: 'Reencuadre cognitivo: "He fallado" → "He obtenido información". El error es solo un dato, no define tu valía.',
+                    hasTimer: true
+                }
+            }
+        };
+
+        function selectError(errorType) {
+            document.querySelectorAll('.error-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.target.closest('.error-card').classList.add('selected');
+            selectedError = errorType;
+        }
+
+        function showAntidote() {
+            if (!selectedError) {
+                alert('Por favor, selecciona un error primero');
+                return;
+            }
+
+            const error = errors[selectedError];
+            const antidoteContent = document.getElementById('antidote-content');
+
+            let stepsHTML = error.antidote.steps.map((step, index) => `
+                <div class="step">
+                    <span class="step-number">${index + 1}</span>
+                    <strong>${step}</strong>
+                </div>
+            `).join('');
+
+            antidoteContent.innerHTML = `
+                <h3>✅ ${error.antidote.title}</h3>
+                ${stepsHTML}
+                <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 10px;">
+                    <strong>💡 Prevención:</strong><br>
+                    ${error.antidote.prevention}
+                </div>
+            `;
+
+            document.getElementById('test-section').classList.add('hidden');
+            document.getElementById('antidote-section').classList.remove('hidden');
+
+            if (error.antidote.hasTimer) {
+                document.getElementById('timer-section').style.display = 'block';
+            }
+        }
+
+        function backToTest() {
+            document.getElementById('test-section').classList.remove('hidden');
+            document.getElementById('antidote-section').classList.add('hidden');
+            document.querySelectorAll('.error-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            selectedError = null;
+            resetTimer();
+        }
+
+        function startTimer() {
+            const phases = [
+                { duration: 1, text: '"Mierda" - Reconoce la emoción' },
+                { duration: 1, text: 'Respiración profunda' },
+                { duration: 1, text: 'Palabra Ancla "MIRAS"' }
+            ];
+
+            currentPhase = 0;
+            let timeLeft = phases[currentPhase].duration;
+
+            document.getElementById('timer-phase').textContent = phases[currentPhase].text;
+            document.getElementById('timer').textContent = timeLeft;
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    currentPhase++;
+                    if (currentPhase < phases.length) {
+                        timeLeft = phases[currentPhase].duration;
+                        document.getElementById('timer-phase').textContent = phases[currentPhase].text;
+                    } else {
+                        clearInterval(timerInterval);
+                        document.getElementById('timer').textContent = '✓';
+                        document.getElementById('timer-phase').textContent = '¡Protocolo completado!';
+                    }
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            document.getElementById('timer').textContent = '3';
+            document.getElementById('timer-phase').textContent = 'Listo para comenzar';
+            currentPhase = 0;
+        }
+
+        function saveToHistory() {
+            if (!selectedError) return;
+
+            const entry = {
+                error: errors[selectedError].name,
+                date: new Date().toISOString(),
+                timestamp: Date.now()
+            };
+
+            errorHistory.push(entry);
+            localStorage.setItem('errorHistory', JSON.stringify(errorHistory));
+
+            alert('✅ Error guardado en el historial');
+            updateHistory();
+        }
+
+        function updateHistory() {
+            const historyList = document.getElementById('history-list');
+
+            if (errorHistory.length === 0) {
+                historyList.innerHTML = '<p style="color: #666; text-align: center;">No hay errores registrados aún</p>';
+                document.getElementById('chart-container').style.display = 'none';
+                return;
+            }
+
+            historyList.innerHTML = errorHistory.slice(-10).reverse().map(entry => {
+                const date = new Date(entry.date);
+                return `
+                    <div class="history-item">
+                        <strong>${entry.error}</strong><br>
+                        <small style="color: #666;">${date.toLocaleDateString()} ${date.toLocaleTimeString()}</small>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('chart-container').style.display = 'block';
+            updateChart();
+        }
+
+        function updateChart() {
+            const ctx = document.getElementById('errorChart');
+            if (!ctx) return;
+
+            // Count errors by type
+            const errorCounts = {
+                'Parálisis por Análisis': 0,
+                'Trampa de Dopamina': 0,
+                'Resistencia al Error (Ego)': 0
+            };
+
+            errorHistory.forEach(entry => {
+                errorCounts[entry.error]++;
+            });
+
+            // Simple bar chart using canvas
+            const canvas = ctx;
+            const context = canvas.getContext('2d');
+            canvas.width = 800;
+            canvas.height = 300;
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            const maxCount = Math.max(...Object.values(errorCounts), 1);
+            const barWidth = 200;
+            const barSpacing = 50;
+            const colors = ['#dc2626', '#f59e0b', '#8b5cf6'];
+
+            Object.keys(errorCounts).forEach((errorName, index) => {
+                const count = errorCounts[errorName];
+                const barHeight = (count / maxCount) * 200;
+                const x = index * (barWidth + barSpacing) + 50;
+                const y = 250 - barHeight;
+
+                // Draw bar
+                context.fillStyle = colors[index];
+                context.fillRect(x, y, barWidth, barHeight);
+
+                // Draw count
+                context.fillStyle = '#000';
+                context.font = 'bold 20px Arial';
+                context.textAlign = 'center';
+                context.fillText(count, x + barWidth / 2, y - 10);
+
+                // Draw label
+                context.font = '12px Arial';
+                context.fillText(errorName.split(' ')[0], x + barWidth / 2, 280);
+            });
+        }
+
+        // Initialize
+        updateHistory();
+    </script>
+</body>
+
+</html>

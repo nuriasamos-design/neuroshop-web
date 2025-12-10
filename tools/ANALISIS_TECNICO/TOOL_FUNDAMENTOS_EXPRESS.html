@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundamentos Express | NeuroShot</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --green: #10b981;
+            --orange: #f97316;
+            --text: #f8fafc;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: system-ui, sans-serif;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h2 {
+            color: var(--green);
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .checklist-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .checklist-item.checked {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--green);
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text);
+            border-radius: 4px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .checklist-item.checked .checkbox {
+            background: var(--green);
+            border-color: var(--green);
+        }
+
+        .checklist-item.checked .checkbox::after {
+            content: '✔';
+            font-size: 14px;
+            color: #000;
+        }
+
+        .detail {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            display: none;
+            margin-top: 4px;
+            margin-left: 36px;
+        }
+
+        .checklist-item.checked .detail {
+            display: block;
+        }
+
+        .btn-close {
+            background: var(--orange);
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        .text-instructions {
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position:fixed; top:10px; right:10px; z-index:9999;">
+        <a href="../../toolkit_index.html"
+            style="background:#ef4444; color:white; padding:8px 15px; border-radius:6px; text-decoration:none; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.3);">✕
+            Cerrar</a>
+    </div>
+
+    <div class="card">
+        <h2>🛠️ Check-In Técnico</h2>
+        <p class="text-instructions">Revisa estos 5 puntos antes de tu primera serie.</p>
+
+        <div class="checklist-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div>
+                <strong>1. Postura (Stance)</strong>
+                <div class="detail">Pies ancho de hombros, peso balanceado 50/50. Bloqueo de rodillas suave.</div>
+            </div>
+        </div>
+
+        <div class="checklist-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div>
+                <strong>2. Empuñadura (Grip)</strong>
+                <div class="detail">Mano alta en la rabera. Presión constante. Muñeca bloqueada sin tensión excesiva.
+                </div>
+            </div>
+        </div>
+
+        <div class="checklist-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div>
+                <strong>3. Respiración</strong>
+                <div class="detail">Inhala al subir. Exhala al bajar a zona de puntería. Apnea natural (4-8 seg).</div>
+            </div>
+        </div>
+
+        <div class="checklist-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div>
+                <strong>4. Elementos de Puntería</strong>
+                <div class="detail">Enfoque nítido en el punto de mira. Luces laterales simétricas.</div>
+            </div>
+        </div>
+
+        <div class="checklist-item" onclick="toggle(this)">
+            <div class="checkbox"></div>
+            <div>
+                <strong>5. Disparo (Trigger)</strong>
+                <div class="detail">Presión progresiva recta hacia atrás. "Que te sorprenda el disparo".</div>
+            </div>
+        </div>
+
+        <button class="btn-close" onclick="window.close()">✅ LISTO PARA ENTRENAR</button>
+    </div>
+
+    <script>
+        function toggle(el) {
+            el.classList.toggle('checked');
+        }
+    </script>
+</body>
+
+</html>

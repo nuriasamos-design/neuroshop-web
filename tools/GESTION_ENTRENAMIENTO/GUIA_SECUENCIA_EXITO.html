@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroShot | El Camino del Éxito</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #fbbf24;
+            --dark: #0f172a;
+            --panel: #1e293b;
+            --text: #cbd5e1;
+            --accent: #f59e0b;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--dark);
+            color: var(--text);
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: radial-gradient(circle at center, rgba(251, 191, 36, 0.1) 0%, transparent 70%);
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: 900;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        .subtitle {
+            color: var(--gold);
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+
+        /* TIMELINE CONTAINER */
+        .roadmap-container {
+            max-width: 800px;
+            margin: 50px auto;
+            position: relative;
+            padding-bottom: 50px;
+        }
+
+        /* VERTICAL LINE */
+        .roadmap-container::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, #3b82f6, #a855f7, #ef4444, #fbbf24);
+            transform: translateX(-50%);
+            border-radius: 2px;
+            z-index: 0;
+        }
+
+        .step {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 60px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s forwards;
+        }
+
+        .step:nth-child(even) {
+            flex-direction: row-reverse;
+            text-align: right;
+        }
+
+        /* DOT ON THE LINE */
+        .step::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            background: var(--dark);
+            border: 4px solid white;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        .step-content {
+            width: 45%;
+            background: var(--panel);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .step-content:hover {
+            transform: scale(1.03);
+            border-color: var(--gold);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .step-number {
+            font-size: 4rem;
+            font-weight: 900;
+            position: absolute;
+            top: -20px;
+            opacity: 0.1;
+            color: white;
+            line-height: 1;
+        }
+
+        .step:nth-child(even) .step-number {
+            left: 20px;
+        }
+
+        .step:nth-child(odd) .step-number {
+            right: 20px;
+        }
+
+        .step-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .step-desc {
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .step-action {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+
+        /* TYPE COLORS */
+        .type-diag {
+            border-left: 4px solid #3b82f6;
+        }
+
+        /* Blue */
+        .type-plan {
+            border-left: 4px solid #10b981;
+        }
+
+        /* Green */
+        .type-train {
+            border-left: 4px solid #a855f7;
+        }
+
+        /* Purple */
+        .type-comp {
+            border-left: 4px solid #ef4444;
+        }
+
+        /* Red */
+        .type-eval {
+            border-left: 4px solid #fbbf24;
+        }
+
+        /* Gold */
+
+        /* ANIMATION DELAYS */
+        .step:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .step:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .step:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        .step:nth-child(4) {
+            animation-delay: 0.8s;
+        }
+
+        .step:nth-child(5) {
+            animation-delay: 1.0s;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .roadmap-container::before {
+                left: 20px;
+            }
+
+            .step {
+                flex-direction: column !important;
+                align-items: flex-start;
+                margin-left: 50px;
+            }
+
+            .step::after {
+                left: -34px;
+                transform: none;
+            }
+
+            .step-content {
+                width: 100%;
+                text-align: left !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position:fixed; top:10px; right:10px; z-index:9999;">
+        <a href="../../toolkit_index.html"
+            style="background:#ef4444; color:white; padding:8px 15px; border-radius:6px; text-decoration:none; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.3);">✕
+            Cerrar</a>
+    </div>
+
+    <div class="header">
+        <div class="title">NeuroShot Roadmap</div>
+        <div class="subtitle">La Secuencia del Éxito Deportivo (Método Buceta)</div>
+    </div>
+
+    <div class="roadmap-container">
+
+        <!-- STEP 1: DIAGNOSIS -->
+        <div class="step">
+            <a href="TOOL_AUTO_DIAGNOSTICO.html" class="step-content type-diag">
+                <div class="step-number">01</div>
+                <span class="step-title">Diagnóstico y Triage</span>
+                <div class="step-desc">
+                    Antes de entrenar, debes saber qué corregir. ¿Es un fallo técnico, mental o físico? Identifica la
+                    causa raíz.
+                </div>
+                <span class="step-action">⚔️ IR A DIAGNÓSTICO</span>
+            </a>
+        </div>
+
+        <!-- STEP 2: PLANNING -->
+        <div class="step">
+            <a href="HERRAMIENTA_GENERADOR_PLANTILLAS.html" class="step-content type-plan"
+                onclick="localStorage.setItem('templateType', 'objetivos')">
+                <div class="step-number">02</div>
+                <span class="step-title">Establecimiento de Objetivos</span>
+                <div class="step-desc">
+                    Define el destino. Transforma "Quiero ganar" en "Voy a trabajar mi parada". Planifica tu ciclo.
+                </div>
+                <span class="step-action">🗺️ PLANIFICAR CICLO</span>
+            </a>
+        </div>
+
+        <!-- STEP 3: TRAINING -->
+        <div class="step">
+            <div class="step-content type-train" style="cursor:default;">
+                <div class="step-number">03</div>
+                <span class="step-title">Entrenamiento Neuro-Técnico</span>
+                <div class="step-desc">
+                    El trabajo diario. Divide y vencerás.
+                </div>
+                <div style="margin-top:15px; display:flex; flex-direction:column; gap:5px;">
+                    <a href="HERRAMIENTA_ANALISIS_AGRUPACIONES.html"
+                        style="color:white; text-decoration:none; padding:5px; background:rgba(0,0,0,0.2); border-radius:4px;">🎯
+                        <strong>Laboratorio Técnico:</strong> Analiza Agrupaciones</a>
+                    <a href="TOOL_ATENCION_INTEGRAL.html"
+                        style="color:white; text-decoration:none; padding:5px; background:rgba(0,0,0,0.2); border-radius:4px;">🧠
+                        <strong>Gimnasio Mental:</strong> Atención y Foco</a>
+                    <a href="TOOL_RUTINAS_ANCLAS.html"
+                        style="color:white; text-decoration:none; padding:5px; background:rgba(0,0,0,0.2); border-radius:4px;">🔁
+                        <strong>Rutinas:</strong> Automatiza tu disparo</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 4: COMPETITION -->
+        <div class="step">
+            <a href="HERRAMIENTA_GENERADOR_PLANTILLAS.html" class="step-content type-comp">
+                <div class="step-number">04</div>
+                <span class="step-title">Competición y Contingencias</span>
+                <div class="step-desc">
+                    La prueba de fuego. Prepara planes "If-Then" para crisis. Visualiza escenarios.
+                </div>
+                <span class="step-action">🛡️ PREPARAR ESTRATEGIA</span>
+            </a>
+        </div>
+
+        <!-- STEP 5: EVALUATION -->
+        <div class="step">
+            <a href="TOOL_PSYCH_RADAR.html" class="step-content type-eval">
+                <div class="step-number">05</div>
+                <span class="step-title">Evaluación y Feedback</span>
+                <div class="step-desc">
+                    El ciclo se cierra. Analiza datos, ajusta el perfil psicológico y combate el Burnout.
+                </div>
+                <span class="step-action">📊 ANALIZAR PERFIL</span>
+            </a>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

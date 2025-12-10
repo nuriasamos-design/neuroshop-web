@@ -1,0 +1,647 @@
+{
+    "metadata": {
+        "version": "3.0",
+        "last_updated": "2025-12-09",
+        "description": "Base de Datos Unificada NeuroShot 3.0 - Integración Total de Bibliotecas Multimedia"
+    },
+    "bibliotecas": {
+        "videoteca_tecnica": {
+            "descripcion": "Biblioteca de videos técnicos organizados por categoría y error",
+            "ruta_base": "../Media/videos/",
+            "videos": [
+                {
+                    "id": "VID001",
+                    "nombre": "Independencia del Dedo Índice",
+                    "archivo": "independencia_dedo_indice.mp4",
+                    "duracion": "5:30",
+                    "categoria_tecnica": [
+                        "Disparador",
+                        "Trigger"
+                    ],
+                    "categoria_error": [
+                        "Gatillazo",
+                        "Jerking"
+                    ],
+                    "tags": [
+                        "dedo",
+                        "independencia_motora",
+                        "presion_progresiva"
+                    ],
+                    "nivel": "Intermedio",
+                    "descripcion": "Drill para desarrollar independencia motora del dedo índice",
+                    "drills_relacionados": [
+                        "D-02_La_Moneda",
+                        "D-06_Dedo_Muerto",
+                        "D-07_Gatillo_Goma"
+                    ]
+                },
+                {
+                    "id": "VID002",
+                    "nombre": "Técnica de Agarre - Garra de Águila",
+                    "archivo": "agarre_garra_aguila.mp4",
+                    "duracion": "4:15",
+                    "categoria_tecnica": [
+                        "Agarre",
+                        "Grip"
+                    ],
+                    "categoria_error": [
+                        "Inestabilidad",
+                        "Temblor"
+                    ],
+                    "tags": [
+                        "agarre",
+                        "grip",
+                        "presion",
+                        "triangulo_suspension"
+                    ],
+                    "nivel": "Básico",
+                    "descripcion": "Fundamentos del agarre correcto con presión en pinza",
+                    "drills_relacionados": [
+                        "G-01_Garra_Aguila",
+                        "G-06_Agarre_Sombras",
+                        "G-07_Shake_Lock"
+                    ]
+                },
+                {
+                    "id": "VID003",
+                    "nombre": "Análisis SCATT - Lectura de Trazas R(t)",
+                    "archivo": "scatt_analisis_trazas.mp4",
+                    "duracion": "8:45",
+                    "categoria_tecnica": [
+                        "Análisis",
+                        "SCATT"
+                    ],
+                    "categoria_error": [
+                        "Diagnóstico"
+                    ],
+                    "tags": [
+                        "scatt",
+                        "analisis",
+                        "trazas",
+                        "diagnostico"
+                    ],
+                    "nivel": "Avanzado",
+                    "descripcion": "Cómo interpretar las curvas R(t) del SCATT para detectar errores",
+                    "drills_relacionados": []
+                },
+                {
+                    "id": "VID004",
+                    "nombre": "Postura y Equilibrio - Flamenco Ciego",
+                    "archivo": "postura_flamenco_ciego.mp4",
+                    "duracion": "3:20",
+                    "categoria_tecnica": [
+                        "Postura",
+                        "Stance",
+                        "Equilibrio"
+                    ],
+                    "categoria_error": [
+                        "Inestabilidad",
+                        "Falta_Propiocepcion"
+                    ],
+                    "tags": [
+                        "postura",
+                        "equilibrio",
+                        "propiocepcion"
+                    ],
+                    "nivel": "Intermedio",
+                    "descripcion": "Drill de equilibrio a la pata coja para desarrollar propiocepción",
+                    "drills_relacionados": [
+                        "EQ-01_Flamenco_Ciego",
+                        "EQ-05_Estatua_Armada"
+                    ]
+                },
+                {
+                    "id": "VID005",
+                    "nombre": "Slow Motion - Análisis de Retroceso",
+                    "archivo": "slow_motion_retroceso.mp4",
+                    "duracion": "6:00",
+                    "categoria_tecnica": [
+                        "Análisis",
+                        "Biomecánica"
+                    ],
+                    "categoria_error": [
+                        "Anticipación",
+                        "Flinching"
+                    ],
+                    "tags": [
+                        "slow_motion",
+                        "retroceso",
+                        "anticipacion"
+                    ],
+                    "nivel": "Avanzado",
+                    "descripcion": "Análisis en cámara lenta del retroceso y anticipación",
+                    "drills_relacionados": []
+                },
+                {
+                    "id": "VID006",
+                    "nombre": "Modelado Mental - Visualización de Campeones",
+                    "archivo": "modelado_mental_campeones.mp4",
+                    "duracion": "4:30",
+                    "categoria_tecnica": [
+                        "Mental",
+                        "Visualización"
+                    ],
+                    "categoria_error": [
+                        "Falta_Confianza"
+                    ],
+                    "tags": [
+                        "modelado",
+                        "visualizacion",
+                        "confianza"
+                    ],
+                    "nivel": "Todos",
+                    "descripcion": "Técnicas de modelado mental observando a campeones olímpicos",
+                    "drills_relacionados": []
+                }
+            ]
+        },
+        "laboratorio_mental": {
+            "descripcion": "Biblioteca de audios para gestión de activación y estados mentales",
+            "ruta_base": "../Media/audios/",
+            "audios": [
+                {
+                    "id": "AUD001",
+                    "nombre": "Respiración 4-7-8 (Calma)",
+                    "archivo": "respiracion_4_7_8.mp3",
+                    "duracion": "5:00",
+                    "estado_activacion": "Para Calmar",
+                    "momento": [
+                        "Pre-Competición",
+                        "Intra-Competición"
+                    ],
+                    "tags": [
+                        "respiracion",
+                        "calma",
+                        "ansiedad",
+                        "parasimpatico"
+                    ],
+                    "trigger_automatico": {
+                        "condicion": "activacion > 8",
+                        "prioridad": "ALTA"
+                    },
+                    "descripcion": "Inhala 4s, Retén 7s, Exhala 8s. Activa sistema parasimpático",
+                    "fuente": "Bachrach - Neurociencia Aplicada"
+                },
+                {
+                    "id": "AUD002",
+                    "nombre": "Respiración de Fuego (Activación)",
+                    "archivo": "respiracion_fuego.mp3",
+                    "duracion": "3:30",
+                    "estado_activacion": "Para Activar",
+                    "momento": [
+                        "Pre-Entrenamiento"
+                    ],
+                    "tags": [
+                        "respiracion",
+                        "activacion",
+                        "energia",
+                        "simpatico"
+                    ],
+                    "trigger_automatico": {
+                        "condicion": "activacion < 4",
+                        "prioridad": "MEDIA"
+                    },
+                    "descripcion": "Respiraciones rápidas y rítmicas para activar sistema simpático",
+                    "fuente": "Buceta - Gestión de Activación"
+                },
+                {
+                    "id": "AUD003",
+                    "nombre": "Reset Mental Integrado",
+                    "archivo": "reset_mental_integrado.mp3",
+                    "duracion": "5:30",
+                    "estado_activacion": "Reset Completo",
+                    "momento": [
+                        "Intra-Competición",
+                        "Post-Error"
+                    ],
+                    "tags": [
+                        "reset",
+                        "emergencia",
+                        "bloqueo",
+                        "miedo"
+                    ],
+                    "trigger_automatico": {
+                        "condicion": "problema == 'Bloqueo' OR problema == 'Miedo_al_Fallo'",
+                        "prioridad": "CRÍTICA"
+                    },
+                    "descripcion": "Protocolo completo de reset mental para situaciones de crisis",
+                    "fuente": "Manual NeuroShot V3 - Protocolo de Emergencia"
+                },
+                {
+                    "id": "AUD004",
+                    "nombre": "Protocolo de Veto",
+                    "archivo": "protocolo_veto.mp3",
+                    "duracion": "3:00",
+                    "estado_activacion": "Emergencia",
+                    "momento": [
+                        "Intra-Competición"
+                    ],
+                    "tags": [
+                        "veto",
+                        "emergencia",
+                        "salir_puesto",
+                        "crisis"
+                    ],
+                    "trigger_automatico": {
+                        "condicion": "pulso_alto == TRUE AND pensamiento_rumiante == TRUE",
+                        "prioridad": "CRÍTICA"
+                    },
+                    "descripcion": "Instrucciones para salir del puesto, resetear y volver",
+                    "fuente": "Guía de Emergencia - 3 Errores Mentales Capitales"
+                },
+                {
+                    "id": "AUD005",
+                    "nombre": "Coherencia Cardíaca 5.5",
+                    "archivo": "coherencia_cardiaca_5_5.mp3",
+                    "duracion": "10:00",
+                    "estado_activacion": "Equilibrio",
+                    "momento": [
+                        "Pre-Competición",
+                        "Para Dormir"
+                    ],
+                    "tags": [
+                        "coherencia",
+                        "variabilidad_cardiaca",
+                        "equilibrio"
+                    ],
+                    "trigger_automatico": null,
+                    "descripcion": "Respiración a 5.5 ciclos/minuto para coherencia cardíaca óptima",
+                    "fuente": "Bachrach - Protocolo de Coherencia"
+                },
+                {
+                    "id": "AUD006",
+                    "nombre": "Escaneo Corporal (Body Scan)",
+                    "archivo": "body_scan_propiocepcion.mp3",
+                    "duracion": "8:00",
+                    "estado_activacion": "Conciencia Corporal",
+                    "momento": [
+                        "Pre-Entrenamiento",
+                        "Para Dormir"
+                    ],
+                    "tags": [
+                        "body_scan",
+                        "propiocepcion",
+                        "conciencia_corporal"
+                    ],
+                    "trigger_automatico": null,
+                    "descripcion": "Escaneo mental del cuerpo para desarrollar propiocepción",
+                    "fuente": "Buceta - Técnicas de Relajación"
+                },
+                {
+                    "id": "AUD007",
+                    "nombre": "Visualización Guiada - Final Olímpica",
+                    "archivo": "visualizacion_final_olimpica.mp3",
+                    "duracion": "12:00",
+                    "estado_activacion": "Preparación Mental",
+                    "momento": [
+                        "Pre-Competición"
+                    ],
+                    "tags": [
+                        "visualizacion",
+                        "imaginacion",
+                        "competicion",
+                        "final"
+                    ],
+                    "trigger_automatico": null,
+                    "descripcion": "Guion completo de visualización para preparación de finales",
+                    "fuente": "Manual NeuroShot V3 - Protocolo VMBR"
+                }
+            ]
+        },
+        "mapas_mentales": {
+            "descripcion": "Biblioteca de infografías y esquemas visuales interactivos",
+            "ruta_base": "../Media/infografias/",
+            "infografias": [
+                {
+                    "id": "INF001",
+                    "nombre": "Matriz de Decisión Táctica",
+                    "archivo": "matriz_decision_tactica.svg",
+                    "tipo": "Diagrama de Flujo",
+                    "tags": [
+                        "decision",
+                        "crisis",
+                        "error",
+                        "que_hacer"
+                    ],
+                    "descripcion": "Diagrama de flujo: ¿Qué hago si fallo un 8?",
+                    "interactivo": true
+                },
+                {
+                    "id": "INF002",
+                    "nombre": "Semáforo de Autoevaluación",
+                    "archivo": "semaforo_autoevaluacion.svg",
+                    "tipo": "Gráfico Visual",
+                    "tags": [
+                        "autoevaluacion",
+                        "feedback",
+                        "diario"
+                    ],
+                    "descripcion": "Sistema visual Verde/Amarillo/Rojo para feedback diario",
+                    "interactivo": true
+                },
+                {
+                    "id": "INF003",
+                    "nombre": "Decálogo de Seguridad",
+                    "archivo": "decalogo_seguridad.pdf",
+                    "tipo": "Infografía",
+                    "tags": [
+                        "seguridad",
+                        "normas",
+                        "galeria"
+                    ],
+                    "descripcion": "Normas de galería y manejo seguro de armas",
+                    "interactivo": false
+                },
+                {
+                    "id": "INF004",
+                    "nombre": "Mapa de Independencia del Dedo",
+                    "archivo": "mapa_independencia_dedo.svg",
+                    "tipo": "Esquema Anatómico",
+                    "tags": [
+                        "dedo",
+                        "anatomia",
+                        "independencia_motora"
+                    ],
+                    "descripcion": "Esquema visual de la independencia motora del índice",
+                    "interactivo": true
+                },
+                {
+                    "id": "INF005",
+                    "nombre": "Escala de Activación Buceta",
+                    "archivo": "escala_activacion_buceta.svg",
+                    "tipo": "Escala Visual",
+                    "tags": [
+                        "activacion",
+                        "buceta",
+                        "izof",
+                        "zona_optima"
+                    ],
+                    "descripcion": "Representación visual de la escala 1-10 de activación",
+                    "interactivo": true
+                }
+            ]
+        }
+    },
+    "motor_recomendacion": {
+        "descripcion": "Lógica condicional para interacción automática entre herramientas y bibliotecas",
+        "reglas_interaccion": [
+            {
+                "id": "REGLA001",
+                "nombre": "Diario → Biblioteca Audio (Ansiedad Alta)",
+                "trigger": {
+                    "herramienta": "diario_entrenamiento",
+                    "condicion": "ansiedad > 7",
+                    "campo": "nivel_activacion"
+                },
+                "accion": {
+                    "tipo": "modal_obligatorio",
+                    "titulo": "⚠️ Nivel de Alerta Alto Detectado",
+                    "mensaje": "Tu nivel de activación está en {valor}/10. Se recomienda escuchar el audio antes de continuar.",
+                    "recurso_recomendado": "AUD001",
+                    "permitir_saltar": false
+                },
+                "prioridad": "ALTA"
+            },
+            {
+                "id": "REGLA002",
+                "nombre": "SCATT → Videoteca (Gatillazo Detectado)",
+                "trigger": {
+                    "herramienta": "analisis_scatt",
+                    "condicion": "caida_brusca_rt_ultimos_0_2s == true",
+                    "diagnostico": "Gatillazo/Jerking"
+                },
+                "accion": {
+                    "tipo": "receta_del_dia",
+                    "titulo": "📊 Análisis SCATT: Gatillazo Detectado",
+                    "mensaje": "Se ha detectado una caída brusca en la curva R(t) en los últimos 0.2 segundos.",
+                    "recursos_recomendados": [
+                        "VID001",
+                        "INF004"
+                    ],
+                    "drills_sugeridos": [
+                        "D-02_La_Moneda",
+                        "D-06_Dedo_Muerto"
+                    ]
+                },
+                "prioridad": "ALTA"
+            },
+            {
+                "id": "REGLA003",
+                "nombre": "Temporizador → Audio Activación (Energía Baja)",
+                "trigger": {
+                    "herramienta": "cronometro_duelo",
+                    "condicion": "nivel_energia < 4",
+                    "momento": "pre_serie"
+                },
+                "accion": {
+                    "tipo": "pregunta_modal",
+                    "titulo": "💤 Nivel de Energía Bajo",
+                    "mensaje": "¿Quieres activar tu sistema antes de la serie de duelo?",
+                    "recurso_recomendado": "AUD002",
+                    "permitir_saltar": true
+                },
+                "prioridad": "MEDIA"
+            },
+            {
+                "id": "REGLA004",
+                "nombre": "Análisis Agrupaciones → Videoteca (Error Vertical)",
+                "trigger": {
+                    "herramienta": "analizador_agrupaciones",
+                    "condicion": "desviacion_vertical > desviacion_horizontal",
+                    "diagnostico": "Error de Respiración"
+                },
+                "accion": {
+                    "tipo": "recomendacion",
+                    "titulo": "🎯 Diagnóstico: Error de Respiración",
+                    "mensaje": "Tu agrupación es principalmente vertical. Esto indica un problema de timing respiratorio.",
+                    "recursos_recomendados": [
+                        "VID_RESPIRACION",
+                        "AUD001"
+                    ],
+                    "drills_sugeridos": [
+                        "Respiración_Cuadrada",
+                        "Timing_Respiratorio"
+                    ]
+                },
+                "prioridad": "MEDIA"
+            },
+            {
+                "id": "REGLA005",
+                "nombre": "Matriz Crisis → Protocolo Veto",
+                "trigger": {
+                    "herramienta": "matriz_decision_tactica",
+                    "condicion": "pulso_alto == TRUE AND pensamiento_rumiante == TRUE"
+                },
+                "accion": {
+                    "tipo": "desbloqueo_recurso",
+                    "titulo": "🆘 Crisis Nivel 1 Detectada",
+                    "mensaje": "Protocolo de Veto desbloqueado",
+                    "recurso_desbloqueado": "AUD004",
+                    "instrucciones": [
+                        "1. Baja el arma",
+                        "2. Sal del puesto",
+                        "3. Escucha el audio completo",
+                        "4. Vuelve cuando estés listo"
+                    ]
+                },
+                "prioridad": "CRÍTICA"
+            },
+            {
+                "id": "REGLA006",
+                "nombre": "Calculadora Volumen → Alerta Burnout",
+                "trigger": {
+                    "herramienta": "calculadora_volumen",
+                    "condicion": "media_activacion_3dias > 8"
+                },
+                "accion": {
+                    "tipo": "alerta_coach",
+                    "titulo": "⚠️ RIESGO DE BURNOUT",
+                    "mensaje": "El atleta {nombre} tiene una media de activación > 8 durante 3 días consecutivos.",
+                    "accion_automatica": "reducir_volumen_40_porciento",
+                    "notificar_coach": true
+                },
+                "prioridad": "CRÍTICA"
+            }
+        ]
+    },
+    "integracion_herramientas": {
+        "descripcion": "Mapeo de herramientas existentes con bibliotecas multimedia",
+        "herramientas_integradas": [
+            {
+                "nombre": "Diario de Entrenamiento",
+                "archivo": "APP_DIARIO_MOVIL.html",
+                "bibliotecas_conectadas": [
+                    "laboratorio_mental",
+                    "mapas_mentales"
+                ],
+                "campos_monitoreados": [
+                    "nivel_activacion",
+                    "problemas_detectados",
+                    "calidad_ejecucion"
+                ],
+                "reglas_activas": [
+                    "REGLA001"
+                ]
+            },
+            {
+                "nombre": "Análisis SCATT",
+                "archivo": "analizador_scatt.py",
+                "bibliotecas_conectadas": [
+                    "videoteca_tecnica",
+                    "mapas_mentales"
+                ],
+                "campos_monitoreados": [
+                    "curva_rt",
+                    "caidas_bruscas",
+                    "estabilidad"
+                ],
+                "reglas_activas": [
+                    "REGLA002"
+                ]
+            },
+            {
+                "nombre": "Cronómetro de Duelo",
+                "archivo": "temporizador_duelo.html",
+                "bibliotecas_conectadas": [
+                    "laboratorio_mental"
+                ],
+                "campos_monitoreados": [
+                    "nivel_energia",
+                    "pre_serie"
+                ],
+                "reglas_activas": [
+                    "REGLA003"
+                ]
+            },
+            {
+                "nombre": "Analizador de Agrupaciones",
+                "archivo": "analizador_agrupaciones.py",
+                "bibliotecas_conectadas": [
+                    "videoteca_tecnica",
+                    "laboratorio_mental"
+                ],
+                "campos_monitoreados": [
+                    "desviacion_horizontal",
+                    "desviacion_vertical",
+                    "diagnostico"
+                ],
+                "reglas_activas": [
+                    "REGLA004"
+                ]
+            },
+            {
+                "nombre": "Matriz de Decisión Táctica",
+                "archivo": "matriz_decision_tactica.xlsx",
+                "bibliotecas_conectadas": [
+                    "laboratorio_mental",
+                    "videoteca_tecnica"
+                ],
+                "campos_monitoreados": [
+                    "sintomas_fisicos",
+                    "sintomas_mentales"
+                ],
+                "reglas_activas": [
+                    "REGLA005"
+                ]
+            },
+            {
+                "nombre": "Calculadora de Volumen",
+                "archivo": "calculadora_volumen.xlsx",
+                "bibliotecas_conectadas": [
+                    "laboratorio_mental"
+                ],
+                "campos_monitoreados": [
+                    "media_activacion",
+                    "volumen_disparos"
+                ],
+                "reglas_activas": [
+                    "REGLA006"
+                ]
+            }
+        ]
+    },
+    "configuracion_pwa": {
+        "nombre": "NeuroShot Academy 3.0",
+        "version": "3.0.0",
+        "descripcion": "Sistema Operativo de Entrenamiento Mental para Tiro Olímpico",
+        "offline_ready": true,
+        "instalable": true,
+        "plataformas": [
+            "Android",
+            "iOS",
+            "Desktop"
+        ],
+        "manifest": {
+            "name": "NeuroShot Academy",
+            "short_name": "NeuroShot",
+            "start_url": "/index.html",
+            "display": "standalone",
+            "background_color": "#1A3A59",
+            "theme_color": "#E65100",
+            "icons": [
+                {
+                    "src": "/assets/icon-192.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                },
+                {
+                    "src": "/assets/icon-512.png",
+                    "sizes": "512x512",
+                    "type": "image/png"
+                }
+            ]
+        },
+        "service_worker": {
+            "estrategia_cache": "network-first",
+            "recursos_offline": [
+                "/index.html",
+                "/css/styles.css",
+                "/js/app.js",
+                "/Data/knowledge_graph.json",
+                "/Data/database_unificada.json"
+            ],
+            "bibliotecas_descargables": true,
+            "sincronizacion_background": true
+        }
+    }
+}

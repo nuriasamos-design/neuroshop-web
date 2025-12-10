@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroShot | Laboratorio Técnico</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --primary-gold: #fbbf24;
+            --primary-green: #10b981;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-blue: #3b82f6;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            background: rgba(30, 41, 59, 0.8);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* TABS */
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            background: rgba(30, 41, 59, 0.5);
+            padding: 5px;
+            border-radius: 12px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 10px 20px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary-gold);
+            color: #0f172a;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* CONTAINER layout */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 2rem;
+            flex-grow: 1;
+            display: none;
+            /* Hidden by default, shown by tab logic */
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+        }
+
+        .container.active {
+            display: grid;
+        }
+
+        /* WORKSPACE & PANELS */
+        .workspace {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 600px;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .panel {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--primary-gold);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+
+        /* TARGET LAB STYLES (Existing) */
+        #dropZone {
+            width: 80%;
+            height: 200px;
+            border: 2px dashed var(--text-muted);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #dropZone:hover {
+            border-color: var(--primary-gold);
+            color: var(--primary-gold);
+            background: rgba(251, 191, 36, 0.05);
+        }
+
+        #canvasContainer {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* POSTURE LAB STYLES */
+        .posture-svg {
+            height: 500px;
+            filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.2));
+        }
+
+        .body-part {
+            fill: rgba(255, 255, 255, 0.1);
+            stroke: var(--primary-gold);
+            stroke-width: 2;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .body-part:hover {
+            fill: rgba(251, 191, 36, 0.3);
+        }
+
+        .body-part.selected {
+            fill: var(--primary-gold);
+            stroke: white;
+        }
+
+        /* TRIGGER LAB STYLES */
+        .trigger-visualizer {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .finger-bone {
+            width: 100px;
+            height: 20px;
+            background: #94a3b8;
+            border-radius: 10px;
+            position: absolute;
+            transform-origin: left center;
+        }
+
+        .trigger-blade {
+            width: 20px;
+            height: 80px;
+            background: #ef4444;
+            border-radius: 4px;
+            position: absolute;
+        }
+
+        .force-arrow {
+            position: absolute;
+            height: 4px;
+            background: var(--primary-gold);
+            transform-origin: left center;
+        }
+
+        .force-arrow::after {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: -5px;
+            border-left: 10px solid var(--primary-gold);
+            border-top: 7px solid transparent;
+            border-bottom: 7px solid transparent;
+        }
+
+        /* UTILS */
+        .btn {
+            background: var(--primary-gold);
+            color: #1e293b;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .deep-note {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 3px solid var(--accent-blue);
+            padding: 10px;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            margin-top: 10px;
+        }
+
+        /* NEW UTILITIES FOR CLEANUP */
+        .header-subtitle {
+            font-weight: 300;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .hand-toggle-container {
+            display: flex;
+            gap: 5px;
+            margin-right: 20px;
+        }
+
+        .hand-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            transition: background 0.3s;
+        }
+
+        .hand-btn.active {
+            background: var(--accent-blue);
+        }
+
+        .btn-close {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .drop-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .instruction-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        .input-full {
+            width: 100%;
+        }
+
+        .select-dark {
+            width: 100%;
+            padding: 8px;
+            background: #0f172a;
+            color: white;
+            border: 1px solid #334155;
+            border-radius: 6px;
+        }
+
+        .label-block {
+            margin-top: 10px;
+            display: block;
+        }
+
+        .diagnosis-main {
+            font-size: 1.2rem;
+            color: var(--primary-gold);
+            font-weight: bold;
+        }
+
+        .diagnosis-sub {
+            font-size: 0.9rem;
+            margin-top: 10px;
+            color: #cbd5e1;
+        }
+
+        .drill-header {
+            color: var(--primary-green);
+        }
+
+        .slider-group {
+            width: 80%;
+            margin-top: 30px;
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* REFACTOR UTILS */
+        .hidden-element {
+            display: none;
+        }
+
+        .canvas-wrapper {
+            display: none;
+        }
+
+        .result-panel {
+            display: none;
+        }
+
+        .drill-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .sim-container {
+            position: relative;
+            width: 300px;
+            height: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position:fixed; top:10px; right:10px; z-index:9999;">
+        <a href="../../toolkit_index.html"
+            style="background:#ef4444; color:white; padding:8px 15px; border-radius:6px; text-decoration:none; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.3);">✕
+            Cerrar</a>
+    </div>
+
+    <header>
+        <div class="logo">NeuroShot <span class="header-subtitle">| Lab. Técnico</span></div>
+
+        <!-- Handedness Toggle -->
+        <div class="hand-toggle-container">
+            <button id="btn-right" class="hand-btn active" onclick="setHand('right')">✋ Diestro</button>
+            <button id="btn-left" class="hand-btn" onclick="setHand('left')">🤚 Zurdo</button>
+        </div>
+
+        <button onclick="window.close()" class="btn-close">Cerrar</button>
+    </header>
+
+    <!-- TAB NAVIGATION -->
+    <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchTab('target')">🎯 Analizador Blancos</button>
+        <button class="tab-btn" onclick="switchTab('posture')">🧘 Lab Postura</button>
+        <button class="tab-btn" onclick="switchTab('trigger')">👆 Lab Disparador</button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 1: TARGET ANALYZER (Legacy Tool)       -->
+    <!-- ========================================== -->
+    <div id="tab-target" class="container active">
+        <!-- WORKSPACE -->
+        <div class="workspace">
+            <div id="dropZone" onclick="document.getElementById('fileInput').click()">
+                <div class="drop-icon">📷</div>
+                <h3>Sube o Arrastra una Foto del Blanco</h3>
+                <input type="file" id="fileInput" accept="image/*" class="hidden-element"
+                    aria-label="Subir imagen del blanco">
+            </div>
+            <div id="canvasContainer" class="canvas-wrapper">
+                <canvas id="mainCanvas"></canvas>
+            </div>
+            <p id="targetInstructions" class="instruction-text">Centra la retícula y haz CLIC en el error.</p>
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="panel">
+                <h2>🧠 Contexto Mental</h2>
+                <label for="activationInput">Nivel de Activación</label>
+                <input type="range" id="activationInput" min="0" max="10" value="5" class="input-full">
+                <label for="focusInput" class="label-block">Foco Atencional</label>
+                <select id="focusInput" class="select-dark">
+                    <option value="good">🎯 Foco Óptimo</option>
+                    <option value="distracted">💭 Distraído</option>
+                    <option value="result">🏆 Obsesión Resultado</option>
+                </select>
+            </div>
+            <div class="panel result-panel" id="targetResultPanel">
+                <h2>Diagnóstico</h2>
+                <div id="diagnosisOutput" class="diagnosis-main">--</div>
+                <div id="bioOutput" class="diagnosis-sub">--</div>
+                <div id="fixOutput" class="deep-note">--</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- TAB 2: POSTURE LAB (Deep Biomechanics)     -->
+    <!-- ========================================== -->
+    <div id="tab-posture" class="container">
+        <div class="workspace">
+            <!-- SVG Interactive Body -->
+            <svg class="posture-svg" viewBox="0 0 300 600">
+                <!-- Head -->
+                <circle cx="150" cy="50" r="30" class="body-part" onclick="analyzePosture('head', this)" />
+                <!-- Spine -->
+                <rect x="140" y="80" width="20" height="200" class="body-part"
+                    onclick="analyzePosture('spine', this)" />
+                <!-- Shoulders -->
+                <path d="M 80 100 L 220 100" stroke="var(--primary-gold)" stroke-width="5" />
+                <!-- Hips -->
+                <rect x="100" y="280" width="100" height="40" class="body-part"
+                    onclick="analyzePosture('hips', this)" />
+                <!-- Legs -->
+                <rect x="110" y="320" width="20" height="200" class="body-part"
+                    onclick="analyzePosture('knees', this)" />
+                <rect x="170" y="320" width="20" height="200" class="body-part"
+                    onclick="analyzePosture('knees', this)" />
+                <!-- Feet -->
+                <rect x="100" y="520" width="40" height="20" class="body-part" onclick="analyzePosture('feet', this)" />
+                <rect x="160" y="520" width="40" height="20" class="body-part" onclick="analyzePosture('feet', this)" />
+            </svg>
+            <p class="instruction-text">Haz clic en una zona corporal para analizar su biomecánica de tiro.</p>
+        </div>
+
+        <div class="sidebar">
+            <div class="panel">
+                <h2 id="postureTitle">Selecciona una Zona</h2>
+                <div id="postureDeepAnalysis">
+                    <p>La postura es la plataforma de lanzamiento. Un error en la base (pies) se magnifica
+                        exponencialmente en la boca de fuego.</p>
+                </div>
+                <div id="proprioceptionDrill" class="drill-container">
+                    <h3 class="drill-header">🧬 Ajuste Propioceptivo</h3>
+                    <p id="drillText" class="deep-note">--</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- TAB 3: TRIGGER LAB (Micro-Mechanics)       -->
+    <!-- ========================================== -->
+    <div id="tab-trigger" class="container">
+        <div class="workspace">
+            <div class="trigger-visualizer" id="fingerContainer">
+                <!-- Dynamic Content drawn by JS -->
+                <div id="fingerSim" class="sim-container">
+                    <!-- Visual Reference created via JS -->
+                </div>
+            </div>
+            <div class="slider-group">
+                <label for="contactSlider">Punto de Contacto (Falange)</label>
+                <input type="range" id="contactSlider" min="0" max="100" value="50" oninput="updateTriggerSim()">
+                <div class="slider-labels">
+                    <span>Punta (Yema)</span>
+                    <span>Articulación</span>
+                </div>
+
+                <label for="vectorSlider" class="label-block">Vector de Fuerza</label>
+                <input type="range" id="vectorSlider" min="-45" max="45" value="0" oninput="updateTriggerSim()">
+                <div class="slider-labels">
+                    <span>empuje (Izquierda)</span>
+                    <span>Tirón (Derecha)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="panel">
+                <h2 id="fingerStatus">Análisis Micro-Mecánico</h2>
+                <div id="triggerDiagnosis">
+                    <p> Ajusta los sliders para simular diferentes errores de ejecución.</p>
+                </div>
+                <div class="deep-note">
+                    <strong>Biomecánica del Flexor Digitorum:</strong>
+                    El objetivo es aislar la falange distal para que viaje en línea recta pura hacia atrás, sin
+                    perturbar el alineamiento de miras.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- NAVIGATION LOGIC ---
+        function switchTab(tabId) {
+            // Hide all containers
+            document.querySelectorAll('.container').forEach(el => el.classList.remove('active'));
+            // Deactivate all buttons
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            // Activate selected
+            document.getElementById('tab-' + tabId).classList.add('active');
+            document.querySelector(`button[onclick="switchTab('${tabId}')"]`).classList.add('active');
+
+            if (tabId === 'trigger') updateTriggerSim(); // Init visualizer
+        }
+
+        // --- GLOBAL STATE ---
+        let currentHand = 'right'; // 'right' or 'left'
+
+        // --- MODULE 1: TARGET ANALYZER (Expert Logic) ---
+        // CLOCK FACE DIAGNOSTICS (For Right Hand Shooter - Left Hand is Mirrored)
+        // 12: Breaking Wrist Up / Heeling
+        // 2 (High Right): Heeling (Anticipation)
+        // 3 (Right): Thumbing / Too Little Finger
+        // 4 (Low Right): Tightening Grip / Milking
+        // 6: Breaking Wrist Down / Flinching
+        // 8 (Low Left): Jerking (Gatillazo Violent)
+        // 9 (Left): Too Much Finger / Hooking
+        // 10 (High Left): Pushing (Shoulder)
+
+        const BIO_DB = {
+            12: { diag: "Heeling (Taloneo)", fix: "Estás empujando con la base de la mano (talón) justo antes del disparo. Relaja la muñeca y mantén la presión isométrica.", code: "UP" },
+            3: { diag: "Thumbing (Compresión Pulgar)", fix: "Demasiada presión, pulgar apretando o 'Falta de Dedo'. Aísla el movimiento del índice y revisa la presión lateral.", code: "RIGHT" },
+            6: { diag: "Breaking Wrist (Muñecazo)", fix: "Relajación súbita de la muñeca o 'Flinching' (Cierre de ojos/Cabeza) por miedo al retroceso.", code: "DOWN" },
+            9: { diag: "Too Much Finger (Gancho)", fix: "Estás metiendo demasiado dedo índice, 'arrastrando' el arma hacia adentro. Usa solo la primera falange (yema).", code: "LEFT" }
+        };
+
+        // --- 1.2 CANVAS INTERACTION ENGINE (Restored) ---
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+        let img = new Image();
+
+        // Canvas State
+        let isDragging = false;
+        let startX, startY;
+        let imgX = 0, imgY = 0; // Image Offset
+        let scale = 1; // Zoom Level
+
+        function drawReticle() {
+            ctx.strokeStyle = 'cyan';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(canvas.width / 2, canvas.height); // Vertical
+            ctx.moveTo(0, canvas.height / 2); ctx.lineTo(canvas.width, canvas.height / 2); // Horizontal
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, canvas.height / 2, 20, 0, Math.PI * 2); // Center Circle
+            ctx.stroke();
+        }
+
+        function drawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.scale(scale, scale);
+            ctx.translate(imgX, imgY);
+            if (img.src) ctx.drawImage(img, -250, -250, 500, 500);
+            ctx.restore();
+            drawReticle();
+        }
+
+        // Event Listeners
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const dx = (e.clientX - startX) / scale;
+                const dy = (e.clientY - startY) / scale;
+                imgX += dx;
+                imgY += dy;
+                startX = e.clientX;
+                startY = e.clientY;
+                drawCanvas();
+            }
+        });
+
+        window.addEventListener('mouseup', (e) => {
+            if (isDragging) isDragging = false;
+        });
+
+        // Click Logic -> Calls Expert Analyzer
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const screenX = e.clientX - rect.left;
+            const screenY = e.clientY - rect.top;
+
+            // Calculate angle relative to Center of Reticle (Screen Center)
+            // Users align the target bullseye to the reticle, then click the shot hole.
+            let dx = screenX - (canvas.width / 2);
+            let dy = screenY - (canvas.height / 2);
+
+            let angle = Math.atan2(dy, dx) * 180 / Math.PI;
+            if (angle < 0) angle += 360;
+
+            analyzeShot(angle);
+        });
+
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? 0.9 : 1.1;
+            scale *= delta;
+            drawCanvas();
+        });
+
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            if (e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    img.src = evt.target.result;
+                    img.onload = () => {
+                        document.getElementById('dropZone').style.display = 'none';
+                        document.getElementById('canvasContainer').style.display = 'flex';
+                        canvas.width = 500; canvas.height = 500;
+                        drawCanvas();
+                    }
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+
+
+        // --- MODULE 2: POSTURE LAB (Deep Biomechanics) ---
+        const POSTURE_DB = {
+            'head': {
+                title: "Cabeza y Control Vestibular",
+                analysis: "La cabeza debe estar vertical o levemente inclinada hacia el blanco, pero NUNCA girada al extremo. La tensión cervical arruina el equilibrio.",
+                drill: "Drill 'Ojos Cerrados': Asiente la posición. Cierra ojos. Mueve la cabeza libremente y vuelve al centro. Abre. ¿Sigues alineado? Si no, mueve LOS PIES, no el brazo."
+            },
+            'spine': {
+                title: "Columna y Bloqueo Vertical",
+                analysis: "Evita la hiper-lordosis (arquear atrás). El tronco debe caer relajado sobre la cadera. Si te inclinas atrás para compensar el peso, vibrarás.",
+                drill: "Sensación 'La Marioneta': Siente un hilo tirando de tu coronilla al cielo. Alarga la columna. Hombros 'derretidos' hacia abajo."
+            },
+            'hips': {
+                title: "Caderas (Plataforma)",
+                analysis: "Las caderas no deben rotar durante el levantamiento. Son el bloque de cemento.Cualquier torsión aquí se multiplica x10 en la boca de fuego.",
+                drill: "Posición Neutra: Tus caderas deben mirar a 45º (aprox) del blanco. No fuerces una posición frontal si tu anatomía no lo permite."
+            },
+            'knees': {
+                title: "Rodillas (Amortiguación)",
+                analysis: "ERROR COMÚN: Bloquear las rodillas (hiperextensión). Esto corta el retorno venoso y aumenta el 'Sway' (balanceo) de alta frecuencia.",
+                drill: "Desbloqueo Táctico: Estira totalmente y relaja un 5%. Deben estar firmes pero elásticas, capaces de absorber micro-movimientos."
+            },
+            'feet': {
+                title: "Pies y Base de Sustentación",
+                analysis: "La separación ideal es la anchura de hombros (aprox). El peso debe estar en los ARCOS plantares o levemente hacia los talones, NUNCA en las puntas.",
+                drill: "Drill 'Balanceo de Carga': Oscila adelante/atrás hasta sentir que el suelo te sostiene sin esfuerzo muscular. Ese es tu 'Zero Point'."
+            }
+        };
+
+        // --- HANDEDNESS TOGGLE LOGIC ---
+        function setHand(hand) {
+            currentHand = hand;
+            document.querySelectorAll('.hand-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${hand}`).classList.add('active');
+
+            // UI Feedback
+            const msg = (hand === 'right') ? "Modo: DIESTRO (Mano Derecha)" : "Modo: ZURDO (Mano Izquierda)";
+            const color = (hand === 'right') ? "var(--accent-blue)" : "var(--primary-green)";
+
+            // Only show toast if needed, implies logic inversion
+            // console.log("Handedness set to: " + hand); 
+        }
+
+        // --- DIAGNOSTIC LOGIC (UPDATED WITH MIRRORING) ---
+        // Canvas Click Logic (Extracting from click handler)
+        function analyzeShot(angleDeg) {
+            let result = "";
+            let baseAngle = angleDeg;
+
+            // NORMALIZE ANGLES
+            // 0/360 = Right (3 o'clock)
+            // 90 = Down (6 o'clock) - HTML5 Canvas standard is usually 0=Right, 90=Down, 180=Left, 270=Up
+            // Let's verify standard Math.atan2(y, x). 0 is Right. +y is Down.
+
+            // My previous code: atan2(dy, dx) + 90.
+            // if dy=1, dx=0 (Down) -> atan2(1,0)=90. +90 = 180? Confusing math.
+
+            // Let's stick to simple quadrants relative to center.
+            // Using updated angle calculation below.
+
+            // MIRRORING FOR LEFT HAND
+            // If Left Handed: Left and Right are swapped.
+            // 3 o'clock (Right) becomes "Too Much Finger" (Hooking In)
+            // 9 o'clock (Left) becomes "Thumbing" (Pushing Out)
+
+            // Define standard "Right Hand" zones
+            // 0-45 & 315-360 (Right Side) -> Code RIGHT
+            // 45-135 (Down) -> Code DOWN
+            // 135-225 (Left Side) -> Code LEFT
+            // 225-315 (Up) -> Code UP
+
+            let zone = "";
+            if (angle >= 315 || angle < 45) zone = "RIGHT";
+            else if (angle >= 45 && angle < 135) zone = "DOWN";
+            else if (angle >= 135 && angle < 225) zone = "LEFT";
+            else if (angle >= 225 && angle < 315) zone = "UP";
+
+            // LOGIC MAPPING
+            let finalDiag = {};
+
+            if (zone === "UP") {
+                finalDiag = BIO_DB[12]; // Heeling is universal
+            } else if (zone === "DOWN") {
+                finalDiag = BIO_DB[6]; // Breaking wrist is universal
+            } else if (zone === "RIGHT") { // 3 o'clock
+                if (currentHand === 'right') finalDiag = BIO_DB[3]; // Thumbing
+                else finalDiag = BIO_DB[9]; // LeftHand 3 o'clock is Hooking (Inside) -> equiv to RightHand 9
+            } else if (zone === "LEFT") { // 9 o'clock
+                if (currentHand === 'right') finalDiag = BIO_DB[9]; // Hooking
+                else finalDiag = BIO_DB[3]; // LeftHand 9 o'clock is Pushing (Outside) -> equiv to RightHand 3
+            }
+
+            document.getElementById('targetResultPanel').style.display = 'block';
+            document.getElementById('diagnosisOutput').innerText = finalDiag.diag;
+            document.getElementById('fixOutput').innerText = "🔧 Corrección: " + finalDiag.fix;
+        }
+
+
+        // --- MODULE 3: TRIGGER LAB (Visualizer) ---
+        function updateTriggerSim() {
+            const contact = document.getElementById('contactSlider').value;
+            const vector = document.getElementById('vectorSlider').value;
+
+            const area = document.getElementById('fingerSim');
+            area.innerHTML = '';
+
+            // DRAW FINGERS & MECHANICS (Same as before but Refined text)
+            // Bone
+            const finger = document.createElement('div');
+            finger.style.cssText = `
+                width: 140px; height: 25px; background: #94a3b8; border-radius: 12px;
+                position: absolute; top: 90px; left: 20px;
+                transform-origin: left center;
+                transform: rotate(${vector * -0.5}deg);
+            `;
+            area.appendChild(finger);
+
+            // Contact
+            const dot = document.createElement('div');
+            dot.style.cssText = `
+                width: 15px; height: 15px; background: #fbbf24; border-radius: 50%;
+                position: absolute; top: 5px; left: ${contact}%; box-shadow: 0 0 10px gold;
+            `;
+            finger.appendChild(dot);
+
+            // Trigger
+            const trigger = document.createElement('div');
+            trigger.style.cssText = `
+                width: 10px; height: 60px; background: #ef4444;
+                position: absolute; top: 75px; left: 160px;
+            `;
+            area.appendChild(trigger);
+
+            // LOGIC & FEEDBACK
+            let title = "Análisis en Tiempo Real";
+            let msg = "";
+            let warn = "";
+
+            // Vector Logic depends on Handedness?
+            // "Pushing Left" (Vector < 0) for Right Hand = Hooking.
+            // For Left Hand, Pushing Left is Pushing Out (Thumbing).
+
+            // Let's assume Vector Negative = Towards Center of Hand? No, standard is Left/Right.
+            // Let's standardise: Slider Left (-45) = Force to LEFT. Slider Right (+45) = Force to RIGHT.
+
+            if (vector < -15) { // Force LEFT
+                if (currentHand === 'right') {
+                    title = "ERROR: Hooking / Gancho";
+                    msg = "Estás arrastrando el gatillo hacia ADENTRO (Izquierda). Causa: Too Much Finger.";
+                } else {
+                    title = "ERROR: Pushing / Empuje";
+                    msg = "Estás empujando el gatillo hacia AFUERA (Izquierda). Causa: Too Little Finger.";
+                }
+            } else if (vector > 15) { // Force RIGHT
+                if (currentHand === 'right') {
+                    title = "ERROR: Thumbing / Empuje";
+                    msg = "Estás empujando el gatillo hacia AFUERA (Derecha). Causa: Too Little Finger.";
+                } else {
+                    title = "ERROR: Hooking / Gancho";
+                    msg = "Estás arrastrando el gatillo hacia ADENTRO (Derecha). Causa: Too Much Finger.";
+                }
+            } else {
+                title = "✅ Vector Óptimo";
+                msg = "Tracción limpia y recta, paralela al eje del cañón.";
+            }
+
+            // Contact Checks
+            if (contact > 80) warn = "⚠️ Falange demasiado profunda. Pierdes sensibilidad.";
+            if (contact < 20) warn = "⚠️ Contacto muy en la punta. Riesgo de resbalar.";
+
+            document.getElementById('fingerStatus').innerHTML = title;
+            document.getElementById('triggerDiagnosis').innerHTML = `<p>${msg}</p><p style='color:orange; font-size:0.9rem'>${warn}</p>`;
+        }
+
+
+    </script>
+</body>
+
+</html>

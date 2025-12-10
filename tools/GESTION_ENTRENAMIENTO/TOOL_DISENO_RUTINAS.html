@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diseñador de Rutinas - NeuroShot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1e3a8a;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .tab {
+            padding: 15px 30px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #1e3a8a;
+            border-bottom-color: #1e3a8a;
+        }
+
+        .tab:hover {
+            color: #1e3a8a;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="number"],
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #1e3a8a;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #e5e7eb;
+        }
+
+        .card.selected {
+            border-color: #1e3a8a;
+            background: #eff6ff;
+        }
+
+        .card h3 {
+            color: #1e3a8a;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #1e3a8a;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1e40af;
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background: #7c3aed;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #6d28d9;
+            transform: scale(1.05);
+        }
+
+        .result-box {
+            background: #f0fdf4;
+            border: 2px solid #10b981;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .result-box h3 {
+            color: #10b981;
+            margin-bottom: 15px;
+        }
+
+        .warning-box {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .routine-output {
+            background: white;
+            border: 2px solid #1e3a8a;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            line-height: 1.8;
+        }
+
+        .phase {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9fafb;
+            border-left: 4px solid #1e3a8a;
+        }
+
+        .phase-title {
+            font-weight: bold;
+            color: #1e3a8a;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .container {
+                box-shadow: none;
+            }
+
+            .tabs,
+            .action-buttons {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position:fixed; top:10px; right:10px; z-index:9999;">
+        <a href="../../toolkit_index.html"
+            style="background:#ef4444; color:white; padding:8px 15px; border-radius:6px; text-decoration:none; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.3);">✕
+            Cerrar</a>
+    </div>
+
+    <div class="container">
+        <h1>🎯 Diseñador de Rutinas NeuroShot</h1>
+        <p class="subtitle">Ingeniería de Comportamiento y Neurohacking</p>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('biomechanics')">1. Biomecánica</button>
+            <button class="tab" onclick="switchTab('attention')">2. Atención</button>
+            <button class="tab" onclick="switchTab('anchors')">3. Anclas</button>
+            <button class="tab" onclick="switchTab('routine')">4. Rutina Final</button>
+        </div>
+
+        <!-- TAB 1: BIOMECHANICS -->
+        <div id="biomechanics" class="tab-content active">
+            <h2 style="margin-bottom: 20px;">Configuración Biomecánica</h2>
+
+            <div class="form-group">
+                <label>Altura del tirador (cm):</label>
+                <input type="number" id="height" placeholder="Ej: 175" min="140" max="220">
+                <small style="color: #666;">Esto afectará el ángulo óptimo de brazo</small>
+            </div>
+
+            <div class="form-group">
+                <label>Escuela Biomecánica:</label>
+                <div class="grid-2">
+                    <div class="card" id="school-russian" onclick="selectSchool('russian')">
+                        <h3>🇷🇺 Arco Alto (Rusa)</h3>
+                        <p><strong>Técnica:</strong> Levantar 45° sobre el blanco</p>
+                        <p><strong>Ventaja:</strong> Usa gravedad para relajar deltoides</p>
+                        <p><strong>Ideal para:</strong> Precisión, tiros lentos</p>
+                    </div>
+                    <div class="card" id="school-asian" onclick="selectSchool('asian')">
+                        <h3>🇨🇳 Aterrizaje Corto (Asiática)</h3>
+                        <p><strong>Técnica:</strong> Movimiento minimalista directo</p>
+                        <p><strong>Ventaja:</strong> Ahorra energía cerebral</p>
+                        <p><strong>Ideal para:</strong> Finales largas, velocidad</p>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="calculateBiomechanics()">Calcular Parámetros</button>
+
+            <div id="biomech-results"></div>
+        </div>
+
+        <!-- TAB 2: ATTENTION -->
+        <div id="attention" class="tab-content">
+            <h2 style="margin-bottom: 20px;">Modelo del Embudo Atencional</h2>
+
+            <div class="phase">
+                <div class="phase-title">FASE 1: Preparación (Mesa)</div>
+                <label>Canal Atencional:</label>
+                <select id="phase1-channel">
+                    <option value="amplio-interno">Amplio-Interno (Chequeo sistémico)</option>
+                    <option value="amplio-externo">Amplio-Externo (Análisis viento/juez)</option>
+                </select>
+                <label style="margin-top: 10px;">Tarea mental:</label>
+                <input type="text" id="phase1-task" placeholder='Ej: "¿Tengo tensión en trapecio?"'>
+            </div>
+
+            <div class="phase">
+                <div class="phase-title">FASE 2: Pre-Disparo (Antes de subir)</div>
+                <label>Canal Atencional:</label>
+                <select id="phase2-channel">
+                    <option value="estrecho-interno">Estrecho-Interno (Visualización)</option>
+                </select>
+                <label style="margin-top: 10px;">Tarea mental:</label>
+                <input type="text" id="phase2-task" placeholder='Ej: "Ver la película del tiro perfecto"'>
+            </div>
+
+            <div class="phase">
+                <div class="phase-title">FASE 3: Ejecución (Zona de punter ía)</div>
+                <label>Canal Atencional:</label>
+                <select id="phase3-channel">
+                    <option value="estrecho-externo">Estrecho-Externo (El Láser)</option>
+                </select>
+                <label style="margin-top: 10px;">Tarea mental:</label>
+                <input type="text" id="phase3-task" placeholder='Ej: "Foco absoluto en el guion"'
+                    value="Foco absoluto en el guion">
+            </div>
+
+            <button class="btn btn-primary" onclick="nextTab('anchors')">Continuar →</button>
+        </div>
+
+        <!-- TAB 3: ANCHORS -->
+        <div id="anchors" class="tab-content">
+            <h2 style="margin-bottom: 20px;">Palabras Ancla y Triggers</h2>
+
+            <div class="form-group">
+                <label>Palabra Ancla Principal:</label>
+                <input type="text" id="main-anchor" placeholder='Ej: "MIRAS", "SUAVE", "FLUYE"'>
+                <small style="color: #666;">Una palabra que active toda tu rutina automáticamente</small>
+            </div>
+
+            <div class="form-group">
+                <label>Palabra de Emergencia (Error):</label>
+                <input type="text" id="emergency-anchor" placeholder='Ej: "STOP", "RESET"'>
+                <small style="color: #666;">Para abortar un tiro malo</small>
+            </div>
+
+            <div class="form-group">
+                <label>Trigger Físico (Acción que inicia la rutina):</label>
+                <select id="physical-trigger">
+                    <option value="tocar-mesa">Tocar la mesa</option>
+                    <option value="respiracion">Respiración profunda</option>
+                    <option value="cerrar-ojos">Cerrar ojos 2 segundos</option>
+                    <option value="custom">Personalizado</option>
+                </select>
+            </div>
+
+            <div class="warning-box">
+                <strong>⚠️ Regla de Oro:</strong> La palabra ancla debe repetirse 3000-5000 veces en entrenamiento para
+                crear la autopista neuronal.
+            </div>
+
+            <button class="btn btn-primary" onclick="nextTab('routine')">Generar Rutina →</button>
+        </div>
+
+        <!-- TAB 4: FINAL ROUTINE -->
+        <div id="routine" class="tab-content">
+            <h2 style="margin-bottom: 20px;">Tu Rutina Personalizada</h2>
+
+            <div id="final-routine" class="routine-output">
+                <em style="color: #666;">Completa los pasos anteriores para generar tu rutina...</em>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir</button>
+                <button class="btn btn-primary" onclick="downloadRoutine()">💾 Descargar PDF</button>
+                <button class="btn btn-secondary" onclick="copyRoutine()">📋 Copiar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let routineData = {
+            height: 0,
+            school: '',
+            angle: 0,
+            mainAnchor: '',
+            emergencyAnchor: '',
+            trigger: '',
+            phases: {}
+        };
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function nextTab(tabName) {
+            switchTab(tabName);
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+        }
+
+        function selectSchool(school) {
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+            document.getElementById('school-' + school).classList.add('selected');
+            routineData.school = school;
+        }
+
+        function calculateBiomechanics() {
+            const height = parseInt(document.getElementById('height').value);
+
+            if (!height || height < 140 || height > 220) {
+                alert('Por favor, introduce una altura válida (140-220 cm)');
+                return;
+            }
+
+            if (!routineData.school) {
+                alert('Por favor, selecciona una escuela biomecánica');
+                return;
+            }
+
+            routineData.height = height;
+
+            // Cálculo del ángulo óptimo basado en altura
+            // Tiradores bajos: ángulo mayor para compensar centro de gravedad
+            // Tiradores altos: ángulo menor
+            let optimalAngle;
+            if (height < 165) {
+                optimalAngle = 95;
+            } else if (height < 175) {
+                optimalAngle = 90;
+            } else if (height < 185) {
+                optimalAngle = 88;
+            } else {
+                optimalAngle = 85;
+            }
+
+            routineData.angle = optimalAngle;
+
+            const resultsDiv = document.getElementById('biomech-results');
+            resultsDiv.innerHTML = `
+                <div class="result-box">
+                    <h3>✅ Parámetros Calculados</h3>
+                    <p><strong>Altura:</strong> ${height} cm</p>
+                    <p><strong>Escuela:</strong> ${routineData.school === 'russian' ? 'Arco Alto (Rusa)' : 'Aterrizaje Corto (Asiática)'}</p>
+                    <p><strong>Ángulo óptimo de brazo:</strong> ${optimalAngle}° (en fase final)</p>
+                    <p><strong>Ventana de oportunidad:</strong> 3-7 segundos</p>
+                    ${routineData.school === 'russian' ?
+                    '<p><strong>Técnica de bajada:</strong> Usar gravedad, exhalar al bajar</p>' :
+                    '<p><strong>Técnica de subida:</strong> Movimiento directo, mínimo recorrido</p>'
+                }
+                </div>
+            `;
+
+            setTimeout(() => nextTab('attention'), 1000);
+        }
+
+        function generateFinalRoutine() {
+            routineData.mainAnchor = document.getElementById('main-anchor').value || 'MIRAS';
+            routineData.emergencyAnchor = document.getElementById('emergency-anchor').value || 'STOP';
+            routineData.trigger = document.getElementById('physical-trigger').value;
+
+            routineData.phases = {
+                phase1: {
+                    channel: document.getElementById('phase1-channel').value,
+                    task: document.getElementById('phase1-task').value
+                },
+                phase2: {
+                    channel: document.getElementById('phase2-channel').value,
+                    task: document.getElementById('phase2-task').value
+                },
+                phase3: {
+                    channel: document.getElementById('phase3-channel').value,
+                    task: document.getElementById('phase3-task').value
+                }
+            };
+
+            const routine = `
+═══════════════════════════════════════════════════════
+    RUTINA PERSONALIZADA NEUROSHOT
+    Generada: ${new Date().toLocaleDateString()}
+═══════════════════════════════════════════════════════
+
+📊 CONFIGURACIÓN BIOMECÁNICA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Altura: ${routineData.height} cm
+• Escuela: ${routineData.school === 'russian' ? 'Arco Alto (Rusa)' : 'Aterrizaje Corto (Asiática)'}
+• Ángulo óptimo: ${routineData.angle}°
+• Ventana de oportunidad: 3-7 segundos
+
+🎯 RUTINA MACRO (PRE-COMPETICIÓN)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Gestión del entorno: Ordenar equipo, cascos puestos
+2. Respiración 5.5: 15 minutos antes de competir
+3. Aislamiento sensorial: Evitar contacto visual con rivales
+
+🔄 RUTINA MICRO (SECUENCIA DE DISPARO)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FASE 1: PREPARACIÓN (Mesa)
+─────────────────────────────────────
+• Canal: ${routineData.phases.phase1.channel}
+• Tarea: ${routineData.phases.phase1.task || 'Chequeo sistémico'}
+• Trigger físico: ${getTriggerName(routineData.trigger)}
+• Duración: 3-5 segundos
+
+FASE 2: PRE-DISPARO (Antes de subir)
+─────────────────────────────────────
+• Canal: ${routineData.phases.phase2.channel}
+• Tarea: ${routineData.phases.phase2.task || 'Visualización del tiro perfecto'}
+• Respiración: Inhalar profundo
+• Palabra ancla: "${routineData.mainAnchor}"
+
+FASE 3: EJECUCIÓN (Zona de puntería)
+─────────────────────────────────────
+• Canal: ${routineData.phases.phase3.channel}
+• Tarea: ${routineData.phases.phase3.task}
+${routineData.school === 'russian' ?
+                    `• Técnica: Subir 45° sobre blanco, exhalar al bajar
+• Asentamiento: Dejar caer hombro por gravedad` :
+                    `• Técnica: Movimiento directo al centro
+• Economía: Mínimo recorrido, máxima eficiencia`}
+• Dedo: Presión progresiva continua
+• Ventana: 3-7 segundos (SI PASA DE 7 → ABORTAR)
+
+⚠️ PROTOCOLO DE ERROR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Si aparece pensamiento intrusivo o duda:
+1. Palabra de emergencia: "${routineData.emergencyAnchor}"
+2. Bajar el arma inmediatamente
+3. Respiración 4-7-8 (1 ciclo)
+4. Resetear con palabra ancla: "${routineData.mainAnchor}"
+
+📝 VALIDACIÓN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ Repeticiones necesarias: 3000-5000 (para mielinización)
+✓ Validar con SCATT: Curva R(t) y micro-trayectoria
+✓ Indicador de maestría: Ejecutar mientras conversas
+
+═══════════════════════════════════════════════════════
+    FIN DE RUTINA - NEUROSHOT ACADEMY
+═══════════════════════════════════════════════════════
+            `;
+
+            document.getElementById('final-routine').textContent = routine;
+        }
+
+        function getTriggerName(trigger) {
+            const triggers = {
+                'tocar-mesa': 'Tocar la mesa',
+                'respiracion': 'Respiración profunda',
+                'cerrar-ojos': 'Cerrar ojos 2 segundos',
+                'custom': 'Personalizado'
+            };
+            return triggers[trigger] || trigger;
+        }
+
+        function copyRoutine() {
+            const routine = document.getElementById('final-routine').textContent;
+            navigator.clipboard.writeText(routine).then(() => {
+                alert('✅ Rutina copiada al portapapeles');
+            });
+        }
+
+        function downloadRoutine() {
+            const routine = document.getElementById('final-routine').textContent;
+            const blob = new Blob([routine], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Rutina_NeuroShot_${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+        }
+
+        // Auto-generate routine when entering tab 4
+        document.querySelector('[onclick="switchTab(\'routine\')"]').addEventListener('click', () => {
+            if (routineData.height > 0) {
+                generateFinalRoutine();
+            }
+        });
+    </script>
+</body>
+
+</html>

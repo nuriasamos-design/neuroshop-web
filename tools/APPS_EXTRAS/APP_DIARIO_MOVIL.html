@@ -1,0 +1,2603 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroShot Academy | Master System</title>
+    <style>
+        :root {
+            /* Palette - Deep Blue & Soft Green + Orange Accents */
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --primary-green: #10b981;
+            --accent-orange: #f97316;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(249, 115, 22, 0.1) 0%, transparent 20%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: var(--bg-card);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Layout */
+        header {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand span {
+            color: var(--primary-green);
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            display: flex;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Sidebar - Profile */
+        aside {
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .profile-card {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-green), #059669);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .data-field {
+            text-align: left;
+            margin-bottom: 1rem;
+        }
+
+        .data-field label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .data-field input,
+        .data-field select {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem;
+            border-radius: 8px;
+            color: white;
+        }
+
+        /* Main Content - Diary */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .diary-input-section {
+            padding: 2rem;
+        }
+
+        .sliders-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: #334155;
+            border-radius: 5px;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-orange);
+            cursor: pointer;
+        }
+
+        .btn-generate {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(90deg, var(--accent-orange), #ea580c);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+        }
+
+        .suggestion-card {
+            margin-top: 2rem;
+            border-left: 4px solid var(--primary-green);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 1.5rem;
+            border-radius: 0 12px 12px 0;
+            display: none;
+            /* Hidden by default */
+        }
+
+        .resource-link {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--primary-green);
+            text-decoration: none;
+            border-radius: 6px;
+            border: 1px solid var(--primary-green);
+            transition: all 0.2s;
+        }
+
+        .resource-link:hover {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        /* CALENDAR & NAV STYLES */
+        .nav-btn {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-btn.active {
+            background: var(--primary-green);
+            color: #0f172a;
+            font-weight: bold;
+            border-color: var(--primary-green);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            /* Mobile optimized column */
+            gap: 20px;
+        }
+
+        .event-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .event-card.attending {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        /* ACCORDION (Collapsible) */
+        details.event-card>summary {
+            list-style: none;
+            cursor: pointer;
+            outline: none;
+        }
+
+        details.event-card>summary::-webkit-details-marker {
+            display: none;
+        }
+
+        /* ACCORDION MODIFICATIONS */
+        details.event-card>summary {
+            list-style: none;
+            cursor: pointer;
+            outline: none;
+        }
+
+        details.event-card>summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .event-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .event-date {
+            color: var(--accent-orange);
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .event-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        .logistics-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .phase-bar {
+            height: 6px;
+            background: #334155;
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .phase-fill {
+            height: 100%;
+            transition: width 0.5s;
+        }
+
+        .phase-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            margin-top: 4px;
+            color: var(--text-muted);
+        }
+
+        /* --- TOOLS CSS --- */
+        .btn-tool-tab {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .btn-tool-tab:hover {
+            color: white;
+        }
+
+        .btn-tool-tab.active {
+            color: var(--primary-green);
+            border-bottom: 2px solid var(--primary-green);
+        }
+
+        .btn-tool-tab.panic {
+            color: #ef4444;
+        }
+
+        .btn-tool-tab.panic:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .tool-content {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .grid-cell {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .grid-cell:hover {
+            background: rgba(16, 185, 129, 0.3);
+        }
+
+        .grid-cell.found {
+            background: var(--primary-green);
+            color: #022c22;
+        }
+
+        /* REFACTOR UTILS */
+        .header-flat {
+            border-radius: 0;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+        }
+
+        .sub-title {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .mb-1 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-1-5 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mb-4-px {
+            margin-bottom: 4px;
+        }
+
+        .mt-1 {
+            margin-top: 1rem;
+        }
+
+        .mt-2 {
+            margin-top: 2rem;
+        }
+
+        .pb-1 {
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .btn-save {
+            width: 100%;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+
+        .text-sm-muted {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .badge-container {
+            margin-top: 1rem;
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .badge-green {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--primary-green);
+        }
+
+        .badge-orange {
+            background: rgba(249, 115, 22, 0.2);
+            color: var(--accent-orange);
+        }
+
+        .input-dark {
+            width: 100%;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+        }
+
+        .input-dark-sm {
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .section-box {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .section-title-green {
+            color: var(--primary-green);
+            margin-bottom: 10px;
+        }
+
+        .section-title-orange {
+            color: var(--accent-orange);
+            margin-bottom: 10px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .grid-2-sm {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .block-label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .val-green {
+            color: var(--primary-green);
+            font-weight: bold;
+        }
+
+        .val-muted {
+            color: #94a3b8;
+            font-weight: bold;
+        }
+
+        .val-orange {
+            color: var(--accent-orange);
+            font-weight: bold;
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: -5px;
+        }
+
+        .tri-labels {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .audio-presc-box {
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--primary-green);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .audio-title {
+            color: var(--primary-green);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .audio-desc {
+            font-size: 0.85rem;
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+
+        .audio-btns {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .field-mb {
+            margin-bottom: 15px;
+        }
+
+        .input-textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .file-upload-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .comp-box {
+            display: none;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            margin-top: 1rem;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .posture-wrapper {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .posture-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .posture-select {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .coach-msg-area {
+            width: 100%;
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid var(--accent-orange);
+            padding: 0.5rem;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .resource-section {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .resource-header {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .resource-header-orange {
+            font-size: 0.9rem;
+            color: var(--accent-orange);
+            text-transform: uppercase;
+        }
+
+        .resource-list {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-audio-orange {
+            padding: 8px 12px;
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid var(--accent-orange);
+            border-radius: 6px;
+            color: var(--accent-orange);
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .btn-audio-green {
+            padding: 8px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--primary-green);
+            border-radius: 6px;
+            color: var(--primary-green);
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .audio-cat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        /* REFACTOR UTILS 2 - MISSING */
+        .grid-1-gap {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .text-green {
+            color: var(--primary-green);
+        }
+
+        .text-white {
+            color: white;
+        }
+
+        /* FINAL REFACTOR - TOOLS & CALENDAR & PANIC */
+        .calendar-view,
+        .tools-view {
+            display: none;
+        }
+
+        .calendar-header-panel {
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn-add-event {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 0.9rem;
+            background: #334155;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .tools-view.active {
+            display: block;
+            padding: 2rem;
+        }
+
+        .text-neutral-mb2 {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .tools-tabs-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1rem;
+            overflow-x: auto;
+        }
+
+        .tool-panel-centered {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .breath-circle {
+            width: 150px;
+            height: 150px;
+            background: rgba(16, 185, 129, 0.2);
+            border: 2px solid var(--primary-green);
+            border-radius: 50%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 4s ease-in-out;
+        }
+
+        .breath-text {
+            font-weight: bold;
+            color: var(--primary-green);
+            font-size: 1.5rem;
+        }
+
+        .breath-instruction {
+            margin-top: 2rem;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .btn-breath-start,
+        .btn-focus-new {
+            margin-top: 2rem;
+            max-width: 200px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .focus-grid-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            max-width: 350px;
+            margin: 0 auto;
+        }
+
+        .resource-search-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .resource-list-container {
+            max-height: 500px;
+            overflow-y: auto;
+            display: grid;
+            gap: 10px;
+        }
+
+        /* PANIC OVERLAY */
+        .panic-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
+            z-index: 2000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .panic-title {
+            color: #ef4444;
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        .panic-desc {
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            color: #cbd5e1;
+            max-width: 500px;
+            line-height: 1.6;
+        }
+
+        .btn-panic-action {
+            background: var(--primary-green);
+            padding: 1.5rem;
+            border-radius: 50px;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            color: #022c22;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-panic-cancel {
+            background: transparent;
+            border: 1px solid #64748b;
+            color: #94a3b8;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .flex {
+            display: flex;
+        }
+    </style>
+    <script src="resources_db.js"></script>
+</head>
+
+<body>
+
+    <header class="glass-panel header-flat">
+        <div class="brand">NEURO<span>SHOT</span> ACADEMY</div>
+        <div class="sub-title">Diario del Atleta v14.0</div>
+    </header>
+
+    <main>
+        <!-- Sidebar: Athlete Profile & Nav -->
+        <aside>
+            <div class="glass-panel profile-card">
+                <div class="avatar" id="avatarDisplay">T</div>
+                <h2 class="mb-1">Perfil del Tirador</h2>
+
+                <!-- Navigation -->
+                <div class="mb-1-5 pb-1">
+                    <button class="nav-btn active" onclick="switchView('diary')" id="btn_diary">📝 Diario de
+                        Tiro</button>
+                    <button class="nav-btn" onclick="switchView('calendar')" id="btn_calendar">📅 Calendario
+                        2026</button>
+                    <button class="nav-btn" onclick="switchView('tools')" id="btn_tools">🛠️ Herramientas</button>
+                </div>
+
+                <div class="data-field">
+                    <label for="athleteName">Nombre Completo</label>
+                    <input type="text" id="athleteName" placeholder="Tu nombre">
+                </div>
+                <div class="data-field">
+                    <label for="athleteAge">Edad</label>
+                    <input type="number" id="athleteAge" placeholder="25">
+                </div>
+                <div class="data-field">
+                    <label for="athleteLicense">Nº Licencia</label>
+                    <input type="text" id="athleteLicense" placeholder="ESP-0000">
+                </div>
+                <div class="data-field">
+                    <label for="athleteModality">Modalidad</label>
+                    <select id="athleteModality">
+                        <option value="pistol_air">Pistola Aire 10m</option>
+                        <option value="pistol_sport">Pistola Deportiva</option>
+                        <option value="rifle_air">Carabina Aire</option>
+                        <option value="rapid_fire">Velocidad</option>
+                    </select>
+                </div>
+                <button onclick="saveProfile()" class="btn-save">Guardar Perfil</button>
+            </div>
+
+            <div class="glass-panel profile-card text-left">
+                <h3>Estado Actual</h3>
+                <p class="text-sm-muted">
+                    Analizando 78 archivos del sistema...
+                </p>
+                <div class="badge-container">
+                    <span class="badge badge-green">Cerebro: Conectado</span>
+                    <span class="badge badge-orange">Audios: Listos</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main: Content Area -->
+        <section class="content-area">
+
+            <!-- VIEW: DIARY -->
+            <div id="view_diary" class="glass-panel diary-input-section">
+                <h1>Diario de Entrenamiento</h1>
+                <p class="sub-title">Sistema Inteligente de Planificación Diaria</p>
+
+                <div class="sliders-container grid-1-gap">
+
+                    <!-- PHYSIOLOGICAL BLOCK -->
+                    <div class="section-box">
+                        <h4 class="section-title-green">Estado Físico</h4>
+
+                        <div class="grid-2">
+                            <div>
+                                <label for="inputSleep" class="block-label">Horas de Sueño / Calidad</label>
+                                <select id="inputSleep" class="input-dark">
+                                    <option value="low">Poco / Mala calidad</option>
+                                    <option value="medium" selected>Medio / Normal</option>
+                                    <option value="high">Alto / Descansado</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="inputEnergy" class="flex-between">
+                                    Energía General
+                                    <span id="valEnergy" class="val-green">5</span>
+                                </label>
+                                <input type="range" id="inputEnergy" min="1" max="10" value="5"
+                                    oninput="updateSliders()">
+                            </div>
+                        </div>
+
+                        <div class="mt-1">
+                            <label for="inputTiredness" class="flex-between">
+                                Sensación de Cansancio
+                                <span id="valTired" class="val-muted">3</span>
+                            </label>
+                            <input type="range" id="inputTiredness" min="1" max="10" value="3"
+                                oninput="updateSliders()">
+                            <div class="range-labels">
+                                <span>Fresco</span>
+                                <span>Agotado</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PSYCHOLOGICAL BLOCK -->
+                    <div class="section-box">
+                        <h4 class="section-title-orange">Nivel de Activación</h4>
+
+                        <div>
+                            <label for="inputAnxiety" class="flex-between">
+                                Nivel de Activación
+                                <span id="valAnxiety" class="val-orange">5</span>
+                            </label>
+                            <input type="range" id="inputAnxiety" min="1" max="10" value="5" oninput="updateSliders()">
+
+                            <!-- Inverted U Labels -->
+                            <div class="tri-labels">
+                                <span class="text-left">APATÍA (Bajo)</span>
+                                <span class="text-white font-bold">ZONA ÓPTIMA</span>
+                                <span class="text-right">ESTRÉS (Alto)</span>
+                            </div>
+                        </div>
+
+                        <!-- AUDIO PRESCRIPTION BASED ON ACTIVATION -->
+                        <div id="audioPrescription" class="audio-presc-box">
+                            <h5 class="audio-title">🎧 Audio Recomendado:</h5>
+                            <p id="prescriptionText" class="audio-desc"></p>
+                            <div id="prescriptionButtons" class="audio-btns"></div>
+                        </div>
+                    </div>
+
+                    <!-- NEW NEUROSHOT PSYCHOLOGICAL FIELDS -->
+                    <div class="section-box">
+                        <h4 class="section-title-green">🧠 Registro NeuroShot</h4>
+
+                        <div class="field-mb">
+                            <label for="inputNeuroObjective" class="block-label">Objetivo NEURO
+                                (Variable Psicológica)</label>
+                            <select id="inputNeuroObjective" class="input-dark">
+                                <option value="">Selecciona un objetivo...</option>
+                                <option value="Foco Interno">Foco Interno (Propiocepción)</option>
+                                <option value="Foco Externo">Foco Externo (Miras)</option>
+                                <option value="Fluidez">Fluidez (Automatismo)</option>
+                                <option value="Gestión Error">Gestión de Error (Protocolo STOP)</option>
+                                <option value="Activación">Control de Activación (Respiración)</option>
+                                <option value="Confianza">Confianza (Autodiálogo)</option>
+                            </select>
+                        </div>
+
+                        <div class="field-mb">
+                            <label for="inputTrigger" class="block-label">El Disparador (El
+                                Monstruo)</label>
+                            <input type="text" id="inputTrigger" class="input-dark"
+                                placeholder="¿Qué provocó el error? Ej: Ansiedad por resultado, miedo al movimiento...">
+                        </div>
+
+                        <div class="field-mb">
+                            <label for="inputCorrectiveAction" class="block-label">Acción Correctiva (La
+                                Verdad)</label>
+                            <input type="text" id="inputCorrectiveAction" class="input-dark"
+                                placeholder="¿Qué hiciste para corregir? Ej: Apliqué palabra clave, protocolo STOP...">
+                        </div>
+
+                        <div>
+                            <label for="inputAnchorPhrase" class="block-label">Frase Ancla para
+                                Mañana</label>
+                            <input type="text" id="inputAnchorPhrase" class="input-dark"
+                                placeholder="Ej: MIRAS, SUAVE, FLUYE, CALMA...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-field">
+                    <label for="inputGoal">Objetivo Principal de Hoy</label>
+                    <input type="text" id="inputGoal" placeholder="Ej: Mejorar la entrada al área de puntería...">
+                </div>
+
+                <!-- NEW DIARY FIELDS -->
+                <div class="grid-2-sm mt-1">
+                    <div class="data-field">
+                        <label for="inputStrengths">Fortalezas Sesión Anterior</label>
+                        <textarea id="inputStrengths" rows="3" class="input-textarea"
+                            placeholder="¿Qué funcionó bien?"></textarea>
+                    </div>
+                    <div class="data-field">
+                        <label for="inputWeaknesses">Debilidades Sesión Anterior</label>
+                        <textarea id="inputWeaknesses" rows="3" class="input-textarea"
+                            placeholder="¿Qué necesitas corregir?"></textarea>
+                    </div>
+                </div>
+
+                <div class="data-field mt-1">
+                    <label>Tipo de Trabajo</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="workType" value="technical" checked
+                                onclick="toggleCompFields(false)"> Técnica
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="workType" value="attention" onclick="toggleCompFields(false)">
+                            Atención / Mental
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="workType" value="simulation" onclick="toggleCompFields(true)">
+                            Competición / Control
+                        </label>
+                    </div>
+                </div>
+
+                <!-- NEW: QUANTITATIVE DATA (Volume & Duration) -->
+                <div class="grid-2-sm mt-1">
+                    <div class="data-field">
+                        <label for="inputVolume">Volumen (Nº Disparos)</label>
+                        <input type="number" id="inputVolume" placeholder="Ej: 60" class="input-dark">
+                    </div>
+                    <div class="data-field">
+                        <label for="inputDuration">Duración (Minutos)</label>
+                        <input type="number" id="inputDuration" placeholder="Ej: 90" class="input-dark">
+                    </div>
+                </div>
+
+                <!-- UNIVERSAL FILE UPLOAD (Visible only for Competition/Control now) -->
+                <div class="data-field mt-1 hidden-element" id="fileInputWrapper">
+                    <label for="inputFile">📂 Adjuntar Archivo (Competición: Imagen / PDF)</label>
+                    <input type="file" id="inputFile" accept="image/*,application/pdf" onchange="handleFileUpload(this)"
+                        class="file-upload-input">
+                    <div id="filePreview" class="text-sm-muted text-green" style="margin-top: 10px;">
+                    </div>
+                </div>
+
+                <!-- COMPETITION & FILES SECTION (Hidden by default) -->
+                <div id="compFields" class="comp-box">
+                    <h4 class="section-title-orange">📊 Datos de Competición</h4>
+                    <div class="grid-2-sm">
+                        <div class="data-field">
+                            <label for="inputScore">Puntuación Total</label>
+                            <input type="number" id="inputScore" placeholder="Ej: 570">
+                        </div>
+                        <div class="data-field">
+                            <label for="inputInnerTens">X / Centros</label>
+                            <input type="number" id="inputInnerTens" placeholder="Ej: 15">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="data-field">
+                <label>Foco Técnico (Selecciona los puntos clave)</label>
+                <div class="checkbox-grid">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="tech_stance" value="Posición"> Posición
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="tech_grip" value="Agarre"> Agarre
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="tech_breathing" value="Respiración"> Respiración
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="tech_sights" value="Elementos de Puntería"> Elementos Puntería
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="tech_trigger" value="Dedo"> Dedo
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="tech_follow" value="Follow Through"> Follow Through
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="tech_gesture" value="Gesto"> Gesto
+                    </label>
+                </div>
+
+                <!-- Posture Dropdown -->
+                <div class="posture-wrapper">
+                    <label for="tech_posture_detail" class="posture-label">Postura Corporal:</label>
+                    <select id="tech_posture_detail" class="posture-select">
+                        <option value="">-- Seleccionar foco postural --</option>
+                        <option value="Cabeza">Cabeza</option>
+                        <option value="Hombros">Hombros</option>
+                        <option value="Caderas">Caderas</option>
+                        <option value="Pies">Pies</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="data-field">
+                <label for="inputSensations">Sensaciones (Propiocepción / Emocional)</label>
+                <textarea id="inputSensations" rows="2" class="input-textarea"
+                    placeholder="Sensaciones físicas, pensamientos, estado de ánimo..."></textarea>
+            </div>
+
+            <div class="data-field">
+                <label for="inputTechnicalNotes">Notas Técnicas (Análisis de lo trabajado)</label>
+                <textarea id="inputTechnicalNotes" rows="2" class="input-textarea"
+                    placeholder="¿Qué has trabajado bien? ¿Qué mal?"></textarea>
+            </div>
+
+            <div class="data-field">
+                <label for="inputCoachMsg">Comunicación con Entrenador</label>
+                <textarea id="inputCoachMsg" rows="2" class="coach-msg-area"
+                    placeholder="Mensaje directo para tu entrenador..."></textarea>
+            </div>
+
+            <button class="btn-generate mt-2" onclick="generateSmartSession()">GENERAR SESIÓN INTELIGENTE</button>
+
+            <!-- AI Suggestion Output -->
+            <div id="aiSuggestion" class="suggestion-card">
+                <h3 class="section-title-green">⚡ Propuesta NeuroShot</h3>
+                <p id="suggestionText" style="line-height: 1.6;"></p>
+
+                <div class="resource-section">
+                    <h4 class="resource-header">Recursos Recomendados del Codex:</h4>
+                    <div id="resourceLinks" class="resource-list"></div>
+                </div>
+
+                <!-- NEW AUDIO RESOURCES SECTION -->
+                <div class="resource-section">
+                    <h4 class="resource-header-orange">🎧 Audios de Entrenamiento Mental:</h4>
+
+                    <div style="margin-top: 10px;">
+                        <p class="audio-cat-label"><strong>Rápidos (3 min):</strong></p>
+                        <div class="audio-btns field-mb">
+                            <button
+                                onclick="playAudio('03_LABORATORIO_AUDIO/03_MANTENER_FLOW/Mente_cuerpo_datos_en_tiro_olímpico.m4a')"
+                                class="btn-audio-orange">
+                                🧠 Mente-Cuerpo-Datos (3')
+                            </button>
+                            <button
+                                onclick="playAudio('03_LABORATORIO_AUDIO/02_SUBIR_ENERGIA/Cómo_hackear_tu_química_contra_el_fracaso.m4a')"
+                                class="btn-audio-orange">
+                                🧪 Hackear Química (3')
+                            </button>
+                            <button
+                                onclick="playAudio('03_LABORATORIO_AUDIO/03_MANTENER_FLOW/Disparo_por_confirmación_el_secreto_mental.m4a')"
+                                class="btn-audio-orange">
+                                ✓ Disparo por Confirmación (3')
+                            </button>
+                        </div>
+
+                        <p class="audio-cat-label"><strong>Extendidos (25-30 min):</strong></p>
+                        <div class="audio-btns">
+                            <button
+                                onclick="playAudio('03_LABORATORIO_AUDIO/01_BAJAR_REVOLUCIONES/Silencia_tu_pánico_El_encuadre_competitivo.m4a')"
+                                class="btn-audio-green">
+                                🧘 Silencia tu Pánico (25')
+                            </button>
+                            <button
+                                onclick="playAudio('03_LABORATORIO_AUDIO/01_BAJAR_REVOLUCIONES/Silencio_y_precisión_fatiga_cero_del_tirador.m4a')"
+                                class="btn-audio-green">
+                                💪 Fatiga Cero (28')
+                            </button>
+                            <button
+                                onclick="playAudio('03_LABORATORIO_AUDIO/02_SUBIR_ENERGIA/Dopamina_serotonina_neurociencia_del_tiro_perfecto.m4a')"
+                                class="btn-audio-green">
+                                🧬 Dopamina y Tiro Perfecto (30')
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-buttons-row">
+                    <button id="btnWhatsapp" onclick="shareViaWhatsapp()" class="btn-whatsapp">
+                        📲 WhatsApp
+                    </button>
+                    <button id="btnCloud" onclick="saveToCloud()" class="btn-cloud">
+                        ☁️ Enviar a Entrenador
+                    </button>
+                </div>
+            </div>
+            </div>
+            </div> <!-- End View Diary -->
+
+            <!-- VIEW: CALENDAR -->
+            <div id="view_calendar" class="calendar-view">
+                <div class="glass-panel calendar-header-panel">
+                    <h1>Planificación Deportiva 2026</h1>
+                    <p class="text-neutral">Selecciona las competiciones y modalidades de tu temporada.</p>
+                    <button class="btn-generate btn-add-event" onclick="addCustomEvent()">+ Añadir Competición
+                        Manual</button>
+                </div>
+                <div id="calendarContainer" class="calendar-grid">
+                </div> <!-- End Calendar View -->
+
+                <!-- VIEW: TOOLS -->
+                <div id="view_tools" class="glass-panel tools-view">
+                    <h1>Herramientas Mentales</h1>
+                    <p class="text-neutral-mb2">Recursos de intervención en tiempo real.
+                    </p>
+
+                    <!-- Tool Tabs -->
+                    <div class="tools-tabs-container">
+                        <button id="tab_breath" class="btn-tool-tab active" onclick="switchToolTab('breath')">🌬️
+                            Respiración</button>
+                        <button id="tab_focus" class="btn-tool-tab" onclick="switchToolTab('focus')">👀 Foco
+                            (Rejilla)</button>
+                        <button id="tab_resources" class="btn-tool-tab" onclick="switchToolTab('resources')">📚
+                            Biblioteca</button>
+                        <button class="btn-tool-tab panic" onclick="togglePanicMode()">🚨 PÁNICO</button>
+                    </div>
+
+                    <!-- 1. BREATHING -->
+                    <div id="tool_breath" class="tool-content">
+                        <div class="tool-panel-centered">
+                            <div id="breathCircle" class="breath-circle">
+                                <span id="breathText" class="breath-text">4s</span>
+                            </div>
+                            <p id="breathInstruction" class="breath-instruction">
+                                Preparado...</p>
+                            <button id="btnBreath" class="btn-generate btn-breath-start"
+                                onclick="toggleBreath()">Iniciar</button>
+                        </div>
+                    </div>
+
+                    <!-- 2. FOCUS GRID -->
+                    <div id="tool_focus" class="tool-content hidden">
+                        <div class="text-center">
+                            <p class="text-neutral mb-1">Encuentra los números del 00 al 24
+                                en orden.</p>
+                            <div id="focusGrid" class="focus-grid-container">
+                            </div>
+                            <button class="btn-generate btn-focus-new" onclick="generateFocusGrid()">Nuevo
+                                Panel</button>
+                        </div>
+                    </div>
+
+                    <!-- 3. RESOURCES -->
+                    <div id="tool_resources" class="tool-content hidden">
+                        <input type="text" id="resourceSearch" placeholder="Buscar recurso (ej: ansiedad, técnica...)"
+                            onkeyup="renderResources(this.value)" class="resource-search-input">
+                        <div id="resourceLibraryList" class="resource-list-container"></div>
+                    </div>
+                </div>
+
+                <!-- PANIC OVERLAY -->
+                <div id="panicOverlay" class="panic-overlay hidden">
+                    <h1 class="panic-title">
+                        RESPIRA</h1>
+                    <p class="panic-desc">
+                        "Esto es solo una reacción química. No es la realidad. Deja que pase."</p>
+
+                    <button
+                        onclick="playAudio('03_LABORATORIO_AUDIO/01_BAJAR_REVOLUCIONES/Silencia_tu_pánico_El_encuadre_competitivo.m4a')"
+                        class="btn-panic-action">
+                        🎧 ESCUCHAR GUÍA SOS
+                    </button>
+
+                    <button onclick="togglePanicMode()" class="btn-panic-cancel">
+                        Volver a la normalidad
+                    </button>
+                </div>
+
+        </section>
+    </main>
+
+    <script>
+
+
+        // --- 2. RFEDETO CALENDAR DATA (2026 ARMA CORTA) ---
+        const RFEDETO_CALENDAR = [
+            // --- EVENTOS NACIONALES ---
+            {
+                id: "copa_rey_26",
+                name: "Copa S.M. El Rey y La Reina",
+                date: "2026-02-05",
+                location: "CEAR Juan Carlos I, Las Gabias (Granada)",
+                coords: "37.1328,-3.6736",
+                modalities: ["Pistola Aire", "Carabina Aire", "Equipo Mixto"],
+                level: "Nacional"
+            },
+            {
+                id: "cto_esp_aire_26",
+                name: "Campeonato de España Aire Comprimido",
+                date: "2026-02-26",
+                location: "Logroño (La Rioja)",
+                coords: "42.4087,-2.4789",
+                modalities: ["Pistola Aire", "Equipo Mixto", "Pistola Velocidad Aire"],
+                level: "Nacional Principal"
+            },
+            {
+                id: "fase_prel_1",
+                name: "I Fase Preliminar Cto. del Mundo",
+                date: "2026-03-20",
+                location: "CEAR Juan Carlos I, Las Gabias",
+                coords: "37.1328,-3.6736",
+                modalities: ["Pistola 25m", "Pistola Velocidad", "Pistola Standard"],
+                level: "Nacional"
+            },
+            {
+                id: "copa_princesa_26",
+                name: "Copa Princesa de Asturias",
+                date: "2026-04-17",
+                location: "Club de Tiro Oviedo (Asturias)",
+                coords: "43.3619,-5.8494",
+                modalities: ["Pistola Libre", "Pistola 25m", "Pistola Standard", "Fuego Central"],
+                level: "Nacional"
+            },
+            {
+                id: "cto_jovenes_26",
+                name: "Campeonato de España Jóvenes Promesas",
+                date: "2026-05-01",
+                location: "Mollet del Vallès (Barcelona)",
+                coords: "41.5457,2.2285",
+                modalities: ["Pistola Aire", "Pistola Deportiva", "Pistola Velocidad"],
+                level: "Nacional Jovenes"
+            },
+            {
+                id: "copa_rfedeto_26",
+                name: "Copa RFEDETO Armas Olímpicas",
+                date: "2026-06-12",
+                location: "Cantoblanco (Madrid)",
+                coords: "40.5458,-3.6936",
+                modalities: ["Pistola Velocidad", "Pistola Deportiva", "Pistola Libre"],
+                level: "Nacional"
+            },
+            {
+                id: "cto_esp_armas_dep_26",
+                name: "Cto. España Armas Deportivas",
+                date: "2026-09-24",
+                location: "CEAR Juan Carlos I, Las Gabias",
+                coords: "37.1328,-3.6736",
+                modalities: ["Pistola Standard", "Fuego Central", "Pistola 9mm", "Pistola 25m"],
+                level: "Nacional Principal"
+            },
+            {
+                id: "master_100_26",
+                name: "Master 100",
+                date: "2026-10-15",
+                location: "Cantoblanco (Madrid)",
+                coords: "40.5458,-3.6936",
+                modalities: ["Pistola Aire", "Pistola Libre"],
+                level: "Nacional"
+            },
+
+            // --- EVENTOS INTERNACIONALES (ISSF) ---
+            {
+                id: "issf_wc_cairo",
+                name: "ISSF World Cup Cairo",
+                date: "2026-01-24",
+                location: "Cairo, EGYPT",
+                coords: "30.0444,31.2357",
+                modalities: ["Pistola Aire", "Pistola 25m", "Pistola Velocidad"],
+                level: "Internacional"
+            },
+            {
+                id: "euro_air_tallinn",
+                name: "European Championship 10m",
+                date: "2026-03-05",
+                location: "Tallinn, ESTONIA",
+                coords: "59.4370,24.7536",
+                modalities: ["Pistola Aire"],
+                level: "Internacional"
+            },
+            {
+                id: "issf_wc_baku",
+                name: "ISSF World Cup Baku",
+                date: "2026-05-04",
+                location: "Baku, AZERBAIJAN",
+                coords: "40.4093,49.8671",
+                modalities: ["Pistola Aire", "Pistola 25m", "Pistola Velocidad"],
+                level: "Internacional"
+            },
+            {
+                id: "issf_wc_munich",
+                name: "ISSF World Cup Munich",
+                date: "2026-05-31",
+                location: "Munich, GERMANY",
+                coords: "48.1351,11.5820",
+                modalities: ["Pistola Aire", "Pistola 25m", "Pistola Velocidad"],
+                level: "Internacional"
+            }
+        ];
+
+        // --- 3. LOGIC & STATE ---
+        let currentFileBase64 = null;
+
+        function toggleCompFields(show) {
+            document.getElementById('compFields').style.display = show ? 'block' : 'none';
+            // Also toggle the File Input Wrapper based on mode
+            const fileWrapper = document.getElementById('fileInputWrapper');
+            if (fileWrapper) fileWrapper.style.display = show ? 'block' : 'none';
+        }
+
+        function handleFileUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    currentFileBase64 = e.target.result;
+                    document.getElementById('filePreview').innerText = `✅ Archivo listo: ${file.name}`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveToCloud() {
+            const profile = JSON.parse(localStorage.getItem('neuroshot_profile') || '{}');
+            const athleteName = profile.name || "Atleta";
+
+            // Collect Data
+            const sessionData = {
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                athlete: athleteName,
+                energy: document.getElementById('inputEnergy').value,
+                anxiety: document.getElementById('inputAnxiety').value,
+                tiredness: document.getElementById('inputTiredness').value,
+                workType: document.querySelector('input[name="workType"]:checked').value,
+                techFocus: getCheckedValues(),
+                coachMsg: document.getElementById('inputCoachMsg').value,
+
+                // New Fields
+                isCompetition: document.querySelector('input[name="workType"]:checked').value === 'simulation',
+                score: document.getElementById('inputScore').value,
+                innerTens: document.getElementById('inputInnerTens').value,
+                fileAttachment: currentFileBase64,
+
+                // NEW NEUROSHOT PSYCHOLOGICAL FIELDS
+                neuroObjective: document.getElementById('inputNeuroObjective').value,
+                trigger: document.getElementById('inputTrigger').value,
+                correctiveAction: document.getElementById('inputCorrectiveAction').value,
+                anchorPhrase: document.getElementById('inputAnchorPhrase').value
+            };
+
+            // Save to Global DB (Simulating Cloud)
+            const db = JSON.parse(localStorage.getItem('neuroshot_global_db') || '[]');
+            db.push(sessionData);
+            localStorage.setItem('neuroshot_global_db', JSON.stringify(db));
+
+            alert("✅ Reporte enviado correctamente al Entrenador.");
+        }
+
+        function getCheckedValues() {
+            const checked = [];
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+                if (cb.id.startsWith('tech_')) checked.push(cb.value);
+            });
+            return checked;
+        }
+
+        // INTELLIGENT RESOURCE PRESCRIPTION SYSTEM
+        function analyzeProblemsAndRecommend() {
+            const problems = [];
+            const recommendations = [];
+
+            // Collect all diary data
+            const data = {
+                activation: parseInt(document.getElementById('inputAnxiety').value),
+                energy: parseInt(document.getElementById('inputEnergy').value),
+                tiredness: parseInt(document.getElementById('inputTiredness') ? document.getElementById('inputTiredness').value : 5),
+                sleep: document.getElementById('inputSleep').value,
+                workType: document.querySelector('input[name="workType"]:checked') ? document.querySelector('input[name="workType"]:checked').value : 'technical',
+                neuroObjective: document.getElementById('inputNeuroObjective').value,
+                techFocus: getCheckedValues(),
+                weaknesses: document.getElementById('inputWeaknesses') ? document.getElementById('inputWeaknesses').value : '',
+                notes: document.getElementById('inputTechnicalNotes') ? document.getElementById('inputTechnicalNotes').value : ''
+            };
+
+            // CATEGORY 1: ACTIVATION PROBLEMS
+            if (data.activation >= 8) {
+                problems.push("Ansiedad Alta");
+                if (data.workType === 'simulation') {
+                    recommendations.push({
+                        title: "Calibración Neuro-Mecánica",
+                        type: "Audio",
+                        duration: "2'",
+                        path: "03_LABORATORIO_AUDIO/01_BAJAR_REVOLUCIONES/CALIBRACIÓN NEURO-MECÁNICA.mp3",
+                        reason: "Pre-competición con ansiedad alta - Reseteo rápido",
+                        category: "activation",
+                        color: "#ef4444"
+                    });
+                } else {
+                    recommendations.push({
+                        title: "Silencia tu Pánico",
+                        type: "Audio",
+                        duration: "25'",
+                        path: "03_LABORATORIO_AUDIO/01_BAJAR_REVOLUCIONES/Silencia_tu_pánico_El_encuadre_competitivo.m4a",
+                        reason: "Reducir ansiedad mediante reencuadre cognitivo",
+                        category: "activation",
+                        color: "#ef4444"
+                    });
+                }
+            } else if (data.activation <= 3) {
+                problems.push("Apatía/Baja Energía");
+                if (data.weaknesses.length > 0) {
+                    recommendations.push({
+                        title: "Dopamina y Tiro Perfecto",
+                        type: "Audio",
+                        duration: "30'",
+                        path: "03_LABORATORIO_AUDIO/02_SUBIR_ENERGIA/Dopamina_serotonina_neurociencia_del_tiro_perfecto.m4a",
+                        reason: "Apatía post-error - Activación dopaminérgica profunda",
+                        category: "activation",
+                        color: "#f97316"
+                    });
+                } else {
+                    recommendations.push({
+                        title: "Hackear Química vs Fracaso",
+                        type: "Audio",
+                        duration: "3'",
+                        path: "03_LABORATORIO_AUDIO/02_SUBIR_ENERGIA/Cómo_hackear_tu_química_contra_el_fracaso.m4a",
+                        reason: "Boost rápido de energía y motivación",
+                        category: "activation",
+                        color: "#f97316"
+                    });
+                }
+            }
+
+            // CATEGORY 2: TECHNICAL PROBLEMS
+            if (data.techFocus.includes('Agarre')) {
+                problems.push("Problema de Agarre");
+                recommendations.push({
+                    title: "Biomecánica a Medida",
+                    type: "PDF",
+                    duration: "Lectura",
+                    path: "02_CODEX_CONOCIMIENTO/Biomecánica_a_Medida.pdf",
+                    reason: "Optimización del agarre según características individuales",
+                    category: "technical",
+                    color: "#3b82f6"
+                });
+            }
+
+            if (data.techFocus.includes('Dedo')) {
+                problems.push("Problema de Gatillo");
+                recommendations.push({
+                    title: "Silencio El Gatillazo",
+                    type: "Audio",
+                    duration: "31'",
+                    path: "03_LABORATORIO_AUDIO/03_MANTENER_FLOW/Silencio_El_gatillazo_La_tecnología_lo_ve.m4a",
+                    reason: "Corrección técnica del gatillazo mediante análisis SCATT",
+                    category: "technical",
+                    color: "#3b82f6"
+                });
+            }
+
+            if (data.techFocus.includes('Posición') || data.techFocus.includes('Postura')) {
+                problems.push("Problema de Postura");
+                recommendations.push({
+                    title: "Silencio Estático - La Ciencia del Disparo",
+                    type: "PDF",
+                    duration: "Lectura",
+                    path: "02_CODEX_CONOCIMIENTO/Silencio_Estático_La_Ciencia_del_Disparo.pdf",
+                    reason: "Fundamentos de estabilidad y postura corporal",
+                    category: "technical",
+                    color: "#3b82f6"
+                });
+            }
+
+            if (data.techFocus.includes('Elementos de Puntería')) {
+                problems.push("Problema de Puntería");
+                recommendations.push({
+                    title: "Neurociencia para la Precisión",
+                    type: "PDF",
+                    duration: "Lectura",
+                    path: "02_CODEX_CONOCIMIENTO/Neurociencia_para_la_Precisión.pdf",
+                    reason: "Fundamentos neurocientíficos de la precisión visual",
+                    category: "technical",
+                    color: "#3b82f6"
+                });
+            }
+
+            if (data.techFocus.includes('Respiración')) {
+                problems.push("Problema de Respiración");
+                recommendations.push({
+                    title: "Protocolo Respiración Bachrach",
+                    type: "Guía",
+                    duration: "5'",
+                    path: "03_LABORATORIO_AUDIO/Protocolo_Respiracion_Bachrach.md",
+                    reason: "Técnicas 5.5, 4-7-8 y Box para control de activación",
+                    category: "technical",
+                    color: "#3b82f6"
+                });
+            }
+
+            if (data.techFocus.includes('Gesto')) {
+                problems.push("Problema de Gesto");
+                recommendations.push({
+                    title: "Ingeniería de Rendimiento - Tu Disparo Perfecto",
+                    type: "PDF",
+                    duration: "Lectura",
+                    path: "02_CODEX_CONOCIMIENTO/Ingeniería_de_Rendimiento_Tu_Disparo_Perfecto.pdf",
+                    reason: "Optimización biomecánica del gesto completo",
+                    category: "technical",
+                    color: "#3b82f6"
+                });
+            }
+
+            // CATEGORY 3: PSYCHOLOGICAL/NEURO OBJECTIVES
+            if (data.neuroObjective === 'Foco Interno') {
+                problems.push("Objetivo: Foco Interno (Propiocepción)");
+                recommendations.push({
+                    title: "Rendimiento Interoceptivo - La Ventaja Oculta",
+                    type: "PDF",
+                    duration: "Lectura",
+                    path: "02_CODEX_CONOCIMIENTO/Rendimiento_Interoceptivo_La_Ventaja_Oculta.pdf",
+                    reason: "Desarrollo de sensibilidad propioceptiva",
+                    category: "psychological",
+                    color: "#8b5cf6"
+                });
+            }
+
+            if (data.neuroObjective === 'Gestión Error') {
+                problems.push("Objetivo: Gestión de Error");
+                recommendations.push({
+                    title: "Fisiología del Error - Dopamina y Maestría",
+                    type: "PDF",
+                    duration: "Lectura",
+                    path: "02_CODEX_CONOCIMIENTO/Fisiología_del_Error_Dopamina_y_Maestría.pdf",
+                    reason: "Comprensión neurocientífica del error y aprendizaje",
+                    category: "psychological",
+                    color: "#8b5cf6"
+                });
+            }
+
+            if (data.neuroObjective === 'Fluidez') {
+                problems.push("Objetivo: Fluidez/Automatismo");
+                recommendations.push({
+                    title: "El Camino a la Maestría - De Mecánico a Piloto",
+                    type: "PDF",
+                    duration: "Lectura",
+                    path: "02_CODEX_CONOCIMIENTO/El_Camino_a_la_Maestría_De_Mecánico_a_Piloto.pdf",
+                    reason: "Transición de ejecución consciente a automática",
+                    category: "psychological",
+                    color: "#8b5cf6"
+                });
+            }
+
+            if (data.neuroObjective === 'Confianza') {
+                problems.push("Objetivo: Confianza");
+                recommendations.push({
+                    title: "Disparo por Confirmación",
+                    type: "Audio",
+                    duration: "3'",
+                    path: "03_LABORATORIO_AUDIO/03_MANTENER_FLOW/Disparo_por_confirmación_el_secreto_mental.m4a",
+                    reason: "Protocolo de confirmación propioceptiva para confianza",
+                    category: "psychological",
+                    color: "#8b5cf6"
+                });
+            }
+
+            // CATEGORY 4: SCATT/DATA ANALYSIS
+            if (data.notes.toLowerCase().includes('scatt')) {
+                problems.push("Uso de SCATT detectado");
+                recommendations.push({
+                    title: "Neurociencia y SCATT - El Secreto del Tirador",
+                    type: "Audio",
+                    duration: "33'",
+                    path: "03_LABORATORIO_AUDIO/03_MANTENER_FLOW/Neurociencia_y_SCATT_El_Secreto_del_Tirador.m4a",
+                    reason: "Integración de datos SCATT con neurociencia",
+                    category: "data",
+                    color: "#10b981"
+                });
+            }
+
+            // CATEGORY 5: FATIGUE AND PERFORMANCE
+            if (data.tiredness >= 7) {
+                problems.push("Fatiga Mental Alta");
+                recommendations.push({
+                    title: "Fatiga Cero del Tirador",
+                    type: "Audio",
+                    duration: "28'",
+                    path: "03_LABORATORIO_AUDIO/01_BAJAR_REVOLUCIONES/Silencio_y_precisión_fatiga_cero_del_tirador.m4a",
+                    reason: "Gestión de fatiga mental en sesiones largas",
+                    category: "fatigue",
+                    color: "#ef4444"
+                });
+            }
+
+            if (data.energy <= 3 && data.sleep === 'low') {
+                problems.push("Falta de Energía + Mal Sueño");
+                recommendations.push({
+                    title: "Hackear Química vs Fracaso",
+                    type: "Audio",
+                    duration: "3'",
+                    path: "03_LABORATORIO_AUDIO/02_SUBIR_ENERGIA/Cómo_hackear_tu_química_contra_el_fracaso.m4a",
+                    reason: "Recuperación rápida de energía",
+                    category: "fatigue",
+                    color: "#f97316"
+                });
+            }
+
+            // OPTIMAL ZONE - Add flow maintenance if no major problems
+            if (data.activation >= 4 && data.activation <= 7 && recommendations.length === 0) {
+                recommendations.push({
+                    title: "Palabras Clave y Anclajes",
+                    type: "Audio",
+                    duration: "3'",
+                    path: "03_LABORATORIO_AUDIO/03_MANTENER_FLOW/Palabras_clave_anclajes_y_visualización_deportiva.m4a",
+                    reason: "Mantener zona óptima - Refuerzo de anclas",
+                    category: "flow",
+                    color: "#10b981"
+                });
+            }
+
+            return { problems, recommendations };
+        }
+
+        function updateSliders() {
+            document.getElementById('valEnergy').innerText = document.getElementById('inputEnergy').value;
+            document.getElementById('valTired').innerText = document.getElementById('inputTiredness').value;
+            const anxietyLevel = parseInt(document.getElementById('inputAnxiety').value);
+            document.getElementById('valAnxiety').innerText = anxietyLevel;
+
+            // CALL INTELLIGENT ANALYSIS SYSTEM
+            const analysis = analyzeProblemsAndRecommend();
+
+            const prescriptionDiv = document.getElementById('audioPrescription');
+            const prescriptionText = document.getElementById('prescriptionText');
+            const prescriptionButtons = document.getElementById('prescriptionButtons');
+
+            // Clear previous prescription
+            prescriptionButtons.innerHTML = '';
+
+            if (analysis.recommendations.length > 0) {
+                prescriptionDiv.style.display = 'block';
+
+                // Set color based on first recommendation category
+                const firstRec = analysis.recommendations[0];
+                prescriptionDiv.style.background = `${firstRec.color}15`;
+                prescriptionDiv.style.borderColor = firstRec.color;
+
+                // Build problems text
+                const problemsText = analysis.problems.length > 0
+                    ? `<strong>📊 Problemas detectados:</strong> ${analysis.problems.join(', ')}`
+                    : '<strong>✅ Estado óptimo</strong>';
+
+                prescriptionText.innerHTML = problemsText + '<br><small style="color: var(--text-muted);">Recursos recomendados basados en tu estado actual:</small>';
+
+                // Build recommendation buttons (limit to 4 for UI)
+                const displayRecs = analysis.recommendations.slice(0, 4);
+                displayRecs.forEach(rec => {
+                    const icon = rec.type === 'Audio' ? '🎧' : rec.type === 'PDF' ? '📄' : '📋';
+                    const button = document.createElement('button');
+                    button.innerHTML = `${icon} ${rec.title} (${rec.duration})`;
+                    button.style.cssText = `
+                        padding: 8px 12px; 
+                        background: ${rec.color}15; 
+                        border: 1px solid ${rec.color}; 
+                        border-radius: 6px; 
+                        color: ${rec.color}; 
+                        font-size: 0.75rem; 
+                        cursor: pointer;
+                        margin: 4px;
+                    `;
+                    button.title = rec.reason;
+
+                    if (rec.type === 'Audio') {
+                        button.onclick = () => playAudio(rec.path);
+                    } else {
+                        button.onclick = () => window.open(rec.path, '_blank');
+                    }
+
+                    prescriptionButtons.appendChild(button);
+                });
+
+                // Add "more info" if there are more recommendations
+                if (analysis.recommendations.length > 4) {
+                    const moreInfo = document.createElement('small');
+                    moreInfo.style.cssText = 'color: var(--text-muted); font-size: 0.7rem; display: block; margin-top: 8px;';
+                    moreInfo.innerHTML = `+ ${analysis.recommendations.length - 4} recursos más disponibles`;
+                    prescriptionButtons.appendChild(moreInfo);
+                }
+            } else {
+                prescriptionDiv.style.display = 'none';
+            }
+        }
+
+        function saveProfile() {
+            const profile = {
+                name: document.getElementById('athleteName').value,
+                age: document.getElementById('athleteAge').value,
+                license: document.getElementById('athleteLicense').value,
+                modality: document.getElementById('athleteModality').value
+            };
+            localStorage.setItem('neuroshot_profile', JSON.stringify(profile));
+
+            // Update UI
+            if (profile.name) document.getElementById('avatarDisplay').innerText = profile.name.charAt(0).toUpperCase();
+            alert('Perfil actualizado en el Sistema Central.');
+        }
+
+        function loadProfile() {
+            const saved = localStorage.getItem('neuroshot_profile');
+            if (saved) {
+                const p = JSON.parse(saved);
+                document.getElementById('athleteName').value = p.name;
+                document.getElementById('athleteAge').value = p.age;
+                document.getElementById('athleteLicense').value = p.license;
+                document.getElementById('athleteModality').value = p.modality;
+                if (p.name) document.getElementById('avatarDisplay').innerText = p.name.charAt(0).toUpperCase();
+            }
+        }
+
+        // --- 1. THE NEUROSHOT BRAIN (EXPERT SYSTEM) ---
+        const NEUROSHOT_DB = {
+            // VERIFIED MEDIA PATHS (Relative to this HTML in root)
+            // Added: 'takeaway' for text summary, 't' for timestamp (start time in seconds)
+            paths: {
+                audio_calib: {
+                    file: "99_RECURSOS_MULTIMEDIA/Audio/MP4/Fernando 1..mp4",
+                    t: 0,
+                    takeaway: "Escucha solo los primeros 3 min para ajustar tu tono muscular."
+                },
+                audio_pressure: {
+                    file: "99_RECURSOS_MULTIMEDIA/Audio/MP4/Fernando dos..mp4",
+                    t: 10,
+                    takeaway: "CLAVE: 'La presión es imaginaria'. Céntrate en la sensación de tus pies."
+                },
+                video_flow: {
+                    file: "99_RECURSOS_MULTIMEDIA/Video/MP4/como entrar en zona de flujo Fernando..mp4",
+                    t: 45,
+                    takeaway: "MIRA ESTO: La 'Zona' no se busca, se permite. Deja de controlar."
+                },
+                video_mental: {
+                    file: "99_RECURSOS_MULTIMEDIA/Video/MP4/Mente invencible.mp4",
+                    t: 0, // Assuming a default time for the main video
+                    takeaway: "Mente invencible: La clave es la resiliencia mental."
+                }
+            },
+            // --- 4. EXPERT SYSTEM DATABASE (AUDITED) ---
+            "technical": {
+                "tech_grip": {
+                    drill: "Isometría de Agarre",
+                    desc: "Mantén la presión constante en el grip durante 10s sin disparar.",
+                    reps: "10 repeticiones",
+                    resource: { title: "Cierre de Dedos (Fernando)", url: "99_RECURSOS_MULTIMEDIA/Audio/MP4/Fernando 1..mp4", t: 120, end: 180, takeaway: "La presión debe ser lateral, no frontal." }
+                },
+                "tech_sights": {
+                    drill: "Seguimiento de Miras",
+                    desc: "Mueve el arma en ochos manteniendo las miras alineadas.",
+                    reps: "5 min",
+                    resource: { title: "Alineación Perfecta", url: "99_RECURSOS_MULTIMEDIA/Audio/MP4/Fernando 1..mp4", t: 300, end: 360, takeaway: "El ojo debe viajar con el alza." }
+                },
+                "tech_trigger": {
+                    drill: "Tiro en Seco con Moneda",
+                    desc: "Coloca una moneda en la corredera/cañón. Que no caiga al disparar.",
+                    reps: "20 disparos perfectos",
+                    resource: { title: "Gestión del Disparador", url: "99_RECURSOS_MULTIMEDIA/Audio/MP4/Fernando 1..mp4", t: 600, end: 720, takeaway: "El dedo índice es independiente de la mano." }
+                }
+            },
+            "attention": {
+                "low": {
+                    drill: "Activación Vagal Rápida",
+                    desc: "Respiración de Fuego (rápida) + Saltos pequeños.",
+                    reps: "2 min",
+                    resource: { title: "Mente Invencible (Activación)", url: "99_RECURSOS_MULTIMEDIA/Audio/MP4/Mente invencible.mp4", t: 250, end: 350, takeaway: "Despierta tu sistema nervioso." }
+                },
+                "high": {
+                    drill: "Protocolo de Veto (STOP)",
+                    desc: "Deten el pensamiento negativo. Respira. Re-enfoca en la técnica.",
+                    reps: "Cada vez que dudes",
+                    resource: { title: "La Presión es Imaginaria", url: "99_RECURSOS_MULTIMEDIA/Audio/MP4/Fernando dos..mp4", t: 75, end: 180, takeaway: "Tu miedo es una interpretación, no la realidad." }
+                }
+            }
+        };
+
+        function generateSmartSession() {
+            try {
+                // 1. GATHER INPUTS
+                const athlete = document.getElementById('athleteName').value || "Atleta";
+                const energy = parseInt(document.getElementById('inputEnergy').value);
+                const anxiety = parseInt(document.getElementById('inputAnxiety').value);
+                const tiredness = document.getElementById('inputTiredness') ? parseInt(document.getElementById('inputTiredness').value) : 5;
+                const sleep = document.getElementById('inputSleep').value;
+                const goal = document.getElementById('inputGoal').value;
+
+                // Tech Focus (Checkboxes)
+                const techFocus = [];
+                const techCheckboxes = ['tech_stance', 'tech_grip', 'tech_breathing', 'tech_sights', 'tech_trigger', 'tech_follow'];
+                techCheckboxes.forEach(id => {
+                    const cb = document.getElementById(id);
+                    if (cb && cb.checked) techFocus.push({ id: id, val: cb.value });
+                });
+
+                // Get Work Type
+                let workType = 'technical';
+                const radios = document.getElementsByName('workType');
+                radios.forEach(r => { if (r.checked) workType = r.value });
+
+                // New Quantitative Data (Safe Check)
+                const volEl = document.getElementById('inputVolume');
+                const durEl = document.getElementById('inputDuration');
+                const volume = volEl ? volEl.value || 0 : 0;
+                const duration = durEl ? durEl.value || 0 : 0;
+
+                const sensations = document.getElementById('inputSensations').value;
+                const techNotes = document.getElementById('inputTechnicalNotes') ? document.getElementById('inputTechnicalNotes').value : "";
+                const coachMsg = document.getElementById('inputCoachMsg') ? document.getElementById('inputCoachMsg').value : "";
+                const postureDetail = document.getElementById('tech_posture_detail') ? document.getElementById('tech_posture_detail').value : "";
+
+
+                // 2. DETERMINE STATE & RECOMMENDATION
+                let stateQuote = "";
+                let recommendedDrill = {};
+
+                // LOGIC TRIAGE
+                if (workType === 'technical') {
+                    // Check checkboxes
+                    if (document.getElementById('tech_grip').checked) recommendedDrill = NEUROSHOT_DB.technical.tech_grip;
+                    else if (document.getElementById('tech_trigger').checked) recommendedDrill = NEUROSHOT_DB.technical.tech_trigger;
+                    else recommendedDrill = NEUROSHOT_DB.technical.tech_sights; // Default
+                    stateQuote = "La técnica es la base de la confianza.";
+                } else if (workType === 'attention') {
+                    if (anxiety > 7) {
+                        recommendedDrill = NEUROSHOT_DB.attention.high;
+                        stateQuote = "Calma tu mente para que tu cuerpo pueda actuar.";
+                    } else {
+                        recommendedDrill = NEUROSHOT_DB.attention.low;
+                        stateQuote = "Enciende tu foco. La apatía es el enemigo.";
+                    }
+                } else {
+                    stateQuote = "Competición: Acepta lo que venga y resuelve.";
+                    recommendedDrill = { drill: "Simulacro de Competición", desc: "60 disparos con tiempos oficiales.", reps: "1 serie completa", resource: null };
+                }
+
+                // 3. BUILD OUTPUT HTML
+                const outputText = `
+                    <strong>Diagnóstico:</strong> ${stateQuote}<br><br>
+                    <strong>Ejercicio Prioritario:</strong> ${recommendedDrill.drill}<br>
+                    <em>${recommendedDrill.desc}</em><br>
+                    <strong>Volumen:</strong> ${recommendedDrill.reps}
+                `;
+
+                document.getElementById('suggestionText').innerHTML = outputText;
+
+                // 4. RENDER RESOURCES (SMART PLAYER LINKS)
+                const linksContainer = document.getElementById('resourceLinks');
+                linksContainer.innerHTML = "";
+
+                // Helper function to format time (if not already defined)
+                function formatTime(seconds) {
+                    const minutes = Math.floor(seconds / 60);
+                    const remainingSeconds = seconds % 60;
+                    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+                }
+
+                if (recommendedDrill.resource) {
+                    const r = recommendedDrill.resource;
+                    const safeUrl = r.url.replace(/\\\\/g, '/'); // Fix windows paths
+
+                    // NEW: Button calling playReferenceVideo
+                    const btn = document.createElement('button');
+                    btn.className = "resource-link";
+                    btn.style.textAlign = "left";
+                    btn.style.cursor = "pointer";
+                    btn.style.width = "100%";
+                    btn.innerHTML = `
+                        <div style="font-weight:bold;">🎥 ${r.title}</div>
+                        <div style="font-size:0.8rem; opacity:0.8;">"${r.takeaway}"</div>
+                        <div style="font-size:0.75rem; color:var(--primary-green); margin-top:3px;">
+                            ⏱️ Segmento Auto: ${formatTime(r.t)} - ${formatTime(r.end)}
+                        </div>
+                    `;
+                    btn.onclick = function () {
+                        if (typeof playReferenceVideo === 'function') {
+                            playReferenceVideo(safeUrl, r.t, r.end);
+                        } else {
+                            console.error("Smart Player not loaded, falling back.");
+                            window.open(`${safeUrl}#t=${r.t}`, '_blank');
+                        }
+                    };
+
+                    linksContainer.appendChild(btn);
+                } else {
+                    linksContainer.innerHTML = "<span style='color:gray; font-size:0.8rem;'>Sin multimedia específica.</span>";
+                }
+
+                // Show Card
+                document.getElementById('aiSuggestion').style.display = 'block';
+                document.getElementById('btnWhatsapp').style.display = 'inline-block';
+                document.getElementById('btnCloud').style.display = 'inline-block';
+
+                // Save to Global Session Object (Simulation)
+                currentSessionData = {
+                    id: Date.now(),
+                    timestamp: new Date().toISOString(),
+                    athlete: athlete,
+                    energy, anxiety, tiredness, sleep,
+                    goal, sensations, techNotes, coachMsg,
+                    volume, duration,
+                    workType, techFocus,
+                    posture: postureDetail,
+                    score: document.getElementById('inputScore').value,
+                    innerTens: document.getElementById('inputInnerTens').value,
+                    fileAttachment: currentFileBase64,
+                    read: false
+                };
+
+            } catch (e) {
+                alert("Error crítico en generador: " + e.message);
+                console.error(e);
+            }
+        }
+
+        function shareViaWhatsapp() {
+            // Re-gather essential data (or read from last session saved)
+            const athlete = document.getElementById('athleteName').value || "Atleta";
+            const energy = document.getElementById('inputEnergy').value;
+            const anxiety = document.getElementById('inputAnxiety').value;
+            const sleep = document.getElementById('inputSleep').value;
+            const goal = document.getElementById('inputGoal').value;
+
+            // Safe read volume/duration
+            const volEl = document.getElementById('inputVolume');
+            const durEl = document.getElementById('inputDuration');
+            const volume = volEl ? volEl.value : 0;
+            const duration = durEl ? durEl.value : 0;
+
+            // Format Text
+            let text = `🎯 *REPORTE NEUROSHOT* %0A`;
+            text += `📅 ${new Date().toLocaleDateString()} %0A`;
+            text += `👤 ${athlete} %0A%0A`;
+            text += `🔋 Energía: ${energy}/10 %0A`;
+            text += `🧠 Activación: ${anxiety}/10 %0A`;
+            text += `😴 Sueño: ${sleep === 'low' ? 'Bajo' : sleep === 'high' ? 'Alto' : 'Medio'} %0A`;
+            text += `🎯 Objetivo: ${goal} %0A`;
+
+            if (volume > 0) text += `🔫 Volumen: ${volume} disparos %0A`;
+            if (duration > 0) text += `⏱️ Duración: ${duration} min %0A`;
+
+            if (currentFileBase64) {
+                text += `%0A📎 *ARCHIVO ADJUNTO*: Enviado a Nube (Imagen/PDF). %0A`;
+            }
+
+            // Open WhatsApp
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+        }
+
+        function saveToCloud() {
+            // Simulate Cloud Upload
+            const athlete = document.getElementById('athleteName').value || "Atleta";
+
+            // Visual Feedback
+            const btn = document.getElementById('btnCloud');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "⏳ Enviando...";
+            btn.disabled = true;
+
+            setTimeout(() => {
+                alert(`✅ SESIÓN ENVIADA AL ENTRENADOR\n\nAtleta: ${athlete}\nEstado: Recibido en Dashboard.\n\n(Simulación: En producción esto iría a Firebase/Backend).`);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, 1000);
+        }
+
+        // --- UI NAVIGATION ---
+        function switchView(viewName) {
+            // Hide all
+            document.getElementById('view_diary').style.display = 'none';
+            document.getElementById('view_calendar').style.display = 'none';
+
+            // Buttons
+            document.getElementById('btn_diary').classList.remove('active');
+            document.getElementById('btn_calendar').classList.remove('active');
+
+            // Show selected
+            if (viewName === 'diary') {
+                document.getElementById('view_diary').style.display = 'block';
+                document.getElementById('btn_diary').classList.add('active');
+            } else if (viewName === 'calendar') {
+                document.getElementById('view_calendar').style.display = 'block';
+                document.getElementById('btn_calendar').classList.add('active');
+                renderCalendar();
+            }
+        }
+
+        // --- CALENDAR LOGIC ---
+        function renderCalendar() {
+            const calendarGrid = document.getElementById('calendarContainer');
+            const attendance = JSON.parse(localStorage.getItem('neuroshot_attendance') || '{}');
+            calendarGrid.innerHTML = '';
+
+            const customEvents = JSON.parse(localStorage.getItem('neuroshot_custom_events') || '[]');
+            const allEvents = [...RFEDETO_CALENDAR, ...customEvents];
+
+            // Sort by Date
+            allEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            allEvents.forEach(event => {
+                calendarGrid.appendChild(createEventCard(event, attendance[event.id]));
+            });
+        }
+
+        function addCustomEvent() {
+            const name = prompt("Nombre de Competición:");
+            if (!name) return;
+            const date = prompt("Fecha (YYYY-MM-DD):", new Date().toISOString().split('T')[0]);
+            if (!date) return;
+            const loc = prompt("Lugar:");
+
+            const newEvent = {
+                id: 'custom_' + Date.now(),
+                name: name,
+                date: date,
+                date: date,
+                location: loc || "N/A",
+                modalities: ["Pistola Aire", "Pistola 25m", "Plato"], // Removed Carabina
+                level: "Personalizado"
+            };
+
+            const custom = JSON.parse(localStorage.getItem('neuroshot_custom_events') || '[]');
+            custom.push(newEvent);
+            localStorage.setItem('neuroshot_custom_events', JSON.stringify(custom));
+
+            renderCalendar();
+        }
+
+        function createEventCard(event, attendanceData) {
+            // FIX: Handle legacy boolean data
+            let myModalities = [];
+            if (Array.isArray(attendanceData)) {
+                myModalities = attendanceData;
+            } else if (attendanceData === true) {
+                myModalities = []; // Reset legacy boolean to empty array
+            } else {
+                myModalities = [];
+            }
+
+            const isAttending = myModalities.length > 0;
+
+            const details = document.createElement('details');
+            details.className = `event-card ${isAttending ? 'attending' : ''}`;
+
+            // Phase Logic
+            const today = new Date();
+            const evtDate = new Date(event.date);
+            const diffTime = evtDate - today;
+            const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            let phase = "Transición";
+            let phaseColor = "#94a3b8";
+            let phasePct = 10;
+            if (daysLeft > 0) {
+                if (daysLeft > 90) { phase = "F. Preparación"; phaseColor = "#3b82f6"; phasePct = 30; }
+                else if (daysLeft > 30) { phase = "F. Específica"; phaseColor = "#f97316"; phasePct = 70; }
+                else { phase = "F. Competitiva"; phaseColor = "#10b981"; phasePct = 100; }
+            } else {
+                phase = "Finalizado"; phasePct = 100;
+            }
+
+            // SUMMARY (Header - Always Visible)
+            const summaryHTML = `
+                <summary>
+                    <div class="event-date">📅 ${new Date(event.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
+                    <div class="event-title">${event.name}</div>
+                    <div style="font-size:0.85rem; color:#cbd5e1; margin-bottom:5px;">📍 ${event.location}</div>
+                    <div class="event-status" style="margin-top:5px; font-weight:bold; color:${isAttending ? '#10b981' : '#94a3b8'}">
+                        ${isAttending ? `✅ ASISTIENDO (${myModalities.length})` : '⚪ NO PLANIFICADO'}
+                    </div>
+                </summary>
+            `;
+
+            // BODY (Content - Hidden until expanded)
+            let bodyHTML = `
+                <div style="margin-top:15px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.1);">
+                    <div class="logistics-box" style="margin-bottom:15px;">
+                        <button class="btn" style="width:100%; padding:8px; background:rgba(255,255,255,0.1); border:none; color:white; border-radius:4px;" 
+                            onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${event.coords}', '_blank')">
+                            🗺️ Ver Ruta en Maps
+                        </button>
+                    </div>
+            `;
+
+            // Modality Checkboxes
+            bodyHTML += '<div style="background:rgba(0,0,0,0.2); padding:10px; border-radius:8px; margin-bottom:15px;">';
+            bodyHTML += '<div style="font-size:0.75rem; color:#94a3b8; margin-bottom:5px; text-transform:uppercase;">Selecciona Modalidades:</div>';
+
+            event.modalities.forEach(mod => {
+                const checked = myModalities.includes(mod) ? "checked" : "";
+                bodyHTML += `
+                 <label style="display:block; margin-bottom:6px; cursor:pointer;">
+                     <input type="checkbox" ${checked} onchange="toggleModality('${event.id}', '${mod}', this.checked)">
+                     ${mod}
+                 </label>
+                 `;
+            });
+            bodyHTML += '</div>';
+
+            // Phase Bar (if attending)
+            if (isAttending && daysLeft > 0) {
+                bodyHTML += `
+                <div class="phase-bar">
+                    <div class="phase-fill" style="width:${phasePct}%; background:${phaseColor};"></div>
+                </div>
+                <div class="phase-label" style="margin-top:5px; font-size:0.8rem; color:#94a3b8; display:flex; justify-content:space-between;">
+                    <span>${phase}</span>
+                    <span>${daysLeft} días</span>
+                </div>
+                `;
+            }
+
+            bodyHTML += `</div>`; // Close body wrapper
+
+            details.innerHTML = summaryHTML + bodyHTML;
+            return details;
+        }
+
+        function toggleModality(eventId, modality, isChecked) {
+            const attendance = JSON.parse(localStorage.getItem('neuroshot_attendance') || '{}');
+            if (!attendance[eventId]) attendance[eventId] = [];
+
+            if (isChecked) {
+                if (!attendance[eventId].includes(modality)) attendance[eventId].push(modality);
+            } else {
+                attendance[eventId] = attendance[eventId].filter(m => m !== modality);
+                if (attendance[eventId].length === 0) delete attendance[eventId];
+            }
+            localStorage.setItem('neuroshot_attendance', JSON.stringify(attendance));
+            renderCalendar();
+        }
+
+        // Init
+        window.addEventListener('DOMContentLoaded', loadProfile);
+
+    </script>
+    <!-- SMART VIDEO PLAYER MODAL -->
+    <div id="videoModal" class="modal-overlay hidden">
+        <div class="modal-content-lg">
+            <div class="modal-header">
+                <span id="vidStatus">Reproduciendo Segmento Clave...</span>
+                <span class="cursor-pointer" onclick="closeVideoModal()">✖ CERRAR</span>
+            </div>
+            <video id="smartPlayer" controls class="video-player-lg"></video>
+            <div class="text-center-muted mt-1">
+                NeuroShot Smart Player: El video se detendrá automáticamente al finalizar el concepto técnico.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- SMART VIDEO LOGIC ---
+        let videoTimer = null;
+
+        window.playReferenceVideo = function (url, start, end) {
+            const modal = document.getElementById('videoModal');
+            const video = document.getElementById('smartPlayer');
+            const status = document.getElementById('vidStatus');
+
+            // Construct Path (assuming relative to HTML)
+            // Fix: Clean URL if it has #t=...
+            const cleanUrl = url.split('#')[0];
+            video.src = cleanUrl;
+
+            modal.style.display = 'flex';
+
+            // Wait for metadata to seek
+            video.onloadedmetadata = function () {
+                if (start) video.currentTime = start;
+                video.play();
+            };
+
+            // End Time Logic
+            if (end) {
+                status.innerText = `Reproduciendo Segmento: ${formatTime(start)} - ${formatTime(end)}`;
+
+                // Remove previous listeners
+                video.ontimeupdate = function () {
+                    if (video.currentTime >= end) {
+                        video.pause();
+                        closeVideoModal();
+                        alert("Concepto finalizado.");
+                    }
+                };
+            } else {
+                status.innerText = "Reproducción Completa";
+                video.ontimeupdate = null;
+            }
+        };
+
+        window.closeVideoModal = function () {
+            const modal = document.getElementById('videoModal');
+            const video = document.getElementById('smartPlayer');
+            video.pause();
+            modal.style.display = 'none';
+            video.src = ""; // Clear buffer
+        };
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60);
+            return `${m}:${s.toString().padStart(2, '0')}`;
+        }
+
+        // NEW: Audio Player Function
+        window.playAudio = function (audioPath) {
+            const fullPath = audioPath;
+            const audio = new Audio(fullPath);
+
+            audio.play().then(() => {
+                alert(`🎧 Reproduciendo: ${audioPath.split('/').pop().replace('.m4a', '')}\n\nEl audio se está reproduciendo en segundo plano.`);
+            }).catch(error => {
+                console.error('Error al reproducir audio:', error);
+                alert('❌ Error al reproducir el audio. Verifica que el archivo existe en la ruta correcta.');
+            });
+        };
+
+        // --- TOOLS LOGIC ---
+
+        // 1. View Switching
+        window.switchView = function (viewName) {
+            // Hide all views
+            ['diary', 'calendar', 'tools'].forEach(v => {
+                const el = document.getElementById('view_' + v);
+                if (el) el.style.display = 'none';
+
+                const btn = document.getElementById('btn_' + v);
+                if (btn) btn.classList.remove('active');
+            });
+
+            // Show target
+            document.getElementById('view_' + viewName).style.display = viewName === 'tools' ? 'block' : (viewName === 'calendar' ? 'block' : 'block'); // glass-panel usually block
+            document.getElementById('btn_' + viewName).classList.add('active');
+        }
+
+        // 2. Tool Tab Switching
+        window.switchToolTab = function (tabName) {
+            ['breath', 'focus', 'resources'].forEach(t => {
+                document.getElementById('tool_' + t).style.display = 'none';
+                document.getElementById('tab_' + t).classList.remove('active');
+            });
+            document.getElementById('tool_' + tabName).style.display = 'block';
+            document.getElementById('tab_' + tabName).classList.add('active');
+        }
+
+        // 3. Breathing Tool
+        let breathInterval;
+        let isBreathing = false;
+
+        window.toggleBreath = function () {
+            const btn = document.getElementById('btnBreath');
+            const circle = document.getElementById('breathCircle');
+            const text = document.getElementById('breathText');
+            const instr = document.getElementById('breathInstruction');
+
+            if (isBreathing) {
+                // Stop
+                clearInterval(breathInterval);
+                isBreathing = false;
+                btn.innerText = "Iniciar";
+                text.innerText = "4s";
+                instr.innerText = "Preparado...";
+                circle.style.transform = "scale(1)";
+                return;
+            }
+
+            // Start
+            isBreathing = true;
+            btn.innerText = "Detener";
+
+            let phase = 0; // 0=Inhale, 1=Hold, 2=Exhale, 3=Hold
+            const runCycle = () => {
+                if (phase === 0) {
+                    text.innerText = "INHALA";
+                    instr.innerText = "Toma aire profundamente...";
+                    circle.style.transform = "scale(1.5)";
+                    circle.style.backgroundColor = "rgba(16, 185, 129, 0.4)";
+                } else if (phase === 1) {
+                    text.innerText = "SÓSTEN";
+                    instr.innerText = "Mantén el aire...";
+                } else if (phase === 2) {
+                    text.innerText = "EXHALA";
+                    instr.innerText = "Suelta el aire suavemente...";
+                    circle.style.transform = "scale(1)";
+                    circle.style.backgroundColor = "rgba(16, 185, 129, 0.2)";
+                } else if (phase === 3) {
+                    text.innerText = "PAUSA";
+                    instr.innerText = "Mantén pulmones vacíos...";
+                }
+                phase = (phase + 1) % 4;
+            };
+
+            runCycle();
+            breathInterval = setInterval(runCycle, 4000);
+        }
+
+        // 4. Focus Grid
+        window.generateFocusGrid = function () {
+            const grid = document.getElementById('focusGrid');
+            grid.innerHTML = '';
+
+            const nums = Array.from({ length: 25 }, (_, i) => i);
+            // Shuffle
+            for (let i = nums.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [nums[i], nums[j]] = [nums[j], nums[i]];
+            }
+
+            let nextNum = 0;
+
+            nums.forEach(n => {
+                const cell = document.createElement('div');
+                cell.className = 'grid-cell';
+                // Pad with 0
+                cell.innerText = n < 10 ? '0' + n : n;
+
+                cell.onclick = () => {
+                    if (n === nextNum) {
+                        cell.classList.add('found');
+                        nextNum++;
+                        if (nextNum === 25) alert("¡Excelente! Foco activado.");
+                    }
+                };
+                grid.appendChild(cell);
+            });
+        }
+
+        // 5. Panic Mode
+        window.togglePanicMode = function () {
+            const overlay = document.getElementById('panicOverlay');
+            overlay.style.display = overlay.style.display === 'none' ? 'flex' : 'none';
+        }
+
+        // 6. Resources Library
+        window.renderResources = function (query = '') {
+            const list = document.getElementById('resourceLibraryList');
+            if (!list) return;
+            list.innerHTML = '';
+
+            // Safe DB Access
+            const DB = window.RESOURCES_DB || window.NEUROSHOT_DB || [];
+
+            if (DB.length === 0 && query === '') {
+                // Try to load simulated if empty/fail
+                list.innerHTML = '<div style="color:var(--text-muted); text-align:center;">Cargando librería... (Si no aparece nada, verifica resources_db.js)</div>';
+                // If mocking needed:
+                // return; 
+            }
+
+            // Simple Filter (limit 20)
+            const q = query.toLowerCase();
+            const filtered = DB.length > 0 ? DB.filter(item => item.name.toLowerCase().includes(q) || item.path.toLowerCase().includes(q)) : [];
+
+            if (filtered.length === 0 && DB.length > 0) {
+                list.innerHTML = '<div style="color:var(--text-muted);">No se encontraron recursos.</div>';
+                return;
+            }
+
+            // Cap at 20
+            filtered.slice(0, 20).forEach(res => {
+                const div = document.createElement('div');
+                div.style.cssText = "background: rgba(255,255,255,0.05); padding:10px; border-radius:6px; border:1px solid rgba(255,255,255,0.1); cursor:pointer;";
+
+                // Icon
+                let icon = '📄';
+                if (res.path.endsWith('.m4a') || res.path.endsWith('.mp3')) icon = '🎧';
+                if (res.path.endsWith('.mp4')) icon = '🎬';
+
+                div.innerHTML = `
+                    <div style="font-weight:bold; font-size:0.9rem; color: #f8fafc;">${icon} ${res.name}</div>
+                    <div style="font-size:0.75rem; color: #94a3b8; margin-top:4px;">${res.path}</div>
+                `;
+
+                div.onclick = () => {
+                    if (icon === '🎧') window.playAudio(res.path);
+                    else {
+                        alert('Abriendo recurso ' + res.name);
+                        // window.open(res.path, '_blank'); // Cannot open local files directly often in this context but try
+                    }
+                };
+
+                list.appendChild(div);
+            });
+        }
+
+        // Initial init for tools
+        document.addEventListener('DOMContentLoaded', () => {
+            // Init grid
+            generateFocusGrid();
+            // Init resources
+            renderResources('');
+        });
+    </script>
+</body>
+
+</html>

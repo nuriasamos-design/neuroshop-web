@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroShot | Estación de Autodiagnóstico Avanzada</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-panel: #1e293b;
+            --accent-green: #10b981;
+            --accent-gold: #f59e0b;
+            --accent-blue: #3b82f6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* LAYOUT */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 100vh;
+        }
+
+        @media (max-width: 768px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* SIDEBAR */
+        aside {
+            background: var(--bg-panel);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+        }
+
+        .nav-item {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+            border-color: var(--accent-green);
+        }
+
+        /* CONTENT */
+        main {
+            padding: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .card {
+            background: var(--bg-panel);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: white;
+            font-weight: 800;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-gold);
+        }
+
+        /* TOOLS: BREATHING CIRCLE */
+        .breath-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            position: relative;
+        }
+
+        .breath-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, var(--accent-green), #059669);
+            box-shadow: 0 0 50px rgba(16, 185, 129, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            transition: all 4s ease-in-out;
+            transform: scale(1);
+        }
+
+        .breath-circle.inhale {
+            transform: scale(1.8);
+            box-shadow: 0 0 80px rgba(16, 185, 129, 0.6);
+        }
+
+        .breath-circle.hold {
+            border: 5px solid white;
+        }
+
+        .breath-text {
+            margin-top: 2rem;
+            font-size: 1.2rem;
+            color: var(--accent-green);
+            height: 30px;
+        }
+
+        /* TOOLS: BODY SCAN */
+        .body-map {
+            position: relative;
+            height: 400px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .body-zone {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #334155;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .body-zone.tension {
+            background: #ef4444;
+            color: white;
+            border-color: #fca5a5;
+        }
+
+        /* DATA INPUTS */
+        .range-wrap {
+            margin: 20px 0;
+        }
+
+        input[type=range] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #334155;
+            outline: none;
+            appearance: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position:fixed; top:10px; right:10px; z-index:9999;">
+        <a href="../../toolkit_index.html"
+            style="background:#ef4444; color:white; padding:8px 15px; border-radius:6px; text-decoration:none; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.3);">✕
+            Cerrar</a>
+    </div>
+
+    <div class="main-layout">
+        <!-- SIDEBAR NAV -->
+        <aside>
+            <div style="font-size:1.2rem; font-weight:800; margin-bottom:2rem;">
+                NEURO<span style="color:var(--accent-green)">SHOT</span> <br>
+                <span style="font-size:0.8rem; font-weight:300; color:var(--text-muted)">Auto-Diagnóstico
+                    Educativo</span>
+            </div>
+
+            <button class="nav-item active" onclick="switchTab('dashboard')">📊 Panel de Control</button>
+            <button class="nav-item" onclick="switchTab('education')">📘 Aprende a Diagnosticarte</button>
+            <button class="nav-item" onclick="switchTab('breathing')">🫁 Lab. Respiración</button>
+            <button class="nav-item" onclick="switchTab('bodyscan')">🧘 Escáner Corporal</button>
+            <button class="nav-item" onclick="switchTab('report')">📝 Ficha de Autocontrol</button>
+
+            <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:10px;">RECURSOS:</p>
+                <a href="../02_CODEX_CONOCIMIENTO/04_Protocolo_Veto.pdf" target="_blank"
+                    style="display:block; font-size:0.8rem; color:var(--accent-blue); margin-bottom:5px; text-decoration:none;">📄
+                    Protocolo Veto</a>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main>
+
+            <!-- 1. DASHBOARD -->
+            <div id="tab_dashboard" class="tab-content">
+                <div class="card">
+                    <!-- CONTEXT SELECTOR -->
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:15px;">
+                        <div>
+                            <h2 style="margin:0;">Panel de Regulación</h2>
+                            <span id="contextDisplay"
+                                style="font-size:0.8rem; color:var(--accent-gold); font-weight:bold;">ENTRENAMIENTO</span>
+                        </div>
+                        <div style="display:flex; gap:5px;">
+                            <button id="btn-training" class="ctx-btn active" onclick="setContext('training')"
+                                style="padding:5px 10px; border-radius:4px; font-size:0.7rem; cursor:pointer; border:1px solid #334155; background:var(--bg-dark); color:white;">
+                                🏋️ Entreno
+                            </button>
+                            <button id="btn-pre_comp" class="ctx-btn" onclick="setContext('pre_comp')"
+                                style="padding:5px 10px; border-radius:4px; font-size:0.7rem; cursor:pointer; border:1px solid #334155; background:var(--bg-dark); color:white;">
+                                🚌 Viaje
+                            </button>
+                            <button id="btn-competition" class="ctx-btn" onclick="setContext('competition')"
+                                style="padding:5px 10px; border-radius:4px; font-size:0.7rem; cursor:pointer; border:1px solid #334155; background:var(--bg-dark); color:white;">
+                                🏆 Competición
+                            </button>
+                        </div>
+                        <style>
+                            .ctx-btn.active {
+                                background: var(--accent-blue) !important;
+                                border-color: var(--accent-blue) !important;
+                            }
+                        </style>
+                    </div>
+
+                    <p style="color:var(--text-muted); margin-bottom:2rem;">
+                        Utiliza este panel para registrar tu estado actual. Si no sabes cómo puntuarte, visita la
+                        pestaña <strong>"Aprende a Diagnosticarte"</strong>.
+                    </p>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                        <div style="background:rgba(0,0,0,0.2); padding:1.5rem; border-radius:8px;">
+                            <label style="display:block; margin-bottom:10px; color:var(--accent-gold);">Nivel de
+                                Activación (1-10)</label>
+                            <input type="range" min="1" max="10" value="5" id="activationInput"
+                                oninput="updateActivation(this.value)">
+                            <div style="text-align:center; font-size:2rem; font-weight:bold; margin-top:10px;"
+                                id="actVal">5</div>
+                            <small style="display:block; text-align:center; color:#64748b;">(1=Dormido ...
+                                10=Pánico)</small>
+                        </div>
+
+                        <div style="background:rgba(0,0,0,0.2); padding:1.5rem; border-radius:8px;">
+                            <label style="display:block; margin-bottom:10px; color:var(--accent-green);">Calidad del
+                                Foco</label>
+                            <select id="focusInput"
+                                style="width:100%; padding:10px; background:#0f172a; color:white; border:1px solid #334155; border-radius:4px;">
+                                <option value="disperso">Disperso (Ruido Mental Externo)</option>
+                                <option value="interno_negativo">Interno Negativo (Dudas/Miedo)</option>
+                                <option value="interno_positivo">Interno Positivo (Instrucciones Claras)</option>
+                                <option value="flow">Flow / Automático (Sin Pensamiento)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="border-left: 4px solid var(--accent-blue);">
+                    <h3>🧠 Análisis del Instructor</h3>
+                    <div id="aiDiagnosisText" style="margin-top:1rem; line-height:1.6;">
+                        <em>Ajusta tu nivel de activación para recibir feedback...</em>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. EDUCATION TAB (NEW) -->
+            <div id="tab_education" class="tab-content" style="display:none;">
+                <div class="card">
+                    <h2>📖 Cómo Diagnosticar tu Nivel de Activación</h2>
+                    <p>La "Activación" es la cantidad de energía física y mental que tienes en este momento. No existen
+                        niveles "malos", solo niveles inadecuados para la tarea.</p>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:20px;">
+                    <!-- LOW -->
+                    <div
+                        style="background:rgba(59, 130, 246, 0.1); padding:15px; border-radius:8px; border:1px solid #3b82f6;">
+                        <h4 style="color:#60a5fa;">BAJA (1-3)</h4>
+                        <ul style="font-size:0.9rem; margin-top:10px; padding-left:20px; color:#cbd5e1;">
+                            <li>Bostezo frecuente.</li>
+                            <li>Sensación de cuerpo pesado.</li>
+                            <li>Pensamiento lento o desconectado.</li>
+                            <li>Falta de ganas de empezar.</li>
+                        </ul>
+                    </div>
+                    <!-- OPTIMAL -->
+                    <div
+                        style="background:rgba(16, 185, 129, 0.1); padding:15px; border-radius:8px; border:1px solid #10b981;">
+                        <h4 style="color:#34d399;">ÓPTIMA (4-7)</h4>
+                        <ul style="font-size:0.9rem; margin-top:10px; padding-left:20px; color:#cbd5e1;">
+                            <li>Sensación de "estar listo".</li>
+                            <li>Músculos activos pero sueltos.</li>
+                            <li>Corazón late fuerte pero controlado.</li>
+                            <li>Claridad mental.</li>
+                        </ul>
+                    </div>
+                    <!-- HIGH -->
+                    <div
+                        style="background:rgba(239, 68, 68, 0.1); padding:15px; border-radius:8px; border:1px solid #ef4444;">
+                        <h4 style="color:#f87171;">ALTA (8-10)</h4>
+                        <ul style="font-size:0.9rem; margin-top:10px; padding-left:20px; color:#cbd5e1;">
+                            <li>Manos sudorosas o temblorosas.</li>
+                            <li>Respiración corta y alta (pecho).</li>
+                            <li>"Visión de túnel" (no ves detalles).</li>
+                            <li>Pensamientos acelerados/catastrofistas.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top:20px;">
+                    <h3>¿Cómo puntuarte?</h3>
+                    <p>Cierra los ojos 5 segundos y escanea tu cuerpo:</p>
+                    <ol style="margin-left:20px; margin-top:10px;">
+                        <li>¿Sientes el corazón golpeando el pecho? (+ Puntos)</li>
+                        <li>¿Estás apretando la mandíbula? (+ Puntos)</li>
+                        <li>¿Te sientes con sueño? (- Puntos)</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- 3. BREATHING LAB -->
+            <div id="tab_breathing" class="tab-content" style="display:none;">
+                <div class="card">
+                    <h2>Regulación Respiratoria (Protocolo 4-7-8)</h2>
+                    <p style="font-size:0.9rem; color:var(--text-muted);">
+                        Herramienta para reducir ACTIVACIÓN ALTA. Activa el freno vagal del corazón.
+                    </p>
+
+                    <div class="breath-container">
+                        <div id="breathCircle" class="breath-circle">INHALA</div>
+                        <div id="breathText" class="breath-text">Prepárate...</div>
+                    </div>
+
+                    <button class="nav-item"
+                        style="text-align:center; background:var(--accent-blue); color:white; font-weight:bold;"
+                        onclick="startBreathing()">
+                        ▶ INICIAR SECUENCIA (3 Ciclos)
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4. BODY SCAN -->
+            <div id="tab_bodyscan" class="tab-content" style="display:none;">
+                <div class="card">
+                    <h2>Escáner de Tensión Muscular (Método Jacobson)</h2>
+                    <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem;">
+                        <strong>INSTRUCCIONES:</strong> Si no "sientes" el músculo, tensalo al máximo 3 segundos y
+                        suelta. Si notas dolor o rigidez residual, márcalo abajo. Busca la "sensación de pesadez".
+                    </p>
+
+                    <div class="body-map" style="flex-direction: column; gap: 10px;">
+                        <div style="display:flex; gap:20px;">
+                            <div class="body-zone" onclick="toggleTension(this, 'Trapecios')">Trapecios / Cuello</div>
+                            <div class="body-zone" onclick="toggleTension(this, 'Mandibula')">Mandíbula</div>
+                        </div>
+                        <div style="display:flex; gap:20px;">
+                            <div class="body-zone" onclick="toggleTension(this, 'Hombro Der')">Hombro Armado</div>
+                            <div class="body-zone" onclick="toggleTension(this, 'Pecho')">Pecho</div>
+                        </div>
+                        <div style="display:flex; gap:20px;">
+                            <div class="body-zone" onclick="toggleTension(this, 'Abdomen')">Abdomen</div>
+                            <div class="body-zone" onclick="toggleTension(this, 'Manos')">Grip / Manos</div>
+                        </div>
+                        <div style="display:flex; gap:20px;">
+                            <div class="body-zone" onclick="toggleTension(this, 'Piernas')">Piernas / Estabilidad</div>
+                        </div>
+                    </div>
+
+                    <div id="tensionSummary" style="margin-top:1rem; font-weight:bold; color:var(--accent-gold);">
+                        Zonas Activas: Ninguna
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. REPORT -->
+            <div id="tab_report" class="tab-content" style="display:none;">
+                <div class="card">
+                    <h2>Ficha de Autocontrol</h2>
+                    <p>Informe educativo detallado sobre tu estado actual.</p>
+
+                    <textarea id="finalReport"
+                        style="width:100%; height:300px; background:#0f172a; color:white; border:1px solid #334155; padding:1rem; border-radius:8px; font-family:monospace; line-height:1.4;"
+                        readonly></textarea>
+
+                    <button class="nav-item"
+                        style="text-align:center; margin-top:1rem; background:var(--accent-green); color:#064e3b; font-weight:bold;"
+                        onclick="generateReport()">
+                        🔄 GENERAR ANÁLISIS COMPLETO
+                    </button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // --- STATE ---
+        let activeTensions = [];
+        let activationLevel = 5;
+        let selectedFocus = "disperso";
+        let currentContext = "training"; // training, pre_comp, competition
+
+        // --- 0. BUCETA & FERNANDO KNOWLEDGE BASE (REAL RESOURCES) ---
+        // Paths relative to root (verified via audit)
+        const RESOURCES = {
+            audio_calib: "../99_RECURSOS_MULTIMEDIA/Audio/MP4/Fernando 1..mp4", // Grip, Stance, Calm
+            audio_pressure: "../99_RECURSOS_MULTIMEDIA/Audio/MP4/Fernando dos..mp4", // Pressure, Finals
+            video_mind: "../99_RECURSOS_MULTIMEDIA/Video/MP4/mente invencible.mp4", // Motivation
+            pdf_veto: "../02_CODEX_CONOCIMIENTO/04_Protocolo_Veto.pdf"
+        };
+
+        const EXPERT_MATRIX = {
+            training: {
+                high_act: {
+                    title: "Sobrecarga en Entrenamiento",
+                    advice: "El entrenamiento es para adquirir habilidad, no para sufrir. Si estás alterado, estás grabando errores.",
+                    action: "🛑 PARA. Haz 3 minutos de Respiración Abdominal (Tab 3). Luego, trabaja en seco 'Solo Miras'.",
+                    media: { title: "Escuchar: Calibración Base (Fernando)", src: RESOURCES.audio_calib, t: 0, end: 120 }
+                },
+                low_act: {
+                    title: "Apatía / Aburrimiento",
+                    advice: "Sin activación no hay aprendizaje. El cerebro borra lo que considera irrelevante.",
+                    action: "⚡ SUBE EL RETO. Dispara a 'Blanco Vuelto' o reduce el tiempo de serie a 8s.",
+                    media: { title: "Ver: Mente Invencible (Activación)", src: RESOURCES.video_mind, t: 260, end: 320 }
+                }
+            },
+            pre_comp: { // Travel, Hotel, Bus
+                high_act: {
+                    title: "Ansiedad Anticipatoria (Pre-Comp)",
+                    advice: "Tu mente está viajando al futuro ('¿Y si fallo?'). El futuro no existe.",
+                    action: "🧘 RELAJACIÓN PROFUNDA. No intentes 'no pensar'. Ocupa tu mente con la voz guía.",
+                    // REPLACED VOZ DE ROUS WITH FERNANDO CALM SEGMENT
+                    media: { title: "Escuchar: Calma Focalizada (Fernando)", src: RESOURCES.audio_calib, t: 300, end: 420 }
+                },
+                low_act: {
+                    title: "Exceso de Confianza / Letargo",
+                    advice: "Cuidado. El cuerpo necesita 'Tono de Combate'. No te duermas.",
+                    action: "👀 VISUALIZACIÓN ACTIVA. Repasa tu plan de competición paso a paso en tu mente.",
+                    media: null
+                }
+            },
+            competition: { // Match Day
+                high_act: {
+                    title: "Pánico / Bloqueo en Competición",
+                    advice: "La presión es una interpretación. Tu habilidad técnica sigue ahí, solo está 'nublada' por el ruido.",
+                    action: "🌬️ RESPIRACIÓN TÁCTICA. Inhala 4s, Exhala 8s. Siente el peso del arma. Dispara UNO a la vez.",
+                    media: { title: "Escuchar: Gestión de Presión (Fernando 2)", src: RESOURCES.audio_pressure, t: 75, end: 180 }
+                },
+                low_act: { // Rare but possible
+                    title: "Desconexión Competitiva",
+                    advice: "¿Te has rendido ya? Si no te importa el resultado, no hay tensión, pero tampoco hay precisión.",
+                    action: "👊 ANCLAJE FÍSICO. Golpea suavemente tu muslo. Di 'AQUÍ AHORA'.",
+                    media: null
+                }
+            }
+        };
+
+        // --- TABS LOGIC ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.getElementById('tab_' + tabId).style.display = 'block';
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            // Highlight button logic
+        }
+
+        // --- CONTEXT LOGIC ---
+        function setContext(ctx) {
+            currentContext = ctx;
+            document.querySelectorAll('.ctx-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-' + ctx).classList.add('active');
+
+            // Visual Feedback
+            const map = { 'training': 'ENTRENAMIENTO', 'pre_comp': 'PRE-COMPETICIÓN (Viaje)', 'competition': 'DÍA DE COMPETICIÓN' };
+            document.getElementById('contextDisplay').innerText = map[ctx];
+
+            analyzeState();
+        }
+
+        // --- DASHBOARD LOGIC ---
+        function updateActivation(val) {
+            activationLevel = parseInt(val);
+            document.getElementById('actVal').innerText = val;
+            analyzeState();
+        }
+
+        document.getElementById('focusInput').addEventListener('change', (e) => {
+            selectedFocus = e.target.value;
+            analyzeState();
+        });
+
+        function analyzeState() {
+            const diag = document.getElementById('aiDiagnosisText');
+            let content = "";
+            let color = "";
+            let data = null;
+
+            // 1. SELECT MATRIX DATA
+            const ctxData = EXPERT_MATRIX[currentContext];
+
+            if (activationLevel >= 7) data = ctxData.high_act;
+            else if (activationLevel <= 3) data = ctxData.low_act;
+
+            // 2. RENDER
+            if (data) {
+                // EXTREME STATES (High/Low)
+                color = (activationLevel >= 7) ? "#ef4444" : "#3b82f6";
+                content = `
+                    <strong style="color:${color}; font-size:1.1rem;">${data.title}</strong>
+                    <p style="margin:10px 0; font-style:italic;">"${data.advice}"</p>
+                    <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:5px; border-left:3px solid ${color};">
+                        <strong>ACCIÓN:</strong> ${data.action}
+                    </div>
+                `;
+                if (data.media) {
+                    // Start/End Logic for UI
+                    const tStart = formatTime(data.media.t);
+                    const tEnd = formatTime(data.media.end);
+
+                    content += `
+                        <div style="margin-top:10px;">
+                            <button onclick="playReferenceVideo('${data.media.src.replace(/\\/g, '/')}', ${data.media.t}, ${data.media.end})" class="media-link" style="width:100%; text-align:left; cursor:pointer; background:rgba(255,255,255,0.1); border:1px solid #334155; padding:8px; border-radius:4px; color:#93c5fd;">
+                                ▶ ${data.media.title} <br>
+                                <span style="font-size:0.8rem; opacity:0.7;">Segmento Auto: ${tStart} - ${tEnd}</span>
+                            </button>
+                        </div>
+                    `;
+                }
+            } else {
+                // OPTIMAL RANGE (4-6)
+                // Use Focus to fine tune
+                if (selectedFocus === "interno_negativo") {
+                    content = `<strong style="color:#f59e0b">CUIDADO: Foco Interno Negativo</strong><br>Estás tranquilo pero pensando en errores. Cambia a foco "Externo" (Miras, Blanco).`;
+                } else {
+                    content = `<strong style="color:#10b981">✅ ZONA DE RENDIMIENTO (FLOW)</strong><br>Condiciones ideales para ${currentContext.toUpperCase()}.<br>Confía en tu automatización.`;
+                }
+            }
+
+            diag.innerHTML = `<div>${content}</div>`;
+        }
+
+
+        // --- BREATHING LOGIC (DIAFRAGMATICA - APROBADA) ---
+        // 4s Inhale / 8s Exhale (Parasympathic focus)
+        function startBreathing() {
+            const circle = document.getElementById('breathCircle');
+            const text = document.getElementById('breathText');
+            let cycles = 0;
+
+            const runCycle = () => {
+                if (cycles >= 3) {
+                    text.innerText = "Ciclo Completado. Revisa tu pulso.";
+                    circle.className = 'breath-circle';
+                    circle.innerText = "FIN";
+                    analyzeState();
+                    return;
+                }
+                // INHALA (4s)
+                text.innerText = "INHALA (Abdomen Hinchado)";
+                circle.className = 'breath-circle inhale';
+                circle.innerText = "Inspira";
+                setTimeout(() => {
+                    // EXHALA (8s) - Lenta y controlada
+                    text.innerText = "EXHALA (Suelta hombros...)";
+                    circle.className = 'breath-circle'; // Scale down slowly
+                    // We need a transition for 8s, CSS matches generic, let's just force wait
+                    circle.style.transition = "all 8s ease-out";
+                    circle.innerText = "Suelta";
+
+                    setTimeout(() => {
+                        circle.style.transition = "all 4s ease-in-out"; // Reset
+                        cycles++;
+                        runCycle();
+                    }, 8000);
+                }, 4000);
+            };
+            runCycle();
+        }
+
+        // --- BODY SCAN LOGIC (JACOBSON) ---
+        function toggleTension(el, zone) {
+            if (activeTensions.includes(zone)) {
+                activeTensions = activeTensions.filter(z => z !== zone);
+                el.classList.remove('tension');
+            } else {
+                activeTensions.push(zone);
+                el.classList.add('tension');
+            }
+            updateScanStatus();
+        }
+
+        function updateScanStatus() {
+            const status = document.getElementById('tensionSummary');
+            if (activeTensions.length === 0) status.innerText = "Zonas Activas: Ninguna";
+            else status.innerText = `Zonas Activas: ${activeTensions.join(", ")}`;
+        }
+
+        // --- REPORT LOGIC ---
+        function generateReport() {
+            const date = new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString();
+
+            let report = `📋 REPORTE NEUROSHOT | AUTO-REGULACIÓN\n`;
+            report += `📅 ${date} | 🌍 CONTEXTO: ${currentContext.toUpperCase()}\n`;
+            report += `👤 ESTADO: ${activationLevel}/10 | FOCO: ${selectedFocus}\n`;
+            report += `--------------------------------------------------\n`;
+
+            // Get current diagnosis advice
+            const diagDiv = document.getElementById('aiDiagnosisText');
+            // Clean HTML tags for text report
+            const adviceText = diagDiv.innerText.replace(/\n\s*\n/g, '\n').trim();
+
+            report += `🧠 DIAGNÓSTICO & ACCIÓN:\n${adviceText}\n`;
+
+            if (activeTensions.length > 0) report += `\n⚠️ FÍSICO: Tensión detectada en ${activeTensions.join(", ")}.\n`;
+            else report += `\n✅ FÍSICO: Tono muscular óptimo.\n`;
+
+            report += `--------------------------------------------------\n`;
+            report += `Guardado en historial.`;
+
+            // RENDER & SAVE
+            document.getElementById('finalReport').value = report;
+
+            // INTEGRATION
+            try {
+                const reports = JSON.parse(localStorage.getItem('neuroshot_reports') || '[]');
+                reports.push({
+                    id: Date.now(),
+                    date: date,
+                    context: currentContext,
+                    activation: activationLevel,
+                    tensions: activeTensions,
+                    focus: selectedFocus,
+                    full_text: adviceText
+                });
+                localStorage.setItem('neuroshot_reports', JSON.stringify(reports));
+            } catch (e) { console.error(e); }
+
+            switchTab('report');
+        }
+
+        // Init
+        updateActivation(5);
+    </script>
+</body>
+
+</html>

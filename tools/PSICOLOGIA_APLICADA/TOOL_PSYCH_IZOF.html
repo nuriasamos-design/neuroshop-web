@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroShot | Análisis IZOF Pro</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/neuroshot_ui_kit.css">
+    <style>
+        body {
+            background: #0f172a;
+            color: #f8fafc;
+            font-family: 'Outfit', sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fbbf24;
+        }
+
+        .card {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid #334155;
+        }
+
+        .card h2 {
+            color: #fbbf24;
+            margin-top: 0;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .input-field {
+            background: #334155;
+            border: 1px solid #475569;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            width: 100%;
+        }
+
+        .btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #bdc3c7;
+            color: #bdc3c7;
+        }
+
+        .zone-display {
+            text-align: center;
+            padding: 20px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 8px;
+            border: 1px solid #10b981;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .zone-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #10b981;
+        }
+
+        .rec-box {
+            margin-top: 15px;
+            padding: 15px;
+            background: #334155;
+            border-radius: 6px;
+        }
+
+        .rec-title {
+            color: #38bdf8;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .close-btn {
+            text-decoration: none;
+            color: #ef4444;
+            font-weight: 600;
+            border: 1px solid #ef4444;
+            padding: 5px 15px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <div class="brand">📊 IZOF Analyzer Pro</div>
+            <a href="../../toolkit_index.html" class="close-btn">✕ Salir</a>
+        </div>
+
+        <!-- EXPLANATION -->
+        <div class="card">
+            <h2>¿Qué es la IZOF?</h2>
+            <p style="color: #cbd5e1; line-height: 1.5;">La <strong>Zona Individual de Funcionamiento Óptimo</strong> no
+                es "relajarse siempre". Cada tirador tiene un nivel de nervios (activación) donde rinde mejor. Algunos
+                necesitan calma total (zona baja), otros necesitan "fuego" (zona alta).</p>
+            <p style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">👇 Esta herramienta te ayuda a descubrir TU
+                zona analizando tus mejores tiradas.</p>
+        </div>
+
+        <!-- INPUT DATA -->
+        <div class="card">
+            <h3>1. Ingresa tus 3 Mejores Marcas Recientes</h3>
+            <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 15px;">Si no las recuerdas exactas, estima el
+                nivel de nervios (0=Dormido, 10=Pánico) que sentiste.</p>
+
+            <div class="input-grid">
+                <input type="number" id="sc1" class="input-field" placeholder="Puntos (Ej: 570)">
+                <input type="number" id="anx1" class="input-field" placeholder="Nervios (0-10)">
+
+                <input type="number" id="sc2" class="input-field" placeholder="Puntos (Ej: 568)">
+                <input type="number" id="anx2" class="input-field" placeholder="Nervios (0-10)">
+
+                <input type="number" id="sc3" class="input-field" placeholder="Puntos (Ej: 572)">
+                <input type="number" id="anx3" class="input-field" placeholder="Nervios (0-10)">
+            </div>
+            <button onclick="calculateIZOF()" class="btn" style="width: 100%;">⚡ Calcular Mi Zona Óptima</button>
+        </div>
+
+        <!-- RESULT & ACTION -->
+        <div class="card" id="resultCard" style="display:none;">
+            <h3 style="text-align:center;">Resultados del Análisis</h3>
+
+            <div class="zone-display" id="zoneDisplay">
+                <div>Tu Nivel de Activación Ideal es:</div>
+                <div class="zone-value" id="optimalVal">0.0</div>
+                <div id="zoneDesc" style="color: #cbd5e1; margin-top: 5px;">--</div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <canvas id="izofChart"></canvas>
+            </div>
+
+            <!-- RECOMENDACIONES -->
+            <h4 style="margin-top: 30px; border-top: 1px solid #475569; padding-top: 15px;">🛠️ Herramientas Sugeridas
+                (Database)</h4>
+            <div id="recommendations">
+                <!-- Injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGIC -->
+    <script src="../../js/session_db.js"></script>
+    <script>
+        let myChart = null;
+
+        function calculateIZOF() {
+            // 1. Get Data
+            const inputs = [
+                { s: Number(document.getElementById('sc1').value), a: Number(document.getElementById('anx1').value) },
+                { s: Number(document.getElementById('sc2').value), a: Number(document.getElementById('anx2').value) },
+                { s: Number(document.getElementById('sc3').value), a: Number(document.getElementById('anx3').value) }
+            ];
+
+            // Validate
+            if (inputs.some(i => i.s === 0)) return alert("Por favor, rellena las 3 puntuaciones.");
+
+            // 2. Calc Average Anxiety
+            const avgAnx = (inputs.reduce((sum, i) => sum + i.a, 0) / 3).toFixed(1);
+
+            // 3. Display Result
+            document.getElementById('resultCard').style.display = 'block';
+            document.getElementById('zoneDisplay').style.display = 'block';
+            document.getElementById('optimalVal').innerText = avgAnx + "/10";
+
+            let desc = "";
+            let strategy = "";
+
+            if (avgAnx < 4) {
+                desc = "Rindes mejor en CALMA TOTAL. Necesitas desactivarte antes de tirar.";
+                strategy = "low";
+            } else if (avgAnx >= 4 && avgAnx <= 7) {
+                desc = "Rindes mejor con ACTIVACIÓN MEDIA. Necesitas tensión competitiva pero controlada.";
+                strategy = "med";
+            } else {
+                desc = "Rindes mejor con ALTA INTENSIDAD (Adrenalina). Eres un 'Guerrero', no te relajes demasiado.";
+                strategy = "high";
+            }
+            document.getElementById('zoneDesc').innerText = desc;
+
+            // 4. Recommendations from DB
+            renderRecommendations(strategy);
+
+            // 5. Chart
+            renderChart(inputs, avgAnx);
+        }
+
+        function renderRecommendations(strat) {
+            const container = document.getElementById('recommendations');
+            container.innerHTML = '';
+
+            // Fetch tools from global DB
+            // If DB not loaded, use fallback (should be loaded via script tag)
+            const tools = window.NEUROSHOT_DB ? window.NEUROSHOT_DB.mental_tools : [];
+
+            let filterFn = t => true;
+            if (strat === 'low') filterFn = t => t.type === 'regulation' || t.tags.includes('parasimpatico');
+            if (strat === 'high') filterFn = t => t.type === 'activation' || t.tags.includes('activacion');
+            if (strat === 'med') filterFn = t => t.type === 'visualization' || t.tags.includes('flow');
+
+            const recs = tools.filter(filterFn).slice(0, 2);
+
+            if (recs.length === 0) {
+                container.innerHTML = '<p class="text-muted">No hay herramientas específicas en la DB para este perfil.</p>';
+            } else {
+                recs.forEach(t => {
+                    container.innerHTML += `
+                    <div class="rec-box">
+                        <div class="rec-title">🔹 ${t.name}</div>
+                        <div style="font-size:0.8rem; color:#cbd5e1;">${t.desc}</div>
+                    </div>
+                `;
+                });
+            }
+        }
+
+        function renderChart(data, avg) {
+            const ctx = document.getElementById('izofChart').getContext('2d');
+
+            if (myChart) myChart.destroy();
+
+            myChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Tus Picos de Rendimiento',
+                        data: data.map(d => ({ x: d.a, y: d.s })),
+                        backgroundColor: '#fbbf24',
+                        pointRadius: 8
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'linear', position: 'bottom',
+                            title: { display: true, text: 'Nervios (0-10)', color: '#94a3b8' },
+                            min: 0, max: 10,
+                            grid: { color: 'rgba(255,255,255,0.1)' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Puntuación', color: '#94a3b8' },
+                            grid: { color: 'rgba(255,255,255,0.1)' }
+                        }
+                    },
+                    plugins: {
+                        annotation: {
+                            annotations: {
+                                line1: {
+                                    type: 'line',
+                                    xMin: avg, xMax: avg,
+                                    borderColor: '#10b981', borderWidth: 2,
+                                    borderDash: [5, 5],
+                                    label: { content: 'Tu Zona Óptima', enabled: true }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+
+</html>

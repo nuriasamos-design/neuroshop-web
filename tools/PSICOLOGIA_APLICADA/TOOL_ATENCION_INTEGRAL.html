@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroShot | Laboratorio de Atención Integral</title>
+    <link rel="stylesheet" href="../css/neuroshot_ui_kit.css">
+    <style>
+        /* Base styles removed - using UI Kit */
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: rgba(10, 10, 10, 0.8);
+            padding: 20px;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 100;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--neuro-green);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-header {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            text-align: left;
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-btn.active {
+            background: var(--neuro-blue);
+            color: white;
+        }
+
+        /* MAIN */
+        .main {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            position: relative;
+            background: #000;
+        }
+
+        .module {
+            display: none;
+            max-width: 900px;
+            margin: 0 auto;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .module.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            color: var(--text);
+            font-size: 2rem;
+        }
+
+        p.desc {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            max-width: 700px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--neuro-green);
+            color: #064e3b;
+        }
+
+        /* --- RIGID CANDLE CONTAINER --- */
+        .candle-wrapper {
+            width: 100%;
+            height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, rgba(30, 30, 30, 1) 0%, rgba(0, 0, 0, 1) 80%);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.9);
+        }
+
+        /* The critical stage that locks everything together */
+        .candle-stage {
+            position: relative;
+            width: 300px;
+            height: 500px;
+            /* border: 1px solid rgba(255,0,0,0.2); Debug Line */
+        }
+
+        /* Canvas covers the stage perfectly */
+        #fireCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* Elements are positioned relative to the STAGE, not the wrapper */
+        .r-body {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 180px;
+            background: linear-gradient(to right, #e2e8f0, #f8fafc 40%, #94a3b8);
+            border-radius: 8px;
+            z-index: 5;
+            box-shadow: inset -5px 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .r-holder {
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 40px;
+            background: radial-gradient(circle at 40% 10%, #444, #111);
+            border-radius: 50%;
+            z-index: 4;
+            box-shadow: 0 10px 30px black;
+        }
+
+        .r-wick {
+            position: absolute;
+            bottom: 280px;
+            /* 100(bottom) + 180(height) = 280 top edge of wax */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 15px;
+            background: #111;
+            z-index: 6;
+        }
+
+
+        /* --- OBSERVATION --- */
+        .image-box {
+            width: 100%;
+            height: 500px;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid #334155;
+        }
+
+        .image-box img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* --- SCANNER --- */
+        .scan-container {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+
+        .body-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .scan-item {
+            padding: 15px;
+            background: #1e293b;
+            border-radius: 8px;
+            border-left: 4px solid #334155;
+            transition: 0.3s;
+            opacity: 0.5;
+            color: #94a3b8;
+        }
+
+        .scan-item.active {
+            opacity: 1;
+            border-left-color: var(--neuro-green);
+            background: #064e3b;
+            color: white;
+            transform: translateX(10px);
+        }
+
+        .audio-ctrl {
+            background: #020617;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #334155;
+        }
+
+        /* --- OTHERS --- */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            max-width: 450px;
+            margin: 0 auto;
+            aspect-ratio: 1;
+        }
+
+        .grid-cell {
+            background: var(--bg-panel);
+            border: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            color: var(--text);
+        }
+
+        .grid-cell.found {
+            background: var(--neuro-green);
+            color: #064e3b;
+        }
+
+        .reaction-area {
+            width: 100%;
+            height: 400px;
+            background: #334155;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            cursor: pointer;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .reaction-area.go {
+            background: #22c55e;
+        }
+
+        .reaction-area.wait {
+            background: #ef4444;
+        }
+
+        /* --- UTILITY CLASSES REPLACING INLINE STYLES --- */
+        .btn-center-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .overlay-timer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            flex-direction: column;
+        }
+
+        .full-fit-img {
+            object-fit: contain;
+            width: 100%;
+            height: 100%;
+        }
+
+        .audio-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .upload-input {
+            width: 200px;
+            display: none;
+        }
+
+        .btn-upload-warn {
+            background: #dc2626;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .audio-player {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .center-flex-1 {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .back-btn {
+            margin-top: auto;
+            color: var(--neuro-green);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .time-display {
+            font-size: 2rem;
+        }
+
+        .circle-breath {
+            width: 250px;
+            height: 250px;
+            border: 6px solid var(--neuro-blue);
+            border-radius: 50%;
+            margin: 40px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: breathe-anim 16s infinite;
+        }
+
+        .breath-text {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .waiting-text {
+            color: white;
+        }
+
+        /* UTILITY CLASSES */
+        .icon-lg {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .recall-section {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .audio-title {
+            margin: 0;
+            color: var(--neuro-blue);
+        }
+
+        .mt-20 {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position:fixed; top:10px; right:10px; z-index:9999;">
+        <a href="../../toolkit_index.html"
+            style="background:#ef4444; color:white; padding:8px 15px; border-radius:6px; text-decoration:none; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.3);">✕
+            Cerrar</a>
+    </div>
+
+    <div class="sidebar">
+        <div class="logo">🧠 NeuroShot Lab</div>
+
+        <div class="nav-header">Foco Sostenido</div>
+        <button class="nav-btn active" onclick="switchModule('vela')">🕯️ La Vela (Real Physics)</button>
+        <button class="nav-btn" onclick="switchModule('observacion')">🖼️ Observación</button>
+
+        <div class="nav-header">Agilidad/Control</div>
+        <button class="nav-btn" onclick="switchModule('rejilla')">🔢 Rejilla Schulte</button>
+        <button class="nav-btn" onclick="switchModule('reaccion')">⚡ Reacción</button>
+
+        <div class="nav-header">Psicofísico</div>
+        <button class="nav-btn" onclick="switchModule('escaner')">🧘 Escáner Técnico</button>
+        <button class="nav-btn" onclick="switchModule('respiracion')">🌬️ Box Breathing</button>
+
+        <button class="nav-btn back-btn" onclick="location.href='../APP_DIARIO_MOVIL.html'">⬅️ Volver al
+            Diario</button>
+    </div>
+
+    <div class="main" id="mainArea">
+
+        <!-- 1. VELA ALIGNED -->
+        <div id="mod_vela" class="module active">
+            <h2>🕯️ Estabilidad Atencional (Física Real)</h2>
+            <p class="desc">Simulación de partículas. Alineación perfecta. Fija tu mirada en el núcleo.</p>
+
+            <div class="candle-wrapper">
+                <!-- Lock container -->
+                <div class="candle-stage" id="candleStage">
+                    <canvas id="fireCanvas" width="300" height="500"></canvas>
+                    <div class="r-wick"></div>
+                    <div class="r-body"></div>
+                    <div class="r-holder"></div>
+                </div>
+            </div>
+
+            <div class="btn-center-container">
+                <button class="btn btn-primary" onclick="alert('Ejercicio continuo. Concéntrate.')">⏱️ EJERCICIO
+                    ACTIVO</button>
+            </div>
+        </div>
+
+        <!-- 2. OBSERVACION -->
+        <div id="mod_observacion" class="module">
+            <h2>🖼️ Detalle y Texturas</h2>
+            <p class="desc">Memoria visual técnica. Observa materiales durante 10s.</p>
+            <div class="image-box">
+                <div id="observeOverlay" class="overlay-timer">
+                    <div class="icon-lg">👁️</div>
+                    <button class="btn btn-primary" onclick="startObservation()">MOSTRAR IMAGEN</button>
+                </div>
+                <!-- LOCAL ASSETS -->
+                <img id="obsImage" src="../01_DIRECCION_TECNICA/00_ASSETS_WEB/imagen robot.png" class="full-fit-img">
+            </div>
+            <div id="recallSection" class="recall-section">
+                <textarea rows="5" placeholder="Describe texturas..."></textarea>
+                <button class="btn btn-primary"
+                    onclick="document.getElementById('observeOverlay').style.display='none'">VERIFICAR</button>
+            </div>
+        </div>
+
+        <!-- 3. SCANNER TECNICO -->
+        <div id="mod_escaner" class="module">
+            <h2>🧘 Escáner Técnico de Desactivación</h2>
+            <p class="desc">Chequeo progresivo. Si falta audio, usa botón rojo.</p>
+
+            <div class="audio-ctrl">
+                <div class="audio-header">
+                    <h3 class="audio-title">🔊 Audio Guía</h3>
+                    <input type="file" id="audioUpload" accept="audio/*" class="upload-input"
+                        onchange="loadUserAudio(this)">
+                    <button class="btn btn-upload-warn" onclick="document.getElementById('audioUpload').click()">⚠️
+                        Cargar Audio Perdido</button>
+                </div>
+                <audio id="mainAudio" controls class="audio-player">
+                    <source src="../03_LABORATORIO_AUDIO/CALIBRACIÓN NEURO-MECÁNICA.mp3" type="audio/mpeg">
+                    Tu navegador no soporta audio.
+                </audio>
+            </div>
+
+            <div class="scan-container">
+                <div class="body-list" id="scanList">
+                    <div class="scan-item" id="zone1">
+                        <h4>1. PIES Y APOYO</h4><small>Estabilidad del suelo, centro de gravedad.</small>
+                    </div>
+                    <div class="scan-item" id="zone2">
+                        <h4>2. RODILLAS Y CADERA</h4><small>Bloqueo suave, sin tensión excesiva.</small>
+                    </div>
+                    <div class="scan-item" id="zone3">
+                        <h4>3. HOMBROS Y CUELLO</h4><small>Hombros bajos, trapecios relajados.</small>
+                    </div>
+                    <div class="scan-item" id="zone4">
+                        <h4>4. BRAZO Y MUÑECA</h4><small>Tono muscular justo para sostener.</small>
+                    </div>
+                    <div class="scan-item" id="zone5">
+                        <h4>5. DEDO ÍNDICE</h4><small>Aislar movimiento, sensibilidad en la yema.</small>
+                    </div>
+                </div>
+                <div class="center-flex-1">
+                    <button class="btn btn-primary" onclick="startScannerAnim()">▶️ INICIAR GUIADO VISUAL</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. REJILLA -->
+        <div id="mod_rejilla" class="module">
+            <h2>🔢 Rejilla Schulte</h2>
+            <p class="desc">Agilidad visual. Encuentra 1-25.</p>
+            <div id="gridContainer" class="grid-container"></div>
+            <center class="mt-20"><button class="btn btn-primary" onclick="initGrid()">🔄 NUEVA</button>
+            </center>
+        </div>
+
+        <!-- 5. REACCION -->
+        <div id="mod_reaccion" class="module">
+            <h2>⚡ Go / No-Go</h2>
+            <div id="reactionArea" class="reaction-area" onmousedown="handleReaction()">
+                <h1 class="waiting-text">ESPERA...</h1>
+            </div>
+        </div>
+
+        <!-- 6. RESPIRACION -->
+        <div id="mod_respiracion" class="module">
+            <h2>🌬️ Box Breathing</h2>
+            <div class="circle-breath">
+                <span id="breathMsg" class="breath-text">INHALA</span>
+            </div>
+            <style>
+                @keyframes breathe-anim {
+
+                    0%,
+                    25% {
+                        transform: scale(1.3);
+                        border-color: var(--neuro-blue);
+                    }
+
+                    25%,
+                    50% {
+                        transform: scale(1.3);
+                        border-color: var(--neuro-orange);
+                    }
+
+                    50%,
+                    75% {
+                        transform: scale(1);
+                        border-color: var(--neuro-green);
+                    }
+
+                    75%,
+                    100% {
+                        transform: scale(1);
+                        border-color: var(--neuro-orange);
+                    }
+                }
+            </style>
+        </div>
+
+    </div>
+
+    <script>
+        function switchModule(id) {
+            document.querySelectorAll('.module').forEach(el => el.classList.remove('active'));
+            document.getElementById('mod_' + id).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            if (id === 'vela') startFireLoop();
+            else stopFireLoop();
+        }
+
+        // --- ALIGNED PARTICLE FIRE ---
+        const canvas = document.getElementById('fireCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let animationId;
+
+        class Particle {
+            constructor() {
+                this.reset(true);
+            }
+            reset(initial = false) {
+                // FIXED ALIGNMENT:
+                // Canvas is 300px wide. Center is 150px.
+                // Wick bottom is at bottom:280px (relative to stage 500px height).
+                // In Canvas Y coords (0 at top), 500 - 280 = 220px.
+                // So Emitter must be exactly at (150, 220) (+/- little offset for wick top)
+                // Wick height is 15px. So top of wick is 220 - 15 = 205.
+
+                this.x = 150 + (Math.random() - 0.5) * 6; // Tight emitter
+                this.y = 205;
+
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = -1.5 - Math.random() * 2;
+                this.life = 100;
+                this.decay = 1.5 + Math.random();
+                this.size = 12 + Math.random() * 10;
+
+                if (initial) this.y -= Math.random() * 80;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vx += (Math.random() - 0.5) * 0.1;
+
+                // Draft toward center axis (150)
+                if (this.x < 150) this.vx += 0.02;
+                else this.vx -= 0.02;
+
+                this.life -= this.decay;
+                this.size -= 0.15;
+                if (this.life <= 0 || this.size <= 0) this.reset();
+            }
+            draw(ctx) {
+                ctx.beginPath();
+                let r, g, b, a;
+                const p = this.life / 100;
+
+                if (p > 0.85) { r = 50; g = 50; b = 255; a = 0.2; this.size = 8; }
+                else if (p > 0.6) { r = 255; g = 255; b = 100; a = 0.5; }
+                else if (p > 0.3) { r = 255; g = 100; b = 0; a = 0.4; }
+                else { r = 100; g = 0; b = 0; a = 0.1; }
+
+                const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+                grad.addColorStop(0, `rgba(${r},${g},${b},${a})`);
+                grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+
+                ctx.fillStyle = grad;
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Init
+        for (let i = 0; i < 350; i++) particles.push(new Particle());
+
+        function animateFire() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // 300x500
+            ctx.globalCompositeOperation = 'screen';
+
+            particles.forEach(p => {
+                p.update();
+                p.draw(ctx);
+            });
+
+            animationId = requestAnimationFrame(animateFire);
+        }
+
+        function startFireLoop() { if (!animationId) animateFire(); }
+        function stopFireLoop() { if (animationId) { cancelAnimationFrame(animationId); animationId = null; } }
+
+        // --- SCANNER ANIM ---
+        function startScannerAnim() {
+            const zones = ['zone1', 'zone2', 'zone3', 'zone4', 'zone5'];
+            let idx = 0;
+            const aud = document.getElementById('mainAudio');
+            aud.play().catch(e => console.log("Audio play failed req interaction"));
+
+            const cycle = setInterval(() => {
+                document.querySelectorAll('.scan-item').forEach(el => el.classList.remove('active'));
+                if (idx < zones.length) {
+                    document.getElementById(zones[idx]).classList.add('active');
+                    idx++;
+                } else {
+                    clearInterval(cycle);
+                    alert("Escaneo Completo.");
+                }
+            }, 5000);
+        }
+
+        function loadUserAudio(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('mainAudio').src = e.target.result;
+                    alert("Audio personal cargado.");
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // --- OBSERVATION RANDOM ---
+        const imgs = [
+            "../01_DIRECCION_TECNICA/00_ASSETS_WEB/imagen robot.png",
+            "../99_RECURSOS_MULTIMEDIA/PNG/arbolmental.png"
+        ];
+        function startObservation() {
+            document.getElementById('obsImage').src = imgs[Math.floor(Math.random() * imgs.length)];
+            document.getElementById('observeOverlay').style.display = 'none';
+            setTimeout(() => {
+                document.getElementById('observeOverlay').innerHTML = "<div class='time-display'>TIEMPO</div>";
+                document.getElementById('observeOverlay').style.display = 'flex';
+                document.getElementById('recallSection').style.display = 'block';
+            }, 10000);
+        }
+
+        // --- GRID ---
+        let curr = 1;
+        function initGrid() {
+            document.getElementById('gridContainer').innerHTML = ''; curr = 1;
+            let arr = Array.from({ length: 25 }, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+            arr.forEach(n => {
+                let d = document.createElement('div');
+                d.className = 'grid-cell'; d.innerText = n;
+                d.onclick = () => { if (n === curr) { d.classList.add('found'); curr++; } };
+                document.getElementById('gridContainer').appendChild(d);
+            });
+        }
+
+        // --- REACTION ---
+        let rSt = 'idle'; let rT;
+        function handleReaction() {
+            const a = document.getElementById('reactionArea');
+            const h = a.querySelector('h1');
+            if (rSt === 'idle') {
+                rSt = 'wait'; a.className = 'reaction-area wait'; h.innerText = "ESPERA...";
+                rT = setTimeout(() => { rSt = 'go'; a.className = 'reaction-area go'; h.innerText = "¡YA!"; a.dataset.s = Date.now(); }, 2000 + Math.random() * 3000);
+            } else if (rSt === 'wait') {
+                clearTimeout(rT); rSt = 'idle'; a.className = 'reaction-area'; h.innerText = "❌ FALTA";
+            } else if (rSt === 'go') {
+                let t = Date.now() - parseInt(a.dataset.s);
+                rSt = 'idle'; a.className = 'reaction-area'; h.innerText = `⏱️ ${t} ms`;
+            }
+        }
+
+        startFireLoop();
+    </script>
+</body>
+
+</html>

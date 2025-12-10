@@ -1,0 +1,325 @@
+/* :root variables moved to neuroshot_ui_kit.css */
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: var(--bg-color);
+  background-image: radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(249, 115, 22, 0.05) 0%, transparent 20%);
+  color: var(--text-dark);
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- NAV & HEADER --- */
+.top-nav {
+  background: rgba(15, 23, 42, 0.9);
+  border-bottom: 1px solid var(--glass-border);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-family: "Oswald", sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+  color: var(--text-dark);
+}
+
+.logo .highlight {
+  color: var(--accent-color);
+}
+
+.view-switcher button {
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  color: var(--text-light);
+  padding: 0.5rem 1rem;
+  margin-left: 0.5rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+.view-switcher button:hover {
+  border-color: var(--accent-color);
+  color: var(--text-dark);
+}
+
+.view-switcher button.active {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  font-weight: bold;
+}
+
+/* --- DASHBOARD GRID --- */
+#app-container {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  /* Allow scroll for long diary */
+}
+
+/* CARDS */
+.card,
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--text-dark);
+}
+
+.card-header h2 {
+  color: var(--accent-color);
+}
+
+/* --- INPUTS & FORMS (Dark Mode) --- */
+input,
+select,
+textarea {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border);
+  color: white;
+  padding: 0.8rem;
+  border-radius: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+label {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* --- BUTTONS --- */
+.btn-primary {
+  background: var(--accent-color);
+  color: #022c22;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.btn-secondary {
+  background: rgba(249, 115, 22, 0.1);
+  color: var(--warm-accent);
+  border: 1px solid var(--warm-accent);
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* --- TAGS --- */
+.tag-toggle {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--text-light);
+}
+
+.tag-toggle.selected {
+  background: var(--warm-accent);
+  color: white;
+  border-color: var(--warm-accent);
+}
+
+/* --- SCATT --- */
+.scatt-graph {
+  background: rgba(0, 0, 0, 0.2);
+  border-color: var(--glass-border);
+}
+
+.scatt-line {
+  stroke: var(--accent-color);
+}
+
+/* --- LOGIN OVERLAY --- */
+#login-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-color);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-box {
+  background: var(--bg-panel);
+  border: 1px solid var(--glass-border);
+  padding: 3rem;
+  border-radius: 16px;
+  text-align: center;
+  width: 400px;
+}
+
+/* --- UTILS --- */
+.hidden {
+  display: none !important;
+}
+
+.active {
+  display: block;
+}
+
+/* Grid Layouts for Views */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.diary-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* --- NEW UTILITIES (Refactoring) --- */
+.text-center {
+  text-align: center;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.mb-1 {
+  margin-bottom: 1rem;
+}
+
+.mb-1-5 {
+  margin-bottom: 1.5rem;
+}
+
+.mb-2 {
+  margin-bottom: 2rem;
+}
+
+.mt-1 {
+  margin-top: 1rem;
+}
+
+.text-muted {
+  color: var(--text-light);
+}
+
+.text-sm-muted {
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.text-panic {
+  color: var(--panic-color);
+}
+
+.text-accent {
+  color: var(--accent-color);
+}
+
+.text-warm {
+  color: var(--warm-accent);
+}
+
+.align-middle {
+  vertical-align: middle;
+}
+
+.flex-align-center-gap10 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.flex-wrap-gap10 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.grid-2-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.avatar-circle {
+  width: 30px;
+  height: 30px;
+  background: var(--accent-color);
+  border-radius: 50%;
+}
+
+.btn-white {
+  background: white;
+  color: black;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.p-sm {
+  padding: 5px 10px;
+}
+
+/* --- ADDITIONAL UTILITIES --- */
+.tag-sm {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.grid-2-col-gap1 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.flex-wrap-gap1-mb1 {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.vertical-align-middle {
+  vertical-align: middle;
+}
+
+.flex-1 {
+  flex: 1;
+}

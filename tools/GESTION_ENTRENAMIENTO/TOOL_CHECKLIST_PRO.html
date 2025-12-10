@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroShot | Checklists Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/neuroshot_ui_kit.css">
+    <style>
+        body {
+            background: #0f172a;
+            color: #f8fafc;
+            font-family: 'Outfit', sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fbbf24;
+        }
+
+        .close-btn {
+            text-decoration: none;
+            color: #ef4444;
+            border: 1px solid #ef4444;
+            padding: 5px 15px;
+            border-radius: 6px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background: #1e293b;
+            color: #94a3b8;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            flex: 1;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .tab-btn.active {
+            background: #fbbf24;
+            color: #0f172a;
+        }
+
+        .list-container {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            display: none;
+        }
+
+        .list-container.active {
+            display: block;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #334155;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .check-item:hover {
+            background: #334155;
+        }
+
+        .check-item:last-child {
+            border-bottom: none;
+        }
+
+        .check-box {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #64748b;
+            border-radius: 6px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .check-item.checked .check-box {
+            background: #10b981;
+            border-color: #10b981;
+        }
+
+        .check-item.checked .check-box::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+        }
+
+        .check-item.checked span {
+            text-decoration: line-through;
+            color: #64748b;
+        }
+
+        .issf-alert {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin-bottom: 15px;
+            color: #1e3a8a;
+        }
+
+        .issf-danger {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            margin-bottom: 15px;
+            color: #991b1b;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <div class="brand">📋 PRO Checklists</div>
+            <a href="../../toolkit_index.html" class="close-btn">✕ Salir</a>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('viaje')">🧳 Viaje / Maleta</button>
+            <button class="tab-btn" onclick="switchTab('puesto')">🎯 Puesto de Tiro</button>
+            <button class="tab-btn" onclick="switchTab('normas')">⚖️ Normas ISSF</button>
+        </div>
+
+        <!-- VIAJE -->
+        <div id="tab_viaje" class="list-container active">
+            <h2 class="text-xl font-bold mb-4 text-emerald-400">Antes de Salir de Casa</h2>
+            <div id="list_viaje"></div>
+        </div>
+
+        <!-- PUESTO -->
+        <div id="tab_puesto" class="list-container">
+            <h2 class="text-xl font-bold mb-4 text-emerald-400">Montaje del Puesto</h2>
+            <div class="alert-info p-3 mb-4 bg-slate-800 rounded text-sm text-slate-400">
+                💡 Revisa esto durante el tiempo de "Preparation & Sighting".
+            </div>
+            <div id="list_puesto"></div>
+        </div>
+
+        <!-- NORMAS -->
+        <div id="tab_normas" class="list-container">
+            <h2 class="text-xl font-bold mb-4 text-orange-400">Reglamento Crítico ISSF</h2>
+            <div class="issf-danger">
+                <strong>⛔ Descalificación Inmediata (DSQ):</strong><br>
+                Manipulación insegura o no llevar Bandera de Seguridad (Safety Flag).
+            </div>
+            <div id="list_normas"></div>
+        </div>
+
+    </div>
+
+    <script src="../../js/session_db.js"></script>
+    <script>
+        // INIT
+        const db = window.NEUROSHOT_DB ? window.NEUROSHOT_DB.checklists : {
+            viaje: ["Error: DB no cargada"],
+            puesto_tiro: [],
+            normativa_issf: []
+        };
+
+        function renderList(id, items) {
+            const container = document.getElementById(id);
+            if (!container) return;
+
+            container.innerHTML = items.map(item => `
+            <div class="check-item" onclick="toggleCheck(this)">
+                <div class="check-box"></div>
+                <span>${item}</span>
+            </div>
+        `).join('');
+        }
+
+        renderList('list_viaje', db.viaje || []);
+        renderList('list_puesto', db.puesto_tiro || []);
+        renderList('list_normas', db.normativa_issf || []);
+
+        function toggleCheck(el) {
+            el.classList.toggle('checked');
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.list-container').forEach(e => e.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
+
+            document.getElementById('tab_' + (tab === 'puesto' ? 'puesto' : (tab === 'viaje' ? 'viaje' : 'normas'))).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+
+</body>
+
+</html>

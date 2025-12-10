@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroShot | Trataka Final</title>
+    <style>
+        :root {
+            --orange: #ff9800;
+            --yellow: #ffeb3b;
+            --red: #ff5722;
+            --blue: #2196f3;
+            --dark: #121212;
+            --warm-dark: #080200;
+            --text-gray: #b0bec5;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            transition: background-color 1.5s ease-in-out;
+        }
+
+        /* --- ESCENARIO --- */
+        .stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            width: 100%;
+            position: relative;
+            top: 0px;
+            transition: top 1.5s ease-in-out;
+            z-index: 1;
+        }
+
+        /* --- LA VELA (ESTRUCTURA) --- */
+        .candle-container {
+            position: relative;
+            width: 100px;
+            height: 200px;
+            /* Centrado Flexbox */
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            filter: blur(0.5px);
+            transition: transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .candle-body {
+            width: 50px;
+            height: 70px;
+            background: linear-gradient(#e0e0e0, #bdbdbd, #616161);
+            border-radius: 4px;
+            box-shadow: inset -5px 0 10px rgba(0, 0, 0, 0.4);
+            position: absolute;
+            bottom: 0;
+            z-index: 1;
+            /* Aseguramos que el cuerpo esté centrado */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .wick {
+            width: 4px;
+            height: 15px;
+            background: #222;
+            position: absolute;
+            bottom: 65px;
+            z-index: 1;
+            /* Mecha centrada */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* --- LLAMA (CORRECCIÓN DE EJE) --- */
+        .flame {
+            width: 30px;
+            height: 85px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 235, 59, 0.9) 40%, rgba(255, 152, 0, 0.8) 80%, rgba(255, 87, 34, 0.4) 100%);
+            border-radius: 50% 50% 35% 35% / 60% 60% 40% 40%;
+            position: absolute;
+            bottom: 75px;
+
+            /* CENTRADO ABSOLUTO */
+            left: 50%;
+            /* El transform base es translateX(-50%). La animación DEBE respetar esto. */
+            transform: translateX(-50%);
+
+            filter: drop-shadow(0 0 10px rgba(255, 200, 0, 0.5));
+            transform-origin: 50% 90%;
+            z-index: 2;
+
+            /* Animación suave y orgánica */
+            animation: flame-flicker 4s infinite ease-in-out;
+        }
+
+        /* Halo de luz */
+        .glow {
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(255, 120, 0, 0.2) 0%, rgba(0, 0, 0, 0) 65%);
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 50%;
+            animation: glow-breathe 4s infinite ease-in-out;
+            z-index: 0;
+            transition: all 1.5s ease-in-out;
+        }
+
+        /* --- ANIMACIONES CORREGIDAS (Manteniendo el centro) --- */
+
+        @keyframes flame-flicker {
+
+            /* IMPORTANTE: Todos los frames mantienen translateX(-50%) para no descentrarse */
+            0%,
+            100% {
+                transform: translateX(-50%) rotate(-1deg) scale(1);
+                height: 85px;
+            }
+
+            25% {
+                transform: translateX(-50%) rotate(2deg) scale(1.02);
+                height: 87px;
+                opacity: 0.95;
+            }
+
+            50% {
+                transform: translateX(-50%) rotate(-1deg) scale(0.98);
+                height: 83px;
+                opacity: 1;
+            }
+
+            75% {
+                transform: translateX(-50%) rotate(1deg) scale(1.01);
+                height: 86px;
+                opacity: 0.9;
+            }
+        }
+
+        @keyframes glow-breathe {
+
+            0%,
+            100% {
+                transform: translateX(-50%) scale(1);
+                opacity: 0.4;
+            }
+
+            50% {
+                transform: translateX(-50%) scale(1.1);
+                opacity: 0.6;
+            }
+        }
+
+        /* --- UI --- */
+        .controls {
+            z-index: 10;
+            text-align: center;
+            background: rgba(20, 20, 20, 0.9);
+            padding: 20px 30px;
+            border-radius: 16px;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            margin-bottom: 30px;
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        h1 {
+            margin: 0 0 5px;
+            font-size: 1.4rem;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .timer {
+            font-size: 3.5rem;
+            font-weight: 300;
+            font-family: 'Courier New', monospace;
+            margin: 5px 0;
+            color: var(--yellow);
+            text-shadow: 0 0 10px rgba(255, 235, 59, 0.3);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        button {
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:active {
+            transform: scale(0.96);
+        }
+
+        .btn-start {
+            background: var(--red);
+            color: white;
+        }
+
+        .btn-audio {
+            background: transparent;
+            border: 1px solid #555;
+            color: #aaa;
+            padding: 12px;
+            border-radius: 50%;
+        }
+
+        .btn-audio.active {
+            color: var(--blue);
+            border-color: var(--blue);
+            box-shadow: 0 0 10px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-help {
+            background: transparent;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            text-decoration: underline;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            border-left: 4px solid var(--blue);
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .close-modal {
+            background: var(--blue);
+            width: 100%;
+            margin-top: 20px;
+            justify-content: center;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* --- MODO FOCO --- */
+        body.focus-mode {
+            background-color: var(--warm-dark);
+            cursor: none;
+        }
+
+        body.focus-mode .controls {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+
+        body.focus-mode .stage {
+            top: 80px;
+        }
+
+        body.focus-mode .candle-container {
+            transform: scale(3.2);
+        }
+
+        body.focus-mode .glow {
+            width: 450px;
+            height: 450px;
+            opacity: 0.5;
+            background: radial-gradient(circle, rgba(255, 80, 0, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position:fixed; top:10px; right:10px; z-index:9999;">
+        <a href="../../toolkit_index.html"
+            style="background:#ef4444; color:white; padding:8px 15px; border-radius:6px; text-decoration:none; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.3);">✕
+            Cerrar</a>
+    </div>
+
+    <div class="stage">
+        <div class="candle-container">
+            <div class="glow"></div>
+            <div class="flame"></div>
+            <div class="wick"></div>
+            <div class="candle-body"></div>
+        </div>
+    </div>
+
+    <div class="controls" id="ui">
+        <h1>NEUROSHOT TRATAKA</h1>
+        <div class="subtitle">Entrenamiento de Atención Sostenida</div>
+
+        <div class="timer" id="timerDisplay">00:00</div>
+
+        <div class="btn-group">
+            <button class="btn-start" onclick="toggleTimer()" id="mainBtn">▶ INICIAR</button>
+            <button class="btn-audio" onclick="toggleAudio()" id="audioBtn"
+                title="Crepitar de Fuego (Solo Chasquidos)">🔥</button>
+        </div>
+
+        <div class="btn-help" onclick="toggleModal()">📖 Instrucciones del ejercicio</div>
+
+        <p style="font-size: 0.75rem; color: #555; margin-top: 20px;">
+            Pulsa INICIAR. La vela crecerá.<br>
+            Toca la pantalla para pausar.
+        </p>
+    </div>
+
+    <div class="modal-overlay" id="helpModal">
+        <div class="modal">
+            <h2 style="margin-top:0; color:var(--blue)">Guía Técnica: La Vela</h2>
+            <p><strong>1. La Postura:</strong> Espalda recta. Pantalla a altura de los ojos.</p>
+            <p><strong>2. La Observación:</strong> Fija tu mirada en el centro de la llama. <span
+                    style="color:var(--yellow)">No parpadees</span> hasta lagrimear.</p>
+            <p><strong>3. Gestión Mental:</strong> Los pensamientos vendrán. No luches. Déjalos quemarse en la llama y
+                vuelve al centro.</p>
+            <p><strong>4. Cierre:</strong> Al terminar, cierra ojos y mantén la "post-imagen" en tu mente.</p>
+            <button class="close-modal" onclick="toggleModal()">ENTENDIDO</button>
+        </div>
+    </div>
+
+    <script>
+        let seconds = 0;
+        let interval = null;
+        let isRunning = false;
+        let audioContext = null;
+        let crackleTimeout = null;
+        let audioPlaying = false;
+
+        const body = document.body;
+        const mainBtn = document.getElementById('mainBtn');
+        const audioBtn = document.getElementById('audioBtn');
+
+        function updateDisplay() {
+            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+        }
+
+        function toggleTimer() {
+            if (isRunning) {
+                clearInterval(interval);
+                isRunning = false;
+                body.classList.remove('focus-mode');
+                mainBtn.textContent = "▶ SEGUIR";
+                mainBtn.style.background = "var(--red)";
+                stopAudio();
+            } else {
+                isRunning = true;
+                body.classList.add('focus-mode');
+                mainBtn.textContent = "⏸ PAUSAR";
+                mainBtn.style.background = "#555";
+                if (audioPlaying) startAudio();
+                interval = setInterval(() => { seconds++; updateDisplay(); }, 1000);
+            }
+        }
+
+        // --- SONIDO DE FUEGO (SOLO CRUJIDOS SECOS) ---
+        function initAudio() {
+            if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        // EFECTO: Chasquidos de Madera (Snap/Crackle)
+        function triggerCrackle() {
+            if (!audioPlaying || !isRunning) return;
+
+            const bufferSize = audioContext.sampleRate * 0.1;
+            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = (Math.random() * 2 - 1);
+            }
+
+            const noise = audioContext.createBufferSource();
+            noise.buffer = buffer;
+
+            // Filtro paso alto para que suene seco (madera)
+            const filter = audioContext.createBiquadFilter();
+            filter.type = 'highpass';
+            filter.frequency.value = 800 + Math.random() * 1500;
+
+            const gain = audioContext.createGain();
+            // Volumen aleatorio para realismo
+            gain.gain.setValueAtTime(0.02 + Math.random() * 0.08, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.08);
+
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioContext.destination);
+
+            noise.start();
+
+            // Ritmo irregular
+            const nextTime = Math.random() < 0.4 ? Math.random() * 200 + 50 : Math.random() * 2500 + 500;
+            crackleTimeout = setTimeout(triggerCrackle, nextTime);
+        }
+
+        function startAudio() {
+            initAudio();
+            if (audioContext.state === 'suspended') audioContext.resume();
+
+            // Solo arrancamos los chasquidos, nada de fondo
+            triggerCrackle();
+        }
+
+        function stopAudio() {
+            if (crackleTimeout) {
+                clearTimeout(crackleTimeout);
+                crackleTimeout = null;
+            }
+        }
+
+        function toggleAudio() {
+            audioPlaying = !audioPlaying;
+            if (audioPlaying) {
+                audioBtn.classList.add('active');
+                if (isRunning) startAudio();
+            } else {
+                audioBtn.classList.remove('active');
+                stopAudio();
+            }
+        }
+
+        function toggleModal() {
+            document.getElementById('helpModal').classList.toggle('open');
+        }
+
+        document.addEventListener('click', (e) => {
+            if (isRunning && !e.target.closest('button') && !e.target.closest('.modal')) {
+                if (body.classList.contains('focus-mode')) body.classList.remove('focus-mode');
+                else body.classList.add('focus-mode');
+            }
+        });
+    </script>
+</body>
+
+</html>

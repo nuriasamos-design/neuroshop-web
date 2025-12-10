@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroShot | Perfilador Psico-Deportivo</title>
+    <link rel="stylesheet" href="../../css/neuroshot_ui_kit.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --gold: #fbbf24;
+            --red: #ef4444;
+            --blue: #3b82f6;
+            --green: #10b981;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 350px 1fr 350px;
+            gap: 2rem;
+            min-height: 100vh;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        /* CARD STYLES */
+        .panel {
+            background: var(--card);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            height: fit-content;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            color: var(--gold);
+            margin-top: 0;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            font-size: 1rem;
+            margin: 0 0 5px 0;
+        }
+
+        /* INPUTS */
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: help;
+        }
+
+        .val-display {
+            font-weight: bold;
+            color: var(--gold);
+            background: rgba(251, 191, 36, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        input[type=range] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--gold);
+        }
+
+        .definition-tooltip {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 2px;
+            font-style: italic;
+        }
+
+        /* CLINICAL REPORT */
+        .report-section {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .archetype-box {
+            background: rgba(251, 191, 36, 0.05);
+            border: 1px solid var(--gold);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .archetype-title {
+            color: var(--gold);
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .factor-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .tag-red {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--red);
+            border: 1px solid var(--red);
+        }
+
+        .tag-green {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--green);
+            border: 1px solid var(--green);
+        }
+
+        .btn {
+            background: var(--gold);
+            color: #1e293b;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #475569;
+            color: #94a3b8;
+        }
+
+        .btn-outline:hover {
+            border-color: #94a3b8;
+            color: white;
+        }
+
+        .btn-outline:hover {
+            border-color: #94a3b8;
+            color: white;
+        }
+
+        /* UTILITIES FOR REFACTORING */
+        .flex-center-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chart-container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .hidden-panel {
+            display: none;
+        }
+
+        .archetype-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #94a3b8;
+            margin-bottom: 5px;
+        }
+
+        .archetype-desc {
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin: 0;
+        }
+
+        .prescription-text {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+        }
+
+        .media-container {
+            margin-top: 20px;
+            display: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+        }
+
+        .text-resource {
+            color: var(--green);
+        }
+
+        .text-placeholder {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Media Player Styles */
+        .media-video {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .media-audio {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .media-playing-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position:fixed; top:10px; right:10px; z-index:9999;">
+        <a href="../../toolkit_index.html"
+            style="background:#ef4444; color:white; padding:8px 15px; border-radius:6px; text-decoration:none; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.3);">✕
+            Cerrar</a>
+    </div>
+
+    <!-- LEFT: CONTROLS -->
+    <div class="panel">
+        <h2>🎛️ Factores Clínicos</h2>
+
+        <div class="control-group">
+            <div class="label-row">
+                <label title="Impulso dopaminérgico y voluntad de acción">🔥 Motivación</label>
+                <span id="v0" class="val-display">5</span>
+            </div>
+            <input type="range" min="1" max="10" value="5" oninput="updateChart(0, this.value, 'v0')">
+            <div class="definition-tooltip">Drive (Dopamina) y compromiso con la tarea.</div>
+        </div>
+
+        <div class="control-group">
+            <div class="label-row">
+                <label title="Autoeficacia percbida">🛡️ Confianza</label>
+                <span id="v1" class="val-display">5</span>
+            </div>
+            <input type="range" min="1" max="10" value="5" oninput="updateChart(1, this.value, 'v1')">
+            <div class="definition-tooltip">Autoeficacia y seguridad ante el error.</div>
+        </div>
+
+        <div class="control-group">
+            <div class="label-row">
+                <label title="Control Atencional Top-Down">🎯 Foco</label>
+                <span id="v2" class="val-display">5</span>
+            </div>
+            <input type="range" min="1" max="10" value="5" oninput="updateChart(2, this.value, 'v2')">
+            <div class="definition-tooltip">Capacidad de aislamiento y sostenimiento atencional.</div>
+        </div>
+
+        <div class="control-group">
+            <div class="label-row">
+                <label title="Regulación Vagal e Inhibición Amigdalar">🧘 Control Emocional</label>
+                <span id="v3" class="val-display">5</span>
+            </div>
+            <input type="range" min="1" max="10" value="5" oninput="updateChart(3, this.value, 'v3')">
+            <div class="definition-tooltip">Regulación de la activación (Arousal) y gestión del estrés.</div>
+        </div>
+
+        <div class="control-group">
+            <div class="label-row">
+                <label title="Capacidad de Imaginería Motora">🧠 Visualización</label>
+                <span id="v4" class="val-display">5</span>
+            </div>
+            <input type="range" min="1" max="10" value="5" oninput="updateChart(4, this.value, 'v4')">
+            <div class="definition-tooltip">Claridad y viveza de la representación mental motora.</div>
+        </div>
+
+        <button class="btn" onclick="generateReport()">📋 Generar Informe Clínico</button>
+        <button class="btn btn-outline" onclick="window.close()">Cerrar Herramienta</button>
+    </div>
+
+    <!-- CENTER: CHART -->
+    <div class="panel flex-center-panel">
+        <div class="chart-container">
+            <canvas id="radarChart"></canvas>
+        </div>
+    </div>
+
+    <!-- RIGHT: ANALYSIS -->
+    <div class="panel hidden-panel" id="reportPanel">
+        <h2>📊 Informe NeuroShot</h2>
+
+        <div class="archetype-box">
+            <div class="archetype-label">Arquetipo Detectado</div>
+            <div class="archetype-title" id="archetypeName">--</div>
+            <p class="archetype-desc" id="archetypeDesc">--</p>
+        </div>
+
+        <div class="report-section">
+            <h3>🚩 Factores de Riesgo</h3>
+            <div id="riskFactors">--</div>
+        </div>
+
+        <div class="report-section">
+            <h3>💎 Fortalezas Clave</h3>
+            <div id="strengthFactors">--</div>
+        </div>
+
+        <div>
+            <h3>💊 Prescripción (Recursos)</h3>
+            <p class="prescription-text" id="prescription">--</p>
+        </div>
+        <div id="mediaContainer" class="media-container">
+            <h3 class="text-resource">📺 Recurso NeuroShot</h3>
+            <div id="mediaPlayerArea"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA STATE ---
+        // Indices: 0:Motiv, 1:Conf, 2:Foco, 3:Emocion, 4:Visualiz
+        // Initial Defaults
+        let dataValues = JSON.parse(localStorage.getItem('neuroshot_psych_profile') || '[5,5,5,5,5]');
+
+        // --- CHART SETUP ---
+        let myChart;
+        function initChart() {
+            // Restore Sliders
+            dataValues.forEach((val, i) => {
+                document.getElementById('v' + i).innerText = val;
+                document.querySelectorAll('input[type=range]')[i].value = val;
+            });
+
+            const ctx = document.getElementById('radarChart');
+            myChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Motivación', 'Confianza', 'Foco', 'C. Emocional', 'Visualización'],
+                    datasets: [{
+                        label: 'Perfil Neuro-Psicológico',
+                        data: dataValues,
+                        fill: true,
+                        backgroundColor: 'rgba(251, 191, 36, 0.2)',
+                        borderColor: '#fbbf24',
+                        pointBackgroundColor: '#fbbf24',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#fbbf24',
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(255,255,255,0.1)' },
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            pointLabels: {
+                                color: '#94a3b8',
+                                font: { size: 12, weight: 'bold' }
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 10,
+                            ticks: { display: false, backdropColor: 'transparent' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    responsive: true
+                }
+            });
+        }
+
+        function updateChart(index, val, labelId) {
+            val = parseInt(val);
+            document.getElementById(labelId).innerText = val;
+            dataValues[index] = val;
+            myChart.data.datasets[0].data[index] = val;
+            myChart.update();
+            localStorage.setItem('neuroshot_psych_profile', JSON.stringify(dataValues));
+        }
+
+        // --- CLINICAL INTELLIGENCE ---
+        function generateReport() {
+            const [mot, conf, foc, emo, vis] = dataValues;
+
+            // 1. Thresholds
+            const THRESHOLD_HIGH = 7;
+            const THRESHOLD_LOW = 4;
+
+            const highs = [];
+            const lows = [];
+
+            const labels = ["Motivación", "Confianza", "Foco", "Control", "Visualización"];
+            dataValues.forEach((v, i) => {
+                if (v >= THRESHOLD_HIGH) highs.push(labels[i]);
+                if (v <= THRESHOLD_LOW) lows.push(labels[i]);
+            });
+
+            // 2. Narrative Engine (Generate Deep Analysis)
+            let narrative = "";
+            let prescript = "Sigue el plan base.";
+            let mediaResource = null;
+            let archTitle = "DIAGNÓSTICO MIXTO";
+
+            // Factor 0: Motivation
+            if (mot > 7) narrative += "🔥 <strong>Motor Intacto:</strong> Tu reserva de dopamina es alta; tienes la 'batería' cargada para entrenar. ";
+            else if (mot < 4) narrative += "❄️ <strong>Apatía Detectada:</strong> Falta 'fuego'. Posible anhedonia deportiva o falta de objetivos claros. ";
+            else narrative += "🔸 <strong>Motivación Estable:</strong> Cumples, pero falta pasión explosiva. ";
+
+            // Factor 1: Confidence
+            if (conf > 8) narrative += "Posees una <strong>autoeficacia blindada</strong>, crees en tus capacidades (cuidado con la arrogancia). ";
+            else if (conf < 4) narrative += "La <strong>duda te corroe</strong>. Tu diálogo interno probablemente es destructivo ('no puedo', 'no valgo'). ";
+
+            // Factor 2: Focus
+            if (foc < 5) narrative += "⚠️ <strong>Alerta:</strong> Tu atención es frágil. Te distraes con estímulos irrelevantes (ruido, pensamientos). ";
+
+            // Factor 3: Emotional Control
+            if (emo < 4) {
+                narrative += "⛔ <strong>Arousal Desbordado:</strong> Tu sistema límbico secuestra tu corteza prefrontal en competición. ";
+                prescript = "Prioridad ABSOLUTA: Regulación Vagotonica. Aprender a respirar para bajar pulsaciones.";
+                mediaResource = { type: 'audio', src: '99_RECURSOS_MULTIMEDIA/Audio/MP4/Fernando 1..mp4', title: 'Relajación Profunda' };
+            } else if (emo > 8) {
+                narrative += "Tienes <strong>sangre de hielo</strong>. Gran capacidad para mantener la calma bajo presión. ";
+            }
+
+            // Factor 4: Visualization
+            if (vis < 3) narrative += "🌑 <strong>Afantasía Técnica:</strong> No 'ves' el disparo antes de hacerlo. Estás tirando a ciegas mentalmente.";
+
+            // 3. Archetype Override
+            if (lows.length >= 4) {
+                archTitle = "⚠️ COLAPSO / BURNOUT";
+                prescript = "URGENTE: Detener entrenamiento técnico. Audio de Relajación Profunda + Descanso total.";
+                mediaResource = { type: 'audio', src: '99_RECURSOS_MULTIMEDIA/Audio/MP4/Fernando 1..mp4', title: 'S.O.S. Relajación' };
+            }
+            else if (highs.length >= 4) {
+                archTitle = "🏆 EL MAESTRO (FLOW)";
+                prescript = "Mantener estado. Revisar video 'Zona de Flujo' para reforzar conceptos.";
+                mediaResource = { type: 'video', src: '99_RECURSOS_MULTIMEDIA/Video/MP4/como entrar en zona de flujo Fernando..mp4', title: 'Refuerzo: Zona de Flujo' };
+            }
+            else if (emo <= 4) archTitle = "⚡ PERFIL ANSIOSO";
+            else if (emo > 8 && mot < 4) archTitle = "🧘 EL ZEN PASIVO";
+            else if (vis < 4 && conf < 5) {
+                archTitle = "🚧 EL NOVATO INSEGURO";
+                prescript = "Prioridad: Audio de Entrenamiento Mental II para consolidar patrones.";
+                mediaResource = { type: 'audio', src: '99_RECURSOS_MULTIMEDIA/Audio/MP4/Fernando dos..mp4', title: 'Entrenamiento Mental II' };
+            }
+
+            // 4. Render
+            document.getElementById('archetypeName').innerText = archTitle;
+            document.getElementById('archetypeDesc').innerHTML = narrative || "Perfil sin rasgos extremos. Mantén el trabajo de base.";
+            document.getElementById('prescription').innerText = prescript;
+
+            // Render Tags
+            const rDiv = document.getElementById('riskFactors');
+            rDiv.innerHTML = lows.length ? lows.map(l => `<span class="factor-tag tag-red">⚠️ ${l}</span>`).join('') : '<span class="text-placeholder">Ningún factor crítico detectado.</span>';
+
+            const sDiv = document.getElementById('strengthFactors');
+            sDiv.innerHTML = highs.length ? highs.map(h => `<span class="factor-tag tag-green">💎 ${h}</span>`).join('') : '<span class="text-placeholder">Perfil plano sin picos de excelencia.</span>';
+
+            // Show Panel
+            document.getElementById('reportPanel').style.display = 'block';
+
+            // Render Media
+            const mediaDiv = document.getElementById('mediaContainer');
+            const playerArea = document.getElementById('mediaPlayerArea');
+
+            if (mediaResource) {
+                mediaDiv.style.display = 'block';
+                let playerHtml = '';
+                if (mediaResource.type === 'video') {
+                    playerHtml = `<video src="${mediaResource.src}" controls class="media-video"></video>`;
+                } else {
+                    playerHtml = `<audio src="${mediaResource.src}" controls class="media-audio"></audio>`;
+                }
+                playerArea.innerHTML = `<div class="media-playing-label">Playing: ${mediaResource.title}</div>` + playerHtml;
+            } else {
+                mediaDiv.style.display = 'none';
+            }
+
+            // Log Data (Simulated Cloud Save)
+            console.log("Clinical Report Generated:", { values: dataValues, archetype: archTitle });
+        }
+
+        // Init
+        initChart();
+    </script>
+</body>
+
+</html>

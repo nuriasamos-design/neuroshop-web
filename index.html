@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
+    <title>NeuroShot App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+        :root {
+            --neuro-gold: #fbbf24;
+            --neuro-dark: #0f172a;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--neuro-dark);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .app-header {
+            text-align: center;
+            margin-bottom: 40px;
+            margin-top: 20px;
+        }
+
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #fbbf24);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .app-grid {
+            display: grid;
+            gap: 15px;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .app-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s, background 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1;
+        }
+
+        .app-card:active {
+            transform: scale(0.95);
+            background: rgba(251, 191, 36, 0.1);
+        }
+
+        .app-card.large {
+            grid-column: span 2;
+            aspect-ratio: auto;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+            border-color: var(--neuro-gold);
+        }
+
+        .icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 1rem;
+            line-height: 1.2;
+        }
+
+        .version {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            color: #475569;
+            font-size: 0.8rem;
+            left: 0;
+        }
+
+        /* REFACTOR UTILS */
+        .text-subtitle {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .text-card-sub {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .border-green {
+            border-color: #10b981;
+        }
+
+        .section-separator {
+            grid-column: span 2;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 5px;
+        }
+    </style>
+    <link rel="manifest" href="manifest.json">
+</head>
+
+<body>
+
+    <div class="app-header">
+        <div class="logo-text">NEUROSHOT</div>
+        <div class="text-subtitle">Mobile Suite V1.0</div>
+    </div>
+
+    <div class="app-grid">
+        <!-- PRIMARY APPS (The Core Loop) -->
+        <a href="tools/APPS_PRINCIPALES/coach_interface.html" class="app-card large">
+            <span class="icon">💻</span>
+            <span class="card-title">Torre de Control<br><span class="text-card-sub">Panel del
+                    Entrenador</span></span>
+        </a>
+
+        <a href="tools/APPS_PRINCIPALES/diario.html" class="app-card large border-green">
+            <span class="icon">📱</span>
+            <span class="card-title">Diario Inteligente<br><span class="text-card-sub">Atleta &
+                    Generador</span></span>
+        </a>
+
+        <!-- TOOLKIT (Specific Utilities) -->
+        <div class="section-separator">
+            NeuroShot Toolkit
+        </div>
+
+        <a href="toolkit_index.html" class="app-card large" style="border-color:#3b82f6;">
+            <span class="icon">🛠️</span>
+            <span class="card-title">Caja de Herramientas<br><span class="text-card-sub">Calculadoras &
+                    Análisis</span></span>
+        </a>
+
+    </div>
+
+    <!-- PWA Service Worker Registration -->
+    <div class="version">
+        Rendimiento • Psicología • Técnica
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
+</body>
+
+</html>

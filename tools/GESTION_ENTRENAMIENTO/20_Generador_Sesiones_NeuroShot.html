@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroShot | Generador de Sesiones</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --bg: #f4f6f7;
+            --card: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        select,
+        input {
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .btn-generate {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 1.1rem;
+            width: 100%;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-weight: bold;
+        }
+
+        .btn-generate:hover {
+            background-color: #34495e;
+        }
+
+        .result-area {
+            margin-top: 30px;
+            border: 2px dashed #bdc3c7;
+            padding: 20px;
+            border-radius: 8px;
+            position: relative;
+            background: #fafafa;
+            min-height: 200px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .btn-copy {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--success);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-copy:active {
+            transform: scale(0.98);
+        }
+
+        .session-content h2 {
+            color: var(--accent);
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-top: 0;
+        }
+
+        .block {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .block h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+        }
+
+        .tag-mental {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .tag-fisico {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position:fixed; top:10px; right:10px; z-index:9999;">
+        <a href="../../toolkit_index.html"
+            style="background:#ef4444; color:white; padding:8px 15px; border-radius:6px; text-decoration:none; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.3);">✕
+            Cerrar</a>
+    </div>
+
+    <div class="container">
+        <header>
+            <div>
+                <h1>NEUROSHOT DIRECTOR</h1>
+                <div class="subtitle">Generador Inteligente de Sesiones Remotas</div>
+            </div>
+            <div style="text-align: right; font-size: 0.8rem;">
+                V2.0 - Automatizada<br>
+                Metodología Buceta
+            </div>
+        </header>
+
+        <div class="control-panel">
+            <div class="form-group">
+                <label>👤 Nombre del Atleta:</label>
+                <input type="text" id="atletaName" placeholder="Ej: Alex">
+            </div>
+
+            <div class="form-group">
+                <label>📅 Fase de Temporada:</label>
+                <select id="seasonPhase">
+                    <option value="GENERAL">1. General (Volumen/Base)</option>
+                    <option value="ESPECIFICA">2. Específica (Ritmo/Presión)</option>
+                    <option value="COMPETITIVA">3. Competitiva (Simulacro/Veto)</option>
+                    <option value="TRANSICION">4. Transición (Descarga)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>⚠️ Problema Principal (Diagnóstico):</label>
+                <select id="mainProblem">
+                    <option value="NEUTRO">-- Sin problema específico --</option>
+                    <option value="APATIA">Apatía / Baja Activación / Aburrimiento</option>
+                    <option value="ANSIEDAD">Ansiedad / Nervios / Temblores</option>
+                    <option value="AGARRE">Fallo Técnico: Agarre / Muñeca</option>
+                    <option value="DEDO">Fallo Técnico: Dedo / Gatillazo</option>
+                    <option value="POSTURA">Fallo Físico: Equilibrio / Postura</option>
+                    <option value="ATENCION">Fallo Mental: Despistes / Foco</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>🔧 Herramientas Extra:</label>
+                <select id="extraTools">
+                    <option value="NONE">Ninguna extra</option>
+                    <option value="GOMAS">Bandas Elásticas (Fuerza)</option>
+                    <option value="TABLA">Tabla de Equilibrio / Rodillo</option>
+                    <option value="APPS">Apps Móviles (Rejilla/Metrónomo)</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="btn-generate" onclick="generarSesion()">🚀 GENERAR SESIÓN AUTOMÁTICA</button>
+
+        <div id="resultArea" class="result-area hidden">
+            <button class="btn-copy" onclick="copiarTexto()">📋 Copiar para WhatsApp</button>
+            <div id="sessionOutput" class="session-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- BASE DE DATOS INTERNA (Juegos y Fichas) ---
+        const DB = {
+            activacion_subir: [
+                { code: "A-01", name: "Respiración de Fuego", desc: "20 respiraciones rápidas para oxigenar." },
+                { code: "A-03", name: "Saltos de Potencia", desc: "5 saltos rodillas al pecho. Explosivo." },
+                { code: "A-07", name: "Velocidad Absurda", desc: "Montaje del puesto a doble velocidad." },
+                { code: "A-12", name: "La Apuesta", desc: "'Si fallo un 9, hago 10 flexiones'." }
+            ],
+            activacion_bajar: [
+                { code: "B-01", name: "Respiración Cuadrada", desc: "Inhala 4s - Retén 4s - Exhala 4s - Vacío 4s." },
+                { code: "B-02", name: "Escáner de Plomo", desc: "Siente el peso del cuerpo hundiéndose en el suelo." },
+                { code: "B-09", name: "Grounding 5-4-3-2-1", desc: "5 cosas que ves, 4 tocas, 3 oyes..." }
+            ],
+            tecnica_agarre: [
+                { code: "G-01", name: "Garra de Águila", desc: "Suspensión del dedo corazón. Sin palanca." },
+                { code: "G-06", name: "Agarre de Sombras", desc: "Verificar cierre del triángulo contra la luz." },
+                { code: "G-07", name: "Shake & Lock", desc: "Sacudir muñeca y parar. Si se mueve, mal." }
+            ],
+            tecnica_dedo: [
+                { code: "D-02", name: "La Moneda", desc: "Moneda en cañón. Disparo en seco sin que caiga." },
+                { code: "D-06", name: "Dedo Muerto", desc: "Levantar solo índice sobre la mesa." },
+                { code: "D-07", name: "Gatillo Goma", desc: "Simular gatillo con banda elástica." }
+            ],
+            mental_atencion: [
+                { code: "AT-01", name: "La Vela (Trataka)", desc: "Mirar llama sin parpadear 1 min." },
+                { code: "AT-03", name: "El Flash", desc: "Abrir ojos 1s, cerrar y describir entorno." },
+                { code: "AT-04", name: "Rejilla (Grid)", desc: "Tachar números 00-99 con la App." }
+            ],
+            equilibrio: [
+                { code: "EQ-01", name: "Flamenco Ciego", desc: "Pata coja ojos cerrados." },
+                { code: "EQ-05", name: "Estatua Armada", desc: "Resistir empujones suaves en postura." }
+            ],
+            rutinas: [
+                { code: "R-01", name: "Check-in Pre-Disparo", desc: "3 pasos físicos fijos antes de subir." },
+                { code: "R-04", name: "Rutina de Error", desc: "Si <9: Dejar arma, salir, beber, volver." }
+            ]
+        };
+
+        function generarSesion() {
+            const nombre = document.getElementById('atletaName').value || "Atleta";
+            const fase = document.getElementById('seasonPhase').value;
+            const problema = document.getElementById('mainProblem').value;
+            const extra = document.getElementById('extraTools').value;
+
+            // Lógica de Selección (El Algoritmo del Entrenador)
+            let calentamiento = [];
+            let bloqueTecnico = [];
+            let bloqueTiro = "";
+            let cierre = "";
+            let focoMental = "";
+
+            // 1. CONFIGURACIÓN SEGÚN PROBLEMA
+            if (problema === "APATIA") {
+                calentamiento.push(DB.activacion_subir[Math.floor(Math.random() * DB.activacion_subir.length)]);
+                focoMental = "¡ACTITUD! Quiero ritmo alto hoy.";
+            } else if (problema === "ANSIEDAD") {
+                calentamiento.push(DB.activacion_bajar[0]); // Respiración Cuadrada siempre funciona
+                focoMental = "CALMA. Acepta el movimiento.";
+            } else if (problema === "AGARRE") {
+                bloqueTecnico.push(DB.tecnica_agarre[0]);
+                bloqueTecnico.push(DB.tecnica_agarre[1]);
+                focoMental = "Siente el Triángulo de Suspensión.";
+            } else if (problema === "DEDO") {
+                bloqueTecnico.push(DB.tecnica_dedo[0]);
+                if (extra === "GOMAS") bloqueTecnico.push(DB.tecnica_dedo[2]);
+                else bloqueTecnico.push(DB.tecnica_dedo[1]);
+                focoMental = "Dedo independiente. El resto estatua.";
+            } else if (problema === "ATENCION") {
+                calentamiento.push(DB.mental_atencion[2]); // Rejilla
+                bloqueTecnico.push(DB.mental_atencion[0]); // Vela
+                focoMental = "Atención a la Intención.";
+            } else {
+                // Neutro
+                calentamiento.push(DB.equilibrio[0]);
+                bloqueTecnico.push(DB.rutinas[0]);
+                focoMental = "Ejecución perfecta.";
+            }
+
+            // 2. CONFIGURACIÓN SEGÚN FASE (Volumen y Tarea)
+            if (fase === "GENERAL") {
+                bloqueTiro = `
+                <h3>🎯 BLOQUE DE TIRO (VOLUMEN)</h3>
+                <p><strong>Tarea:</strong> 40 Disparos sobre BLANCO VUELTO (Cara blanca).</p>
+                <p><strong>Objetivo:</strong> Agrupación. Olvida los puntos.</p>
+                <p><strong>Juego:</strong> Intercala 5 disparos en seco cada 10 reales.</p>
+            `;
+            } else if (fase === "ESPECIFICA") {
+                bloqueTiro = `
+                <h3>🎯 BLOQUE DE TIRO (RITMO)</h3>
+                <p><strong>Tarea:</strong> 50 Disparos Puntuados.</p>
+                <p><strong>Regla:</strong> Si haces un 8, aplica Rutina de Error (R-04) obligatoria.</p>
+                <p><strong>Objetivo:</strong> Mantener la media sin bajones.</p>
+            `;
+            } else if (fase === "COMPETITIVA") {
+                bloqueTiro = `
+                <h3>🎯 BLOQUE DE TIRO (SIMULACRO)</h3>
+                <p><strong>Tarea:</strong> 30 Disparos "A Muerte".</p>
+                <p><strong>Regla Semáforo:</strong> Si dudas en la parada -> BAJA EL BRAZO. Prohibido tirar con duda.</p>
+                <p><strong>Extra:</strong> Ponte música de final o ruido de fondo.</p>
+            `;
+            } else {
+                bloqueTiro = `<p>Sesión libre / Ludificación. Disfruta.</p>`;
+            }
+
+            // 3. INTEGRACIÓN DE EXTRAS
+            if (extra === "GOMAS") {
+                bloqueTecnico.push({ code: "GOMA-ISO", name: "Isometría con Banda", desc: "Postura de tiro con goma. 45s aguante x 3." });
+            } else if (extra === "TABLA") {
+                calentamiento.push({ code: "EQ-02", name: "Tabla de Equilibrio", desc: "Subir en postura sin arma. Buscar horizonte." });
+            }
+
+            // CONSTRUCCIÓN DEL HTML
+            let html = `
+            <h2>PLAN DE ENTRENAMIENTO: ${nombre.toUpperCase()}</h2>
+            <p><strong>Fecha:</strong> ${new Date().toLocaleDateString()} | <strong>Fase:</strong> ${fase}</p>
+            <p><strong>🧠 FOCO DE HOY:</strong> ${focoMental}</p>
+            
+            <div class="block">
+                <h3>🔥 1. CALENTAMIENTO Y ACTIVACIÓN (15')</h3>
+                <ul>
+                    <li>Movilidad Articular General (Cuello, Hombros).</li>
+                    ${calentamiento.map(ex => `<li><strong>[${ex.code}] ${ex.name}:</strong> ${ex.desc}</li>`).join('')}
+                </ul>
+            </div>
+
+            <div class="block">
+                <h3>🛠️ 2. LABORATORIO TÉCNICO (25')</h3>
+                <p><em>Realizar antes de tirar fuego real.</em></p>
+                <ul>
+                    ${bloqueTecnico.length > 0 ? bloqueTecnico.map(ex => `<li><strong>[${ex.code}] ${ex.name}:</strong> ${ex.desc}</li>`).join('') : '<li>Tiro en seco contra pared (20 reps).</li>'}
+                </ul>
+            </div>
+
+            <div class="block">
+                ${bloqueTiro}
+            </div>
+
+            <div class="block">
+                <h3>🧘 3. VUELTA A LA CALMA</h3>
+                <ul>
+                    <li>Registro en Diario Digital.</li>
+                    <li>Estiramiento de antebrazo y cuello.</li>
+                    <li><strong>Frase de Cierre:</strong> "Dirige tu atención a tu intención".</li>
+                </ul>
+            </div>
+        `;
+
+            document.getElementById('sessionOutput').innerHTML = html;
+            document.getElementById('resultArea').classList.remove('hidden');
+        }
+
+        function copiarTexto() {
+            // Truco para copiar el texto formateado (sin HTML tags)
+            const node = document.getElementById('sessionOutput');
+            const text = node.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector('.btn-copy');
+                btn.textContent = "¡Copiado!";
+                setTimeout(() => btn.textContent = "📋 Copiar para WhatsApp", 2000);
+            });
+        }
+    </script>
+
+</body>
+
+</html>

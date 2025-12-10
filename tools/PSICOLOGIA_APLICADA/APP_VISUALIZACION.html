@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualización Avanzada | NEUROSHOT</title>
+    <style>
+        :root {
+            --primary: #00ff9d;
+            --secondary: #ff9900;
+            --bg: #000000;
+            --surface: #111111;
+            --text-main: #e0e0e0;
+            --text-dim: #94a3b8;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: var(--secondary);
+            font-size: 1.2rem;
+            margin-top: 0;
+            opacity: 0.9;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .visual-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.2);
+            margin: 40px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--primary);
+            position: relative;
+            transition: all 4s ease-in-out;
+        }
+
+        .breathing .visual-circle {
+            transform: scale(1.2);
+            box-shadow: 0 0 50px rgba(0, 255, 157, 0.6);
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background: var(--surface);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        button.primary {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .status-text {
+            margin-top: 20px;
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            min-height: 1.5em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #333;
+            margin-top: 40px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 1s linear;
+        }
+
+        .step-list {
+            text-align: left;
+            margin-top: 40px;
+            background: var(--surface);
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            display: none;
+        }
+
+        .step-list.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Utility Classes */
+        .btn-stop {
+            display: none;
+            border-color: #ff4444;
+            color: #ff4444;
+        }
+
+        .protocol-title {
+            color: var(--primary);
+        }
+
+        .resources-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+
+        .resources-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .resource-link {
+            text-decoration: none;
+            border: 1px solid #333;
+            padding: 10px;
+            border-radius: 8px;
+            display: block;
+        }
+
+        .resource-link-primary {
+            color: var(--primary);
+        }
+
+        .resource-link-dim {
+            color: var(--text-dim);
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position:fixed; top:10px; right:10px; z-index:9999;">
+        <a href="../../toolkit_index.html"
+            style="background:#ef4444; color:white; padding:8px 15px; border-radius:6px; text-decoration:none; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.3);">✕
+            Cerrar</a>
+    </div>
+
+    <div class="container">
+        <h1>NEUROSHOT</h1>
+        <h2>VISUALIZACIÓN AVANZADA</h2>
+
+        <div id="visualDisc" class="visual-circle">
+            <span id="timerDisplay">00:00</span>
+        </div>
+
+        <div id="statusText" class="status-text">Listo para iniciar</div>
+
+        <div class="progress-bar">
+            <div id="progressFill" class="progress-fill"></div>
+        </div>
+
+        <div class="controls">
+            <button onclick="startSession()" class="primary" id="btnStart">Iniciar</button>
+            <button onclick="stopSession()" id="btnStop" class="btn-stop">Detener</button>
+        </div>
+
+        <div id="guideSteps" class="step-list">
+            <strong class="protocol-title">Protocolo Activo:</strong>
+            <ol>
+                <li><strong>00:00 - 02:00</strong>: Inducción (Respiración 4-7-8)</li>
+                <li><strong>02:00 - 08:00</strong>: Visualización Motora (Ejecución Perfecta)</li>
+                <li><strong>08:00 - 10:00</strong>: Anclaje y Salida</li>
+            </ol>
+
+            <div class="resources-section">
+                <strong class="protocol-title">Recursos de Apoyo:</strong>
+                <div class="resources-list">
+                    <a href="99_RECURSOS_MULTIMEDIA/Video/MP4/como entrar en zona de flujo Fernando..mp4"
+                        target="_blank" class="resource-link resource-link-primary">▶
+                        Video: Entrar en Zona de Flujo</a>
+                    <a href="99_RECURSOS_MULTIMEDIA/Audio/MP4/Fernando 1..mp4" target="_blank"
+                        class="resource-link resource-link-dim">🔊
+                        Audio: Calibración Base</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let timerInterval;
+        let breatheInterval;
+        let seconds = 0;
+        let isRunning = false;
+        const TOTAL_TIME = 600; // 10 minutes
+
+        function startSession() {
+            if (isRunning) return;
+            isRunning = true;
+            document.getElementById('btnStart').style.display = 'none';
+            document.getElementById('btnStop').style.display = 'block';
+            document.getElementById('guideSteps').classList.add('active');
+
+            runTimer();
+            runBreathing();
+        }
+
+        function stopSession() {
+            isRunning = false;
+            clearInterval(timerInterval);
+            clearInterval(breatheInterval);
+            document.getElementById('btnStart').style.display = 'block';
+            document.getElementById('btnStop').style.display = 'none';
+            document.getElementById('statusText').innerText = "Sesión detenida";
+            document.getElementById('visualDisc').classList.remove('breathing');
+        }
+
+        function runTimer() {
+            timerInterval = setInterval(() => {
+                seconds++;
+                updateDisplay();
+
+                if (seconds >= TOTAL_TIME) {
+                    finishSession();
+                }
+            }, 1000);
+        }
+
+        function updateDisplay() {
+            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('timerDisplay').innerText = `${m}:${s}`;
+
+            const pct = (seconds / TOTAL_TIME) * 100;
+            document.getElementById('progressFill').style.width = `${pct}%`;
+
+            // Phase Logic
+            if (seconds < 120) {
+                document.getElementById('statusText').innerText = "Fase 1: Inducción - Respira Profundo";
+            } else if (seconds < 480) {
+                document.getElementById('statusText').innerText = "Fase 2: Visualiza tu Ejecución Perfecta";
+                // Stop visual breathing cue, focus on internal image
+                document.getElementById('visualDisc').classList.remove('breathing');
+            } else {
+                document.getElementById('statusText').innerText = "Fase 3: Anclaje de Sensaciones";
+            }
+        }
+
+        function runBreathing() {
+            // 4-7-8 Rhythm approx: 4s inhale, 7s hold, 8s exhale = 19s cycle. 
+            // Simplified for visual cue: 4s expand, 4s contract for general calming
+            const disc = document.getElementById('visualDisc');
+
+            const breathe = () => {
+                if (seconds >= 120) return; // Stop breathing guide after induction
+                disc.classList.add('breathing');
+                setTimeout(() => {
+                    disc.classList.remove('breathing');
+                }, 4000); // 4s inhale
+            };
+
+            breathe();
+            breatheInterval = setInterval(breathe, 8000); // 8s cycle for visual simplicity
+        }
+
+        function finishSession() {
+            stopSession();
+            document.getElementById('statusText').innerText = "¡Sesión Completada!";
+            document.getElementById('statusText').style.color = "var(--primary)";
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroShot | Generador de Plantillas (Buceta)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/neuroshot_ui_kit.css">
+    <style>
+        /* FIX: Body layout to prevent content from appearing far down */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+            background: #0f172a;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Base styles removed - using UI Kit */
+        /* Custom sidebar override */
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 300px;
+            background: var(--neuro-panel);
+            border-right: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+
+        .category-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            color: var(--neuro-text);
+            padding: 12px;
+            width: 100%;
+            text-align: left;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-btn.active {
+            background: var(--neuro-gold);
+            color: black;
+            font-weight: bold;
+        }
+
+        /* MAIN */
+        .main-content {
+            flex: 1;
+            padding: 20px 40px;
+            background: #0f172a;
+            overflow-y: auto;
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .paper-sheet {
+            background: white;
+            color: #334155;
+            width: 210mm;
+            /* A4 Width */
+            min-height: 297mm;
+            /* A4 Height */
+            margin: 0 auto;
+            padding: 20mm;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        /* FORM STYLING INSIDE PAPER */
+        .sheet-title {
+            font-size: 24px;
+            font-weight: 800;
+            text-transform: uppercase;
+            border-bottom: 3px solid #fbbf24;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            color: black;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .section-header {
+            background: #f1f5f9;
+            padding: 8px 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            border-left: 4px solid #fbbf24;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: block;
+            color: #64748b;
+        }
+
+        .paper-input,
+        .paper-textarea {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            padding: 8px;
+            border-radius: 4px;
+            font-family: inherit;
+            background: #fff;
+        }
+
+        .paper-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* CONTROLS (FLOATING) */
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-fab {
+            background: var(--neuro-gold);
+            color: black;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            border: none;
+            transition: transform 0.2s;
+        }
+
+        .btn-fab:hover {
+            transform: scale(1.1);
+        }
+
+        .btn-fab.secondary {
+            background: white;
+            color: black;
+        }
+
+        .btn-fab.print {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-fab.pdf {
+            background: #ef4444;
+            color: white;
+        }
+
+        @media print {
+
+            .sidebar,
+            .controls {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+                margin: 0;
+                display: block;
+            }
+
+            .main-content {
+                padding: 0;
+                overflow: visible;
+            }
+
+            .paper-sheet {
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+                padding: 0;
+            }
+
+            /* Make inputs look like text */
+            .paper-input,
+            .paper-textarea {
+                border: none;
+                padding: 0;
+                resize: none;
+            }
+        }
+
+        /* Extracted Utility Classes for Templates */
+        .text-center {
+            text-align: center;
+        }
+
+        .grid-2-1 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .grid-1-2 {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .grid-3-gap10 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .grid-2-1-1 {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .grid-week {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-top: 20px;
+        }
+
+        .sub-title {
+            font-size: 1rem;
+            opacity: 0.5;
+        }
+
+        .help-text {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+
+        .help-text-sm {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+
+        .h-150 {
+            height: 150px;
+        }
+
+        .h-200 {
+            height: 200px;
+        }
+
+        .h-120 {
+            height: 120px;
+        }
+
+        .h-100 {
+            height: 100px;
+        }
+
+        .h-80 {
+            height: 80px;
+        }
+
+        .h-60 {
+            height: 60px;
+        }
+
+        .h-35 {
+            height: 35px;
+        }
+
+        .signature-section {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+        }
+
+        .signature-block {
+            text-align: center;
+            width: 200px;
+        }
+
+        .sig-space {
+            height: 40px;
+        }
+
+        .sig-line {
+            font-size: 0.8rem;
+            border-top: 1px solid black;
+        }
+
+        .pedagogical-panel {
+            margin-top: auto;
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid var(--neuro-gold);
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .pedagogical-title {
+            color: var(--neuro-gold);
+            font-size: 0.9rem;
+        }
+
+        .pedagogical-text {
+            font-size: 0.8rem;
+            color: #cbd5e1;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .alert-orange {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            padding: 15px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .header-blue {
+            background: #eff6ff !important;
+            border-color: #3b82f6 !important;
+        }
+
+        .header-red {
+            background: #fef2f2 !important;
+            border-color: #ef4444 !important;
+        }
+
+        .week-day-col {
+            border: 1px solid #94a3b8;
+            padding: 5px;
+        }
+
+        .week-day-header {
+            text-align: center;
+            font-weight: bold;
+            background: #e2e8f0;
+            padding: 5px;
+            font-size: 0.8rem;
+        }
+
+        .week-label {
+            font-size: 0.7rem;
+            color: #64748b;
+            font-weight: bold;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .week-input-sm {
+            font-size: 0.7rem;
+        }
+
+        .week-inputs-row {
+            display: flex;
+            gap: 2px;
+            margin-top: 5px;
+        }
+
+        .week-input-half {
+            width: 50%;
+            font-size: 0.6rem;
+            border: 1px solid #ccc;
+        }
+
+        .table-reset {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        .th-reset {
+            border: 1px solid #94a3b8;
+            padding: 8px;
+            background: #e2e8f0;
+        }
+
+        .td-reset {
+            border: 1px solid #cbd5e1;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .td-input-reset {
+            border: 1px solid #cbd5e1;
+            padding: 0;
+        }
+
+        .input-reset {
+            width: 100%;
+            border: none;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .input-reset-text {
+            width: 100%;
+            border: none;
+            padding: 8px;
+        }
+
+        .chart-placeholder {
+            height: 200px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            display: flex;
+            align-items: flex-end;
+            padding: 10px;
+            gap: 10px;
+        }
+
+        .chart-text {
+            width: 100%;
+            text-align: center;
+            color: #94a3b8;
+        }
+
+        .cbt-box {
+            background: #e0f2fe;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #0284c7;
+            font-size: 0.9rem;
+        }
+
+        .th-cbt {
+            border: 1px solid #cbd5e1;
+            padding: 8px;
+            background: #f1f5f9;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .td-cbt {
+            border: 1px solid #cbd5e1;
+            vertical-align: top;
+            padding: 5px;
+        }
+
+        .textarea-cbt {
+            height: 100%;
+            border: none;
+        }
+
+        .tr-h120 {
+            height: 120px;
+        }
+
+        .year-box {
+            border: 1px solid #cbd5e1;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .year-box-yellow {
+            border: 1px solid #cbd5e1;
+            padding: 15px;
+            border-radius: 4px;
+            background: #fffbeb;
+        }
+
+        .year-title {
+            font-weight: bold;
+            color: #fbbf24;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <a href="../../toolkit_index.html" class="close-btn"
+            style="position:static; display:block; text-align:center; margin-bottom:1rem;">✕ Salir</a>
+        <div class="logo">🧠 NeuroTemplate</div>
+
+        <div class="category-title">Planificación</div>
+        <button class="nav-btn active" onclick="loadTemplate('objetivos')">🎯 Establecimiento Objetivos</button>
+        <button class="nav-btn" onclick="loadTemplate('contingencias')">🛡️ Plan de Contingencias</button>
+        <button class="nav-btn" onclick="loadTemplate('semanal')">📅 Planificación Semanal</button>
+        <button class="nav-btn" onclick="loadTemplate('plan_carrera')">🏹 Ciclo Olímpico (Macro)</button>
+
+        <div class="category-title">Entrenamiento Mental</div>
+        <button class="nav-btn" onclick="loadTemplate('analisis')">📝 Análisis Post-Sesión</button>
+        <button class="nav-btn" onclick="loadTemplate('autoregistro')">📊 Autoregistro Diario</button>
+        <button class="nav-btn" onclick="loadTemplate('registros_pensamientos')">💭 Reestructuración (TCC)</button>
+        <button class="nav-btn" onclick="loadTemplate('guion_visualizacion')">🎧 Guion Visualización (VMBR)</button>
+
+        <div class="category-title">Para Entrenadores</div>
+        <button class="nav-btn" onclick="loadTemplate('feedback_entrenador')">👨‍🏫 Feedback del Entrenador</button>
+        <button class="nav-btn" onclick="loadTemplate('analisis_competicion_profesional')">🏆 Debrief Competición
+            Pro</button>
+
+        <div id="pedagogicalPanel" class="pedagogical-panel">
+            <strong class="pedagogical-title">💡 ¿Por qué esta herramienta?</strong>
+            <p id="pedagogicalText" class="pedagogical-text">--</p>
+        </div>
+    </div>
+
+    <!-- MAIN GENERATOR AREA -->
+    <div class="main-content" id="sheetContainer">
+        <!-- TEMPLATE WILL BE INJECTED HERE -->
+    </div>
+
+    <!-- FLOATING CONTROLS -->
+    <div class="controls">
+        <button class="btn-fab secondary" onclick="fillDemoData()" title="Rellenar Demo">🎲</button>
+        <button class="btn-fab" onclick="window.print()" title="Imprimir / Guardar PDF">🖨️</button>
+    </div>
+
+    <script>
+        // --- TEMPLATE DEFINITIONS ---
+        // Based on Buceta's Methodology (UNED)
+
+        // --- PEDAGOGICAL CONTEXT (WHY USE THIS?) ---
+        const PEDAGOGICAL_INFO = {
+            'objetivos': "El establecimiento de objetivos redirige la atención desde la amenaza (miedo a fallar) hacia la tarea (qué debo hacer). Reduce la ansiedad anticipatoria.",
+            'contingencias': "Preparar la respuesta 'If-Then' (Si pasa X, hago Y) automatiza la toma de decisiones bajo estrés, liberando recursos cognitivos para la técnica.",
+            'semanal': "Organizar la carga mental previene el 'Burnout'. Alternar días de foco interno con días de volumen evita la fatiga atencional.",
+            'plan_carrera': "La visión a largo plazo (Macro-ciclo) ayuda a relativizar los fallos del día a día, mantieniendo la motivación intrínseca estable.",
+            'analisis': "El debriefing inmediato consolida la memoria a largo plazo. Escribir lo positivo refuerza las redes neuronales de autoeficacia.",
+            'autoregistro': "Monitorizar sueño y 'Drive' (motivación) permite ajustar la carga. Sin datos, no eres un entrenador, eres un adivino.",
+            'registros_pensamientos': "Modelo TCC (Cognitivo-Conductual). Al cuestionar pensamientos irracionales ('Nunca ganaré'), desactivamos la respuesta de la amígdala.",
+            'guion_visualizacion': "La práctica imaginada activa las mismas áreas motoras que la ejecución real. Un buen guion debe incluir sensaciones propioceptivas (peso, tacto).",
+            'feedback_entrenador': "Evaluar la 'Entrenabilidad' (actitud) es tan vital como la técnica. El talento sin capacidad de aprendizaje tiene un techo bajo.",
+            'analisis_competicion_profesional': "Un análisis objetivo (números) cruzado con uno subjetivo (sensaciones) revela el 'Perfil de Rendimiento' real bajo presión."
+        };
+
+        const TEMPLATES = {
+            'objetivos': `
+                <div class="paper-sheet">
+                    <div class="sheet-title">
+                        <span>Ficha de Establecimiento de Objetivos</span>
+                        <span class="sub-title">Modelo: C.H. Buceta</span>
+                    </div>
+
+                    <div class="grid-2-1">
+                        <div class="input-group">
+                            <label class="input-label">Deportista</label>
+                            <input type="text" class="paper-input" id="athleteName" placeholder="Nombre del tirador...">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Periodo / Ciclo</label>
+                            <input type="text" class="paper-input" id="cycle" placeholder="Ej: Marzo 2026">
+                        </div>
+                    </div>
+
+                    <div class="section-header">1. Objetivo Principal (De Resultado)</div>
+                    <div class="input-group">
+                        <textarea class="paper-textarea" id="mainGoal" placeholder="¿Qué queremos conseguir? (Ej: Clasificar para la final del Cto. España)"></textarea>
+                    </div>
+
+                    <div class="section-header">2. Objetivos de Realización (Proceso)</div>
+                    <p class="help-text">¿QUÉ depende de ti para lograr el resultado? (Conductas observables)</p>
+                    
+                    <div class="grid-3">
+                        <div>
+                            <label class="input-label">Técnicos</label>
+                            <textarea class="paper-textarea h-150" id="techGoal" placeholder="- Mantener el arco de movimiento..."></textarea>
+                        </div>
+                        <div>
+                            <label class="input-label">Físicos</label>
+                            <textarea class="paper-textarea h-150" id="physGoal" placeholder="- Mejorar estabilidad core..."></textarea>
+                        </div>
+                        <div>
+                            <label class="input-label">Psicológicos</label>
+                            <textarea class="paper-textarea h-150" id="psychGoal" placeholder="- Rutina prev. visualización..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="section-header">3. Dificultades Previstas y Soluciones (Contingencia Básica)</div>
+                    <div class="input-group">
+                        <label class="input-label">Posibles Obstáculos</label>
+                        <textarea class="paper-textarea" id="obstacles" placeholder="Ej: Fatiga en las series finales, ruido ambiental..."></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Estrategias de Afrontamiento</label>
+                        <textarea class="paper-textarea" id="strategies" placeholder="Ej: Usar palabra clave 'Muro' para bloquear ruido..."></textarea>
+                    </div>
+
+                    <div class="section-header">4. Compromiso</div>
+                    <div class="input-group">
+                        <textarea class="paper-textarea h-60" id="commitment" placeholder="Yo, [Nombre], me comprometo a cumplir estos objetivos de realización..."></textarea>
+                    </div>
+
+                     <div class="signature-section">
+                        <div class="signature-block">
+                            <div class="sig-space"></div>
+                            <div class="sig-line">Firma Deportista</div>
+                        </div>
+                        <div class="signature-block">
+                            <div class="sig-space"></div>
+                            <div class="sig-line">Firma Entrenador</div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            'contingencias': `
+                <div class="paper-sheet">
+                     <div class="sheet-title">
+                        <span>Plan de Competición y Contingencias</span>
+                        <span class="sub-title">Analisis Situacional</span>
+                    </div>
+
+                    <div class="alert-orange">
+                        <strong>Objetivo:</strong> Preparar la respuesta mental ante diferentes escenarios de competición para evitar el bloqueo.
+                    </div>
+
+                    <div class="section-header">Escenario A: Situación Ideal (Flow)</div>
+                    <div class="input-group">
+                        <label class="input-label">¿Qué está pasando?</label>
+                        <textarea class="paper-textarea" id="sitA_desc" placeholder="Todo sale bien. Entran los dices. Sensación de fluidez."></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Peligro Mental (Confianza exceciva)</label>
+                        <textarea class="paper-textarea" id="sitA_risk" placeholder="Relajarse, perder tensión competitiva, pensar en la medalla antes de tiempo."></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Respuesta (Palabra Clave)</label>
+                        <input type="text" class="paper-input" id="sitA_action" placeholder="Ej: 'Sigue apretando', 'Uno más'.">
+                    </div>
+
+                    <div class="section-header header-blue">Escenario B: Dificultades / Error</div>
+                    <div class="input-group">
+                        <label class="input-label">¿Qué está pasando?</label>
+                        <textarea class="paper-textarea" id="sitB_desc" placeholder="Un 8 inesperado. Mala serie inicial. Juez molesto."></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Respuesta Inmediata (Reset)</label>
+                        <textarea class="paper-textarea" id="sitB_action" placeholder="Respiración diafragmática + Visualización de borrado."></textarea>
+                    </div>
+
+                    <div class="section-header header-red">Escenario C: Crisis (Pánico)</div>
+                    <div class="input-group">
+                        <label class="input-label">¿Qué está pasando?</label>
+                        <textarea class="paper-textarea" id="sitC_desc" placeholder="No paras de temblar. El arma no para. Tiempo agotándose."></textarea>
+                    <div class="input-group">
+                        <label class="input-label">Plan de Emergencia (Survival Mode)</label>
+                        <textarea class="paper-textarea" id="sitC_action" placeholder="Bajar el arma 30seg. Beber agua. Aceptar el estado y disparar con decisión en zona segura."></textarea>
+                    </div>
+                </div>
+            `,
+            'semanal': `
+                <div class="paper-sheet">
+                    <div class="sheet-title">
+                        <span>Planificación Microciclo Semanal</span>
+                        <span class="sub-title">Control de Carga</span>
+                    </div>
+
+                     <div class="grid-1-2">
+                        <div class="input-group">
+                             <label class="input-label">Semana / Fechas</label>
+                             <input type="text" class="paper-input" id="weekDate" placeholder="Ej: 12-18 Mayo">
+                        </div>
+                        <div class="input-group">
+                             <label class="input-label">Objetivo Principal Microciclo</label>
+                             <input type="text" class="paper-input" id="weekGoal">
+                        </div>
+                    </div>
+
+                    <div class="grid-week">
+                        ${['LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO', 'DOMINGO'].map((day, i) => `
+                            <div class="week-day-col">
+                                <div class="week-day-header">${day}</div>
+                                
+                                <label class="week-label">TÉCNICO/TIRO</label>
+                                <textarea class="paper-textarea week-input-sm h-60" id="day${i}_tech"></textarea>
+                                
+                                <label class="week-label">FÍSICO</label>
+                                <textarea class="paper-textarea week-input-sm h-35" id="day${i}_phys"></textarea>
+
+                                <label class="week-label">MENTAL</label>
+                                <textarea class="paper-textarea week-input-sm h-35" id="day${i}_psych"></textarea>
+
+                                <div class="week-inputs-row">
+                                    <input type="text" id="day${i}_vol" placeholder="Vol" class="week-input-half">
+                                    <input type="text" id="day${i}_rpe" placeholder="RPE" class="week-input-half">
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="section-header">Notas y Evaluación</div>
+                    <textarea class="paper-textarea h-100" id="weekNotes"></textarea>
+                </div>
+            `,
+            'analisis': `
+                <div class="paper-sheet">
+                    <div class="sheet-title">
+                        <span>Análisis Post-Sesión</span>
+                        <span class="sub-title">Reflexión Diaria</span>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Fecha y Sesión</label>
+                        <input type="text" class="paper-input" placeholder="Ej: 15 Octubre - Técnica Precisión">
+                    </div>
+
+                    <div class="section-header">1. Evaluación General</div>
+                    <div class="grid-2">
+                         <div class="input-group">
+                            <label class="input-label">Satisfacción (0-10)</label>
+                            <input type="number" class="paper-input">
+                         </div>
+                         <div class="input-group">
+                            <label class="input-label">Esfuerzo Mental (RPE 0-10)</label>
+                            <input type="number" class="paper-input">
+                         </div>
+                    </div>
+
+                    <div class="section-header">2. Lo Mejor del Día (Refuerzo Positivo)</div>
+                    <textarea class="paper-textarea h-120" placeholder="Describe 3 cosas que has hecho bien hoy..."></textarea>
+
+                    <div class="section-header">3. Dificultades Detectadas</div>
+                    <textarea class="paper-textarea h-120" placeholder="principales errores o bloqueos..."></textarea>
+
+                    <div class="section-header">4. Plan de Acción Inmediato</div>
+                    <textarea class="paper-textarea h-80" placeholder="¿Qué harás diferente mañana para corregirlo?"></textarea>
+                </div>
+            `,
+            'autoregistro': `
+                <div class="paper-sheet">
+                    <div class="sheet-title">
+                        <span>Autoregistro Diario de Variables</span>
+                        <span class="sub-title">Control Psicológico</span>
+                    </div>
+                    
+                    <p class="help-text">Rellenar cada mañana o al finalizar el día.</p>
+
+                    <div style="margin-top:20px;">
+                        <table class="table-reset">
+                            <thead>
+                                <tr style="background:#e2e8f0;">
+                                    <th class="th-reset">Día</th>
+                                    <th class="th-reset">Sueño (1-5)</th>
+                                    <th class="th-reset">Motivación (1-10)</th>
+                                    <th class="th-reset">Estrés General (1-10)</th>
+                                    <th class="th-reset">Autoconfianza (1-10)</th>
+                                    <th class="th-reset">Notas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${[1, 2, 3, 4, 5, 6, 7].map(d => `
+                                <tr>
+                                    <td class="td-reset">${d}</td>
+                                    <td class="td-input-reset"><input type="number" class="input-reset"></td>
+                                    <td class="td-input-reset"><input type="number" class="input-reset"></td>
+                                    <td class="td-input-reset"><input type="number" class="input-reset"></td>
+                                    <td class="td-input-reset"><input type="number" class="input-reset"></td>
+                                    <td class="td-input-reset"><input type="text" class="input-reset-text"></td>
+                                </tr>`).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="section-header">Gráfica Semanal (Dibujar)</div>
+                    <div class="chart-placeholder">
+                        <div class="chart-text">Espacio para dibujar tendencia semanal</div>
+                    </div>
+                </div>
+            `,
+            'registros_pensamientos': `
+                <div class="paper-sheet">
+                    <div class="sheet-title">
+                        <span>Registro de Pensamientos (A-B-C)</span>
+                        <span class="sub-title">Reestructuración Cognitiva</span>
+                    </div>
+
+                    <div class="cbt-box">
+                        <strong>Instrucciones:</strong> Cuando detectes ansiedad o enfado, detente y rellena una fila. Identifica el pensamiento "parásito" y debátelo.
+                    </div>
+
+                    <table class="table-reset">
+                        <thead>
+                            <tr>
+                                <th class="th-cbt" style="width:15%;">A. Situación</th>
+                                <th class="th-cbt" style="width:25%;">B. Pensamiento Automático</th>
+                                <th class="th-cbt" style="width:15%;">C. Emoción (0-10)</th>
+                                <th class="th-cbt" style="width:25%;">D. Pensamiento Racional (Debate)</th>
+                                <th class="th-cbt" style="width:20%;">E. Resultado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                             <tr class="tr-h120">
+                                <td class="td-cbt"><textarea class="paper-textarea textarea-cbt" id="cbt_sit" placeholder="Ej: Fallar el tiro 10..."></textarea></td>
+                                <td class="td-cbt"><textarea class="paper-textarea textarea-cbt" id="cbt_auto" placeholder="Ej: 'Soy un desastre, voy a perder la final'"></textarea></td>
+                                <td class="td-cbt"><textarea class="paper-textarea textarea-cbt" id="cbt_emo" placeholder="Ansiedad (9)"></textarea></td>
+                                <td class="td-cbt"><textarea class="paper-textarea textarea-cbt" id="cbt_rat" placeholder="Ej: 'Un fallo no define mi valía. Quedan 50 tiros. Céntrate en la técnica.'"></textarea></td>
+                                <td class="td-cbt"><textarea class="paper-textarea textarea-cbt" id="cbt_res" placeholder="Calma (4)"></textarea></td>
+                            </tr>
+                             <tr class="tr-h120">
+                                <td class="td-reset"><textarea class="paper-textarea textarea-cbt"></textarea></td>
+                                <td class="td-reset"><textarea class="paper-textarea textarea-cbt"></textarea></td>
+                                <td class="td-reset"><textarea class="paper-textarea textarea-cbt"></textarea></td>
+                                <td class="td-reset"><textarea class="paper-textarea textarea-cbt"></textarea></td>
+                                <td class="td-reset"><textarea class="paper-textarea textarea-cbt"></textarea></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `,
+            'guion_visualizacion': `
+                <div class="paper-sheet">
+                    <div class="sheet-title">
+                        <span>Constructor de Guion de Visualización</span>
+                        <span class="sub-title">Técnica VMBR</span>
+                    </div>
+
+                    <div class="section-header">1. Fase de Inducción (Relajación)</div>
+                    <p class="help-text-sm">¿Cómo vas a bajar tus ondas cerebrales a Alfa? (Respiración, Escáner corporal)</p>
+                    <textarea class="paper-textarea" id="vis_induc" placeholder="Ej: 'Cierro los ojos. Siento pesadez en los párpados. Respiro en 4 tiempos...'"></textarea>
+
+                    <div class="section-header">2. Contenido Técnico (El Núcleo)</div>
+                    <p class="help-text-sm">Describe la ejecución PERFECTA en primera persona. Incluye sentidos (tacto empuñadura, olor pólvora).</p>
+                    <textarea class="paper-textarea h-200" id="vis_content" placeholder="Ej: 'Levanto el brazo suavemente. Veo las miras nítidas. La presión en el gatillo es constante como una gota de agua...'"></textarea>
+
+                    <div class="section-header">3. Fase de Refuerzo (Anclaje)</div>
+                    <p class="help-text-sm">¿Qué sensación o palabra clave te llevas a la realidad?</p>
+                    <textarea class="paper-textarea" id="vis_anchor" placeholder="Ej: 'Sensación de Bloque de Hormigón. Palabra: SOLIDEZ.'"></textarea>
+                 </div>
+            `,
+            'feedback_entrenador': `
+                <div class="paper-sheet">
+                    <div class="sheet-title">
+                        <span>Autoregistro del Entrenador</span>
+                        <span class="sub-title">Evaluación de Sesión</span>
+                    </div>
+
+                    <div class="alert-orange">
+                        <strong>Propósito:</strong> El entrenador también necesita monitorizar su estado y efectividad. Sin datos, no puedes mejorar.
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label class="input-label">Nombre del Entrenador</label>
+                            <input type="text" class="paper-input" id="coachName" placeholder="Tu nombre...">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Fecha y Sesión</label>
+                            <input type="text" class="paper-input" id="sessionDate" placeholder="Ej: 15 Octubre - Técnica Precisión">
+                        </div>
+                    </div>
+
+                    <div class="section-header">1. Estado del Entrenador (Pre-Sesión)</div>
+                    <p class="help-text">Tu estado mental afecta directamente a tus atletas. Monitorízalo.</p>
+                    
+                    <div class="grid-3">
+                        <div class="input-group">
+                            <label class="input-label">Energía (1-10)</label>
+                            <input type="number" class="paper-input" id="coachEnergy" min="1" max="10">
+                            <p class="help-text-sm">¿Cómo de descansado estás?</p>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Motivación (1-10)</label>
+                            <input type="number" class="paper-input" id="coachMotivation" min="1" max="10">
+                            <p class="help-text-sm">¿Ganas de entrenar hoy?</p>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Estrés Personal (1-10)</label>
+                            <input type="number" class="paper-input" id="coachStress" min="1" max="10">
+                            <p class="help-text-sm">¿Problemas externos?</p>
+                        </div>
+                    </div>
+
+                    <div class="section-header">2. Calidad de la Sesión Impartida</div>
+                    
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label class="input-label">Claridad de Objetivos (1-10)</label>
+                            <input type="number" class="paper-input" id="objectiveClarity" min="1" max="10">
+                            <p class="help-text-sm">¿Los atletas sabían QUÉ entrenar?</p>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Calidad del Feedback (1-10)</label>
+                            <input type="number" class="paper-input" id="feedbackQuality" min="1" max="10">
+                            <p class="help-text-sm">¿Feedback específico y útil?</p>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label class="input-label">Gestión del Tiempo (1-10)</label>
+                            <input type="number" class="paper-input" id="timeManagement" min="1" max="10">
+                            <p class="help-text-sm">¿Se cumplió el plan?</p>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Conexión con Atletas (1-10)</label>
+                            <input type="number" class="paper-input" id="athleteConnection" min="1" max="10">
+                            <p class="help-text-sm">¿Hubo rapport y comunicación?</p>
+                        </div>
+                    </div>
+
+                    <div class="section-header">3. Observaciones de Atletas</div>
+                    
+                    <table class="table-reset">
+                        <thead>
+                            <tr>
+                                <th class="th-reset">Atleta</th>
+                                <th class="th-reset">Nivel Técnico (1-10)</th>
+                                <th class="th-reset">Actitud/Entrenabilidad (1-10)</th>
+                                <th class="th-reset">Notas Clave</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${[1, 2, 3, 4, 5].map(i => `
+                            <tr>
+                                <td class="td-input-reset"><input type="text" class="input-reset-text" id="athlete${i}_name" placeholder="Nombre"></td>
+                                <td class="td-input-reset"><input type="number" class="input-reset" id="athlete${i}_tech" min="1" max="10"></td>
+                                <td class="td-input-reset"><input type="number" class="input-reset" id="athlete${i}_attitude" min="1" max="10"></td>
+                                <td class="td-input-reset"><input type="text" class="input-reset-text" id="athlete${i}_notes" placeholder="Observaciones..."></td>
+                            </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+
+                    <div class="section-header">4. Autoevaluación del Entrenador</div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">¿Qué hice bien hoy? (Refuerzo Positivo)</label>
+                        <textarea class="paper-textarea h-100" id="coachStrengths" placeholder="Ej: Detecté rápido el error de Juan en la empuñadura, di feedback específico..."></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">¿Qué puedo mejorar? (Área de Desarrollo)</label>
+                        <textarea class="paper-textarea h-100" id="coachWeaknesses" placeholder="Ej: Hablé demasiado, no dejé espacio para que los atletas reflexionaran..."></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Plan de Acción para Próxima Sesión</label>
+                        <textarea class="paper-textarea h-80" id="coachActionPlan" placeholder="Ej: Preparar 3 ejercicios de visualización para María, revisar protocolo de veto con Carlos..."></textarea>
+                    </div>
+
+                    <div class="section-header">5. Métricas Objetivas (Opcional)</div>
+                    
+                    <div class="grid-3">
+                        <div class="input-group">
+                            <label class="input-label">Disparos Totales Sesión</label>
+                            <input type="number" class="paper-input" id="totalShots">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Duración Sesión (min)</label>
+                            <input type="number" class="paper-input" id="sessionDuration">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Atletas Presentes</label>
+                            <input type="number" class="paper-input" id="athletesPresent">
+                        </div>
+                    </div>
+
+                    <div class="signature-section">
+                        <div class="signature-block">
+                            <div class="sig-space"></div>
+                            <div class="sig-line">Firma Entrenador</div>
+                        </div>
+                        <div class="signature-block">
+                            <p style="font-size: 0.8rem; color: #64748b; margin-top: 20px;">
+                                <strong>Nota:</strong> Revisar semanalmente para detectar patrones.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            'plan_carrera': `
+                 <div class="paper-sheet">
+                    <div class="sheet-title">
+                        <span>Planificación de Ciclo Olímpico</span>
+                        <span class="sub-title">Visión Macro (4 Años)</span>
+                    </div>
+
+                    <div class="grid-2-1" style="display:flex; gap:10px; margin-bottom:20px;">
+                         <div style="flex:1;">
+                            <label class="input-label">Ciclo Objetivo</label>
+                            <input type="text" class="paper-input" id="macro_cycle" placeholder="Ej: Los Angeles 2028">
+                         </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <!-- YEAR 1 -->
+                        <div class="year-box">
+                            <div class="year-title">AÑO 1: BASE / FUNDAMENTACIÓN</div>
+                            <textarea class="paper-textarea h-80" id="year1_goal" placeholder="Objetivos Técnicos y Físicos..."></textarea>
+                        </div>
+                         <!-- YEAR 2 -->
+                        <div class="year-box">
+                            <div class="year-title">AÑO 2: DESARROLLO / INTERNACIONAL</div>
+                            <textarea class="paper-textarea h-80" id="year2_goal" placeholder="Debut en Copas del Mundo..."></textarea>
+                        </div>
+                         <!-- YEAR 3 -->
+                        <div class="year-box">
+                            <div class="year-title">AÑO 3: CONSOLIDACIÓN / PLAZA</div>
+                            <textarea class="paper-textarea h-80" id="year3_goal" placeholder="Obtención de Quota Olímpica..."></textarea>
+                        </div>
+                         <!-- YEAR 4 -->
+                        <div class="year-box-yellow">
+                            <div class="year-title">AÑO 4: PERORMANCE (JJ.OO)</div>
+                            <textarea class="paper-textarea h-80" id="year4_goal" placeholder="Puesta a punto y Competición..."></textarea>
+                        </div>
+                    </div>
+                 </div>
+            `,
+            'analisis_competicion_profesional': `
+                <div class="paper-sheet">
+                    <div class="sheet-title">
+                        <span>Debrief Profesional de Competición</span>
+                        <span class="sub-title">Análisis Objetivo + Subjetivo</span>
+                    </div>
+
+                    <div class="cbt-box">
+                        <strong>Metodología:</strong> Cruzar datos objetivos (números) con datos subjetivos (sensaciones) para obtener el perfil de rendimiento real bajo presión.
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label class="input-label">Atleta</label>
+                            <input type="text" class="paper-input" id="compAthlete" placeholder="Nombre del tirador...">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Competición y Fecha</label>
+                            <input type="text" class="paper-input" id="compEvent" placeholder="Ej: Cto. España - 20 Oct 2025">
+                        </div>
+                    </div>
+
+                    <div class="grid-3">
+                        <div class="input-group">
+                            <label class="input-label">Modalidad</label>
+                            <input type="text" class="paper-input" id="compModality" placeholder="Ej: Pistola 10m">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Resultado Final</label>
+                            <input type="text" class="paper-input" id="compResult" placeholder="Ej: 567/600 - 8º puesto">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Objetivo Previo</label>
+                            <input type="text" class="paper-input" id="compGoal" placeholder="Ej: Top 6 (Final)">
+                        </div>
+                    </div>
+
+                    <div class="section-header">1. Datos Objetivos (Números)</div>
+                    
+                    <table class="table-reset">
+                        <thead>
+                            <tr>
+                                <th class="th-reset">Serie</th>
+                                <th class="th-reset">Puntuación</th>
+                                <th class="th-reset">Tiempo (min)</th>
+                                <th class="th-reset">Observaciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${[1, 2, 3, 4, 5, 6].map(i => `
+                            <tr>
+                                <td class="td-reset">Serie ${i}</td>
+                                <td class="td-input-reset"><input type="number" class="input-reset" id="serie${i}_score"></td>
+                                <td class="td-input-reset"><input type="number" class="input-reset" id="serie${i}_time"></td>
+                                <td class="td-input-reset"><input type="text" class="input-reset-text" id="serie${i}_obs" placeholder="Ej: 2 nueves, 1 ocho"></td>
+                            </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <label class="input-label">Mejor Serie</label>
+                            <input type="text" class="paper-input" id="bestSerie" placeholder="Ej: Serie 3 - 98pts">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Peor Serie</label>
+                            <input type="text" class="paper-input" id="worstSerie" placeholder="Ej: Serie 1 - 92pts">
+                        </div>
+                    </div>
+
+                    <div class="section-header">2. Datos Subjetivos (Sensaciones)</div>
+                    
+                    <div class="grid-3">
+                        <div class="input-group">
+                            <label class="input-label">Ansiedad Pre-Comp (1-10)</label>
+                            <input type="number" class="paper-input" id="preAnxiety" min="1" max="10">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Ansiedad Durante (1-10)</label>
+                            <input type="number" class="paper-input" id="duringAnxiety" min="1" max="10">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Confianza General (1-10)</label>
+                            <input type="number" class="paper-input" id="confidence" min="1" max="10">
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label class="input-label">Calidad del Sueño (Noche Anterior)</label>
+                            <select class="paper-input" id="sleepQuality">
+                                <option value="">Seleccionar...</option>
+                                <option value="Muy Mala">Muy Mala (< 4h)</option>
+                                <option value="Mala">Mala (4-6h interrumpido)</option>
+                                <option value="Normal">Normal (6-7h)</option>
+                                <option value="Buena">Buena (7-8h)</option>
+                                <option value="Excelente">Excelente (8h+ profundo)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Estado Emocional Dominante</label>
+                            <select class="paper-input" id="emotionalState">
+                                <option value="">Seleccionar...</option>
+                                <option value="Nervioso/Ansioso">Nervioso/Ansioso</option>
+                                <option value="Tranquilo/Centrado">Tranquilo/Centrado</option>
+                                <option value="Apático/Desmotivado">Apático/Desmotivado</option>
+                                <option value="Eufórico/Hiperactivo">Eufórico/Hiperactivo</option>
+                                <option value="Enfadado/Frustrado">Enfadado/Frustrado</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="section-header">3. Análisis Técnico</div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Aspectos Técnicos que Funcionaron</label>
+                        <textarea class="paper-textarea h-100" id="techStrengths" placeholder="Ej: Empuñadura estable, alineación correcta en series 3-5..."></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Errores Técnicos Detectados</label>
+                        <textarea class="paper-textarea h-100" id="techWeaknesses" placeholder="Ej: Anticipación del disparo en serie 1, pérdida de alineación en serie 6..."></textarea>
+                    </div>
+
+                    <div class="section-header">4. Análisis Mental</div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Fortalezas Mentales Demostradas</label>
+                        <textarea class="paper-textarea h-100" id="mentalStrengths" placeholder="Ej: Recuperación rápida tras el 8 de la serie 2, rutina pre-disparo consistente..."></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Debilidades Mentales / Bloqueos</label>
+                        <textarea class="paper-textarea h-100" id="mentalWeaknesses" placeholder="Ej: Pánico en serie 1 (manos temblorosas), diálogo interno negativo tras error..."></textarea>
+                    </div>
+
+                    <div class="section-header">5. Análisis Táctico</div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">¿Se cumplió el Plan de Competición?</label>
+                        <select class="paper-input" id="planCompliance">
+                            <option value="">Seleccionar...</option>
+                            <option value="Sí, completamente">Sí, completamente</option>
+                            <option value="Parcialmente">Parcialmente</option>
+                            <option value="No, hubo improvisación">No, hubo improvisación</option>
+                            <option value="No había plan claro">No había plan claro</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Gestión del Tiempo y Ritmo</label>
+                        <textarea class="paper-textarea h-80" id="timeManagementComp" placeholder="Ej: Disparé demasiado rápido en serie 1 (nervios), mejor ritmo en series 3-5..."></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Uso de Herramientas Mentales</label>
+                        <textarea class="paper-textarea h-80" id="mentalTools" placeholder="Ej: Usé respiración 4-7-8 antes de serie 1, palabra clave 'Muro' en serie 4..."></textarea>
+                    </div>
+
+                    <div class="section-header header-blue">6. Factores Externos</div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Condiciones Ambientales / Logística</label>
+                        <textarea class="paper-textarea h-80" id="externalFactors" placeholder="Ej: Galería muy ruidosa, luz artificial molesta, llegada tarde por tráfico..."></textarea>
+                    </div>
+
+                    <div class="section-header header-red">7. Conclusiones y Plan de Acción</div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Lección Principal Aprendida</label>
+                        <textarea class="paper-textarea h-100" id="mainLesson" placeholder="Ej: Necesito trabajar más el protocolo de activación pre-competición. La serie 1 siempre es mala por exceso de ansiedad..."></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Acciones Concretas para Próxima Competición</label>
+                        <textarea class="paper-textarea h-120" id="actionPlan" placeholder="Ej: 1) Practicar serie de activación 30 min antes. 2) Incluir visualización de serie 1 perfecta. 3) Trabajar protocolo de veto tras error..."></textarea>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label class="input-label">Prioridad de Entrenamiento (Próximas 2 semanas)</label>
+                            <select class="paper-input" id="trainingPriority">
+                                <option value="">Seleccionar...</option>
+                                <option value="Técnica">Técnica (Errores mecánicos)</option>
+                                <option value="Mental">Mental (Ansiedad, concentración)</option>
+                                <option value="Táctica">Táctica (Gestión de competición)</option>
+                                <option value="Física">Física (Estabilidad, resistencia)</option>
+                                <option value="Mixta">Mixta (Varios aspectos)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Fecha Próxima Revisión</label>
+                            <input type="date" class="paper-input" id="nextReview">
+                        </div>
+                    </div>
+
+                    <div class="signature-section">
+                        <div class="signature-block">
+                            <div class="sig-space"></div>
+                            <div class="sig-line">Firma Atleta</div>
+                        </div>
+                        <div class="signature-block">
+                            <div class="sig-space"></div>
+                            <div class="sig-line">Firma Entrenador</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        };
+
+        let currentType = 'objetivos';
+
+        function loadTemplate(type) {
+            currentType = type;
+            const container = document.getElementById('sheetContainer');
+
+            // Render Template
+            if (TEMPLATES[type]) {
+                container.innerHTML = TEMPLATES[type];
+            } else {
+                container.innerHTML = `<div class="text-center" style="margin-top:50px; color:white;">🚧 Plantilla en construcción: ${type}</div>`;
+            }
+
+            // Update Sidebar Info (Pedagogical Layer)
+            const infoPanel = document.getElementById('pedagogicalPanel');
+            const infoText = document.getElementById('pedagogicalText');
+            if (PEDAGOGICAL_INFO[type]) {
+                infoPanel.style.display = 'block';
+                infoText.innerText = PEDAGOGICAL_INFO[type];
+            } else {
+                infoPanel.style.display = 'none';
+            }
+
+            // Update sidebar active state
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            if (event) {
+                const clickedBtn = event.target.closest('.nav-btn');
+                if (clickedBtn) clickedBtn.classList.add('active');
+            }
+        }
+
+        function fillDemoData() {
+            if (currentType === 'registros_pensamientos') {
+                document.getElementById('cbt_sit').value = "Competición Nacional. Serie 4. Llevo 3 dieces seguidos y se me pasa por la cabeza que puedo ganar.";
+                document.getElementById('cbt_auto').value = "'No te lo creas tanto, seguro que ahora fallas. Siempre la lías al final'.";
+                document.getElementById('cbt_emo').value = "Miedo / Ansiedad (8/10).";
+                document.getElementById('cbt_rat').value = "Es solo un pensamiento, no una predicción. He entrenado esto mil veces. Mi técnica es sólida. No necesito ser perfecto, solo ejecutar.";
+                document.getElementById('cbt_res').value = "Concentración (6/10). Vuelvo a mirar las miras.";
+            }
+            else if (currentType === 'guion_visualizacion') {
+                document.getElementById('vis_induc').value = "Me siento en mi silla, cierro los ojos y hago 5 respiraciones profundas. Siento cómo mis hombros caen pesados como plomo. Cuento del 10 al 0...";
+                document.getElementById('vis_content').value = "Estoy en el puesto. Veo el blanco nítido. Levanto el arma y siento el peso familiar y reconfortante. El dedo índice se mueve suavemente hacia atrás, sin perturbar las miras. BANG. Veo el agujero en el centro. Repito la sensación de suavidad.";
+                document.getElementById('vis_anchor').value = "Sensación: SUAVIDAD. Imagen: Una pluma cayendo.";
+            }
+            else if (currentType === 'objetivos') {
+                document.getElementById('athleteName').value = "Ana López (Pistola)";
+                document.getElementById('cycle').value = "Temporada Aire 2026 - Fase Específica";
+                document.getElementById('mainGoal').value = "Lograr una media de 565 puntos en competiciones nacionales y entrar en el Top 8 del Cto. España.";
+                document.getElementById('techGoal').value = "- Consolidar el 'Follow Through' (2 seg post-disparo).\n- Agrupación constante en zona 9-10 sin gatillazos.";
+                document.getElementById('physGoal').value = "- Mejorar la resistencia isométrica del deltoides (aguantar series de 60 disparos sin bajada de tono).";
+                document.getElementById('psychGoal').value = "- MANTENER EL FOCO en la mira tras un error.\n- Usar rutina de respiración 4-7-8 entre disparos.";
+                document.getElementById('obstacles').value = "- Nervios en la primera serie.\n- Pérdida de concentración si hago un 8.";
+                document.getElementById('strategies').value = "- Si primera serie mala -> 'Borrón y cuenta nueva', me centro en el siguiente tiro (Técnica del Muro).\n- Uso de autodiálogo positivo: 'Confía en tu parada'.";
+                document.getElementById('commitment').value = "Me comprometo a rellenar el autoregistro diario y a no juzgarme por los fallos durante el entrenamiento.";
+            }
+            else if (currentType === 'contingencias') {
+                document.getElementById('sitA_desc').value = "Estoy en mis medias (9.6 - 10.2). Me siento fluida.";
+                document.getElementById('sitA_risk').value = "Pensar en el podio. Calcular puntos totales.";
+                document.getElementById('sitA_action').value = "Palabra clave: 'AQUÍ Y AHORA'. Sigue haciendo lo mismo.";
+
+                document.getElementById('sitB_desc').value = "He tirado dos 8s seguidos. Me noto tensa.";
+                document.getElementById('sitB_action').value = "DEJAR EL ARMA EN LA MESA. 3 Respiraciones profundas. Visualizo un disparo perfecto y vuelvo.";
+
+                document.getElementById('sitC_desc').value = "Faltan 5 minutos y me quedan 10 tiros. El pulso se dispara.";
+                document.getElementById('sitC_action').value = "Ritmo de Tiro Rápido Controlado. No busques el 10 perfecto, busca el 9 seguro. Acepta el movimiento y ejecuta.";
+            }
+            else if (currentType === 'plan_carrera') {
+                document.getElementById('macro_cycle').value = "Juegos Olímpicos Los Angeles 2028";
+                document.getElementById('year1_goal').value = "Consolidar técnica de base. Subir media a 570. Cto. Europa Junior.";
+                document.getElementById('year2_goal').value = "Entrada en equipo absoluto. Finales en Copas del Mundo. Trabajo mental avanzado (Biofeedback).";
+                document.getElementById('year3_goal').value = "Obtención de la Plaza Olímpica (Quota). Pico de rendimiento físico.";
+                document.getElementById('year4_goal').value = "Simulación específica de JJOO. Gestión de presión mediática. Mantenimiento.";
+            }
+            else if (currentType === 'feedback_entrenador') {
+                document.getElementById('coachName').value = 'Entrenador Ejemplo';
+                document.getElementById('sessionDate').value = '15 Octubre 2025 - Técnica Precisión';
+                document.getElementById('coachEnergy').value = '7';
+                document.getElementById('coachMotivation').value = '8';
+                document.getElementById('coachStress').value = '4';
+                document.getElementById('objectiveClarity').value = '9';
+                document.getElementById('feedbackQuality').value = '8';
+                document.getElementById('timeManagement').value = '7';
+                document.getElementById('athleteConnection').value = '9';
+
+                document.getElementById('athlete1_name').value = 'Atleta 1';
+                document.getElementById('athlete1_tech').value = '8';
+                document.getElementById('athlete1_attitude').value = '9';
+                document.getElementById('athlete1_notes').value = 'Excelente progreso en empuñadura';
+
+                document.getElementById('athlete2_name').value = 'Atleta 2';
+                document.getElementById('athlete2_tech').value = '7';
+                document.getElementById('athlete2_attitude').value = '10';
+                document.getElementById('athlete2_notes').value = 'Muy motivada, necesita trabajo en visualización';
+
+                document.getElementById('coachStrengths').value = '- Detecté rápido el error de Juan en la empuñadura\n- Di feedback específico y constructivo\n- Mantuve buen ambiente de grupo';
+                document.getElementById('coachWeaknesses').value = '- Hablé demasiado en algunos momentos\n- No dejé suficiente espacio para reflexión individual\n- Podría haber usado más ejemplos visuales';
+                document.getElementById('coachActionPlan').value = '1. Preparar 3 ejercicios de visualización para María\n2. Revisar protocolo de veto con Carlos\n3. Reducir tiempo de explicaciones, aumentar práctica';
+
+                document.getElementById('totalShots').value = '240';
+                document.getElementById('sessionDuration').value = '120';
+                document.getElementById('athletesPresent').value = '5';
+            }
+            else if (currentType === 'analisis_competicion_profesional') {
+                document.getElementById('compAthlete').value = 'Ana Rodríguez';
+                document.getElementById('compEvent').value = 'Campeonato de España - 20 Octubre 2025';
+                document.getElementById('compModality').value = 'Pistola 10m';
+                document.getElementById('compResult').value = '567/600 - 8º puesto';
+                document.getElementById('compGoal').value = 'Top 6 (Clasificar para Final)';
+
+                document.getElementById('serie1_score').value = '92';
+                document.getElementById('serie1_time').value = '8';
+                document.getElementById('serie1_obs').value = '2 nueves, 1 ocho - Nervios iniciales';
+
+                document.getElementById('serie2_score').value = '95';
+                document.getElementById('serie2_time').value = '10';
+                document.getElementById('serie2_obs').value = 'Mejor, 1 ocho';
+
+                document.getElementById('serie3_score').value = '98';
+                document.getElementById('serie3_time').value = '11';
+                document.getElementById('serie3_obs').value = 'Excelente, solo 2 nueves';
+
+                document.getElementById('serie4_score').value = '97';
+                document.getElementById('serie4_time').value = '10';
+                document.getElementById('serie4_obs').value = 'Muy buena';
+
+                document.getElementById('serie5_score').value = '96';
+                document.getElementById('serie5_time').value = '11';
+                document.getElementById('serie5_obs').value = 'Sólida';
+
+                document.getElementById('serie6_score').value = '89';
+                document.getElementById('serie6_time').value = '7';
+                document.getElementById('serie6_obs').value = 'Colapso final - 3 ochos, 1 siete';
+
+                document.getElementById('bestSerie').value = 'Serie 3 - 98pts';
+                document.getElementById('worstSerie').value = 'Serie 6 - 89pts';
+
+                document.getElementById('preAnxiety').value = '8';
+                document.getElementById('duringAnxiety').value = '7';
+                document.getElementById('confidence').value = '6';
+                document.getElementById('sleepQuality').value = 'Mala';
+                document.getElementById('emotionalState').value = 'Nervioso/Ansioso';
+
+                document.getElementById('techStrengths').value = '- Empuñadura estable en series 2-5\n- Alineación correcta\n- Buen control del gatillo';
+                document.getElementById('techWeaknesses').value = '- Anticipación del disparo en serie 1\n- Pérdida de alineación en serie 6 (fatiga mental)\n- Respiración irregular bajo presión';
+
+                document.getElementById('mentalStrengths').value = '- Recuperación rápida tras el 8 de la serie 2\n- Rutina pre-disparo consistente en series 3-5\n- Uso de palabra clave "Muro" efectivo';
+                document.getElementById('mentalWeaknesses').value = '- Pánico en serie 1 (manos temblorosas)\n- Diálogo interno negativo tras errores\n- Colapso mental en serie 6 (pensamiento catastrófico)';
+
+                document.getElementById('planCompliance').value = 'Parcialmente';
+                document.getElementById('timeManagementComp').value = 'Disparé demasiado rápido en serie 1 por nervios. Mejor ritmo en series 3-5. Serie 6 acelerada por presión de tiempo.';
+                document.getElementById('mentalTools').value = 'Usé respiración 4-7-8 antes de serie 1 (no fue suficiente). Palabra clave "Muro" en series 3-4 funcionó bien. No usé visualización de recuperación tras serie 6.';
+
+                document.getElementById('externalFactors').value = 'Galería muy ruidosa. Luz artificial molesta en puesto 12. Llegada tarde por tráfico (aumentó ansiedad pre-competición).';
+
+                document.getElementById('mainLesson').value = 'Necesito trabajar más el protocolo de activación pre-competición. La serie 1 siempre es mala por exceso de ansiedad. También debo desarrollar estrategia de recuperación para series finales bajo presión.';
+                document.getElementById('actionPlan').value = '1. Practicar serie de activación 30 min antes de competir\n2. Incluir visualización de serie 1 perfecta en preparación\n3. Trabajar protocolo de veto tras error\n4. Desarrollar rutina de recuperación para series finales\n5. Mejorar higiene del sueño pre-competición';
+
+                document.getElementById('trainingPriority').value = 'Mental';
+                document.getElementById('nextReview').value = '2025-10-27';
+            }
+        }
+
+        // Load default
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTemplate('objetivos');
+        });
+
+    </script>
+
+    <!-- FLOATING ACTION BUTTONS -->
+    <div class="controls">
+        <button class="btn-fab print" onclick="printTemplate()" title="Imprimir">🖨️</button>
+        <button class="btn-fab pdf" onclick="exportPDF()" title="Exportar PDF">📄</button>
+    </div>
+
+    <script>
+        // Print function
+        function printTemplate() {
+            window.print();
+        }
+
+        // PDF Export function (using browser's print to PDF)
+        function exportPDF() {
+            alert("💡 Para exportar como PDF:\n\n1. Haz clic en 'Aceptar'\n2. Se abrirá el diálogo de impresión\n3. Selecciona 'Guardar como PDF' o 'Microsoft Print to PDF'\n4. Elige la ubicación y guarda\n\n✅ Tu plantilla se guardará como PDF");
+            window.print();
+        }
+    </script>
+
+</body>
+
+</html>
+```

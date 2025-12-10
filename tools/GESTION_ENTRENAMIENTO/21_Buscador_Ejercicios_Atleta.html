@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroShot | Buscador de Ejercicios</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #34495e;
+            --accent: #e67e22;
+            --bg: #fdfdfd;
+            --text: #333;
+            --card-bg: #fff;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--primary);
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        /* SEARCH BAR */
+        .search-box {
+            position: sticky;
+            top: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+        }
+
+        /* FILTERS */
+        .filters {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px 0;
+            margin-bottom: 20px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .filter-btn {
+            padding: 8px 15px;
+            border: none;
+            background: #ecf0f1;
+            color: var(--secondary);
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .filter-btn:hover {
+            background: #bdc3c7;
+        }
+
+        /* CARDS GRID */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid var(--primary);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .code {
+            font-weight: 900;
+            color: var(--accent);
+            font-size: 1.1rem;
+            background: #fff3e0;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .category {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #95a5a6;
+            font-weight: bold;
+        }
+
+        h3 {
+            margin: 0 0 10px 0;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .objective {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .steps {
+            margin: 0;
+            padding-left: 20px;
+            color: #444;
+            font-size: 0.95rem;
+        }
+
+        .steps li {
+            margin-bottom: 5px;
+        }
+
+        .metric {
+            margin-top: 15px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #2c3e50;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .metric::before {
+            content: '📊';
+        }
+
+        /* COLORS BY CATEGORY */
+        .cat-activacion {
+            border-left-color: #e74c3c;
+        }
+
+        .cat-tecnica {
+            border-left-color: #3498db;
+        }
+
+        .cat-mental {
+            border-left-color: #9b59b6;
+        }
+
+        .cat-rutina {
+            border-left-color: #f1c40f;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #95a5a6;
+            margin-top: 50px;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position:fixed; top:10px; right:10px; z-index:9999;">
+        <a href="../../toolkit_index.html"
+            style="background:#ef4444; color:white; padding:8px 15px; border-radius:6px; text-decoration:none; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.3);">✕
+            Cerrar</a>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>NEUROSHOT | WIKI</h1>
+            <div class="subtitle">Base de Datos de Ejercicios del Atleta</div>
+        </header>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 Busca código (ej: R-04), nombre o problema..."
+                onkeyup="filterCards()">
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active" onclick="setFilter('all')">Todos</button>
+            <button class="filter-btn" onclick="setFilter('RUTINA')">Rutinas (R)</button>
+            <button class="filter-btn" onclick="setFilter('ACTIVACION')">Activación (A/B)</button>
+            <button class="filter-btn" onclick="setFilter('TECNICA')">Técnica (G/D)</button>
+            <button class="filter-btn" onclick="setFilter('MENTAL')">Mental (AT/V)</button>
+        </div>
+
+        <div id="cardsGrid" class="grid">
+            <!-- Las tarjetas se generan automáticamente aquí -->
+        </div>
+
+        <div id="emptyState" class="empty-state hidden">
+            No he encontrado ningún ejercicio con ese nombre. <br> Prueba con "Dedo", "Error" o "Vela".
+        </div>
+    </div>
+
+    <script>
+        // --- BASE DE DATOS MAESTRA (Aquí pegamos todos los ejercicios creados) ---
+        const exercises = [
+            // RUTINAS (Lo que pedías)
+            { code: "R-04", cat: "RUTINA", name: "Rutina de Error (Reseteo)", obj: "Cortar la racha negativa tras un mal disparo.", steps: ["Deja el arma en la mesa.", "Sal del puesto (paso atrás real).", "Bebe un sorbo de agua.", "Visualiza el disparo perfecto.", "Vuelve a entrar al puesto."], metric: "Úsala siempre que bajes de 9." },
+            { code: "R-01", cat: "RUTINA", name: "Check-In Pre-Disparo", obj: "Estandarizar la entrada física.", steps: ["Coloca pies (siempre igual).", "Respiración diafragmática profunda.", "Mirada al suelo (reset visual).", "Levanta la vista y empieza."], metric: "Tiempo fijo +/- 1 seg." },
+            { code: "R-05", cat: "RUTINA", name: "Semáforo de Entrada", obj: "Filtro de calidad.", steps: ["Antes de subir, pregúntate:", "¿Cuerpo OK?", "¿Mente OK?", "Si algo es NO -> ROJO (Baja brazo).", "Si todo es SI -> VERDE (Sube)."], metric: "Nº de renuncias realizadas." },
+
+            // TÉCNICA (Mano y Dedo)
+            { code: "G-01", cat: "TECNICA", name: "La Garra de Águila", obj: "Suspensión ósea vs Palanca muscular.", steps: ["Coge el arma SOLO con dedo corazón y pulgar.", "Deja que el arma 'cuelgue' del corazón.", "Cierra suavemente el triángulo (Anular/Meñique).", "El índice debe quedar libre."], metric: "Test: Mueve el índice sin que el arma oscile." },
+            { code: "D-02", cat: "TECNICA", name: "La Moneda", obj: "Estabilidad en la salida del disparo.", steps: ["Pon una moneda o vaina sobre el cañón.", "Empuña y levanta.", "Realiza el disparo en seco.", "La moneda NO debe caer."], metric: "10 intentos, 0 caídas." },
+            { code: "G-06", cat: "TECNICA", name: "Agarre de Sombras", obj: "Verificar cierre del triángulo.", steps: ["Sin arma, frente a una pared.", "Haz el gesto de empuñar proyectando la sombra.", "Comprueba que no pasa luz entre los dedos del triángulo."], metric: "Cierre hermético." },
+
+            // ACTIVACIÓN (Arousal)
+            { code: "A-01", cat: "ACTIVACION", name: "Respiración de Fuego", obj: "Subir activación ante apatía.", steps: ["20 inhalaciones rápidas y profundas por nariz.", "Exhalación fuerte por boca (sin vaciar).", "Ritmo acelerado."], metric: "Hormigueo en manos." },
+            { code: "B-01", cat: "ACTIVACION", name: "Respiración Cuadrada", obj: "Bajar ansiedad/pulsaciones.", steps: ["Inhala 4 segundos.", "Retén (Apnea) 4 segundos.", "Exhala 4 segundos.", "Vacío 4 segundos."], metric: "4 ciclos completos." },
+            { code: "A-12", cat: "ACTIVACION", name: "La Apuesta", obj: "Generar presión artificial.", steps: ["Dite a ti mismo:", "'Si el próximo tiro no es un 10, hago 10 flexiones'.", "Ejecuta con esa presión."], metric: "Cumplimiento del castigo." },
+
+            // MENTAL (Atención)
+            { code: "AT-01", cat: "MENTAL", name: "La Vela (Trataka)", obj: "Foco sostenido.", steps: ["Habitación oscura, vela a 1m.", "Mira la llama sin parpadear hasta lagrimear.", "Cierra ojos y mantén la imagen en la retina."], metric: "Tiempo aguantando la imagen mental." },
+            { code: "AT-03", cat: "MENTAL", name: "El Flash (Cámara)", obj: "Consciencia situacional.", steps: ["Ojos cerrados en el puesto.", "Ábrelos 1 segundo exacto (Flash).", "Ciérralos.", "Describe 3 detalles que hayas visto."], metric: "3/3 aciertos." },
+            { code: "AD-02", cat: "MENTAL", name: "Palabra STOP", obj: "Detención del pensamiento.", steps: ["Detecta pensamiento negativo.", "Grita mentalmente ¡STOP!", "Visualiza señal roja.", "Sustituye por instrucción técnica."], metric: "Frecuencia de uso." }
+        ];
+
+        const grid = document.getElementById('cardsGrid');
+        const empty = document.getElementById('emptyState');
+        let currentFilter = 'all';
+
+        function renderCards(filterText = '') {
+            grid.innerHTML = '';
+            let count = 0;
+
+            exercises.forEach(ex => {
+                // Filtro por Categoría y Texto
+                const matchesCat = currentFilter === 'all' || ex.cat === currentFilter;
+                const matchesText = ex.name.toLowerCase().includes(filterText.toLowerCase()) ||
+                    ex.code.toLowerCase().includes(filterText.toLowerCase()) ||
+                    ex.obj.toLowerCase().includes(filterText.toLowerCase());
+
+                if (matchesCat && matchesText) {
+                    count++;
+                    const card = document.createElement('div');
+                    card.className = `card cat-${ex.cat.toLowerCase()}`;
+
+                    // Construir lista HTML
+                    const stepsHtml = ex.steps.map(s => `<li>${s}</li>`).join('');
+
+                    card.innerHTML = `
+                    <div class="card-header">
+                        <span class="code">${ex.code}</span>
+                        <span class="category">${ex.cat}</span>
+                    </div>
+                    <h3>${ex.name}</h3>
+                    <div class="objective">${ex.obj}</div>
+                    <ul class="steps">${stepsHtml}</ul>
+                    <div class="metric">${ex.metric}</div>
+                `;
+                    grid.appendChild(card);
+                }
+            });
+
+            if (count === 0) empty.classList.remove('hidden');
+            else empty.classList.add('hidden');
+        }
+
+        function filterCards() {
+            const text = document.getElementById('searchInput').value;
+            renderCards(text);
+        }
+
+        function setFilter(cat) {
+            currentFilter = cat;
+            // Actualizar botones visualmente
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            filterCards(); // Re-renderizar con el filtro nuevo
+        }
+
+        // Inicializar
+        renderCards();
+
+    </script>
+
+</body>
+
+</html>
