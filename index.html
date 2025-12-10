@@ -1,186 +1,201 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
-    <title>NeuroShot App</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <meta name="theme-color" content="#0f172a">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>NeuroShot Mobile Suite</title>
     <style>
-        :root {
-            --neuro-gold: #fbbf24;
-            --neuro-dark: #0f172a;
-        }
-
+        /* Estilos generales */
         body {
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--neuro-dark);
-            color: white;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #0b0c15; /* Azul muy oscuro */
+            color: #ffffff;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
             padding: 20px;
         }
 
-        .app-header {
-            text-align: center;
+        /* Cabecera y Títulos */
+        header {
+            padding: 40px 0 20px 0;
+            border-bottom: 1px solid #203e67;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #f7f7f7;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+
+        h2 {
+            font-size: 1.2em;
+            color: #92b0d0;
+            font-weight: 300;
+            margin-top: 0;
             margin-bottom: 40px;
-            margin-top: 20px;
         }
 
-        .logo-text {
-            font-size: 2rem;
-            font-weight: 800;
-            background: linear-gradient(to right, #fff, #fbbf24);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .app-grid {
-            display: grid;
-            gap: 15px;
-            grid-template-columns: 1fr 1fr;
-        }
-
-        .app-card {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            transition: transform 0.2s, background 0.2s;
-            cursor: pointer;
-            text-decoration: none;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            aspect-ratio: 1;
-        }
-
-        .app-card:active {
-            transform: scale(0.95);
-            background: rgba(251, 191, 36, 0.1);
-        }
-
-        .app-card.large {
-            grid-column: span 2;
-            aspect-ratio: auto;
-            padding: 30px 20px;
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
-            border-color: var(--neuro-gold);
-        }
-
-        .icon {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .card-title {
-            font-weight: 600;
-            font-size: 1rem;
-            line-height: 1.2;
-        }
-
-        .version {
-            position: fixed;
-            bottom: 20px;
+        .separator {
             width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #0b0c15 0%, #00bcd4 50%, #0b0c15 100%);
+            margin: 30px 0;
+        }
+
+        /* Estilo de los Módulos (Botones) */
+        .module-link {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .module-link:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .module-card {
+            background-color: #1a1b2e; /* Fondo del botón */
+            padding: 25px 20px;
+            border-radius: 12px;
+            border: 1px solid #324c7a;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .module-title {
+            font-size: 1.4em;
+            margin: 0;
+            color: #00bcd4; /* Color de realce */
+        }
+
+        .module-subtitle {
+            font-size: 0.9em;
+            color: #92b0d0;
+            margin-top: 5px;
+        }
+
+        .module-icon {
+            font-size: 3em;
+            color: #f7f7f7;
+            background-color: #00bcd433; /* Fondo de icono sutil */
+            padding: 10px;
+            border-radius: 50%;
+        }
+
+        /* Estilo de la caja de herramientas */
+        .toolkit-section {
+            padding: 30px 0 10px 0;
+        }
+
+        .toolkit-title {
+            font-size: 1.8em;
+            color: #f7f7f7;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .toolkit-link {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            margin-bottom: 15px;
+            background-color: #252643;
+            padding: 15px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
             text-align: center;
-            color: #475569;
-            font-size: 0.8rem;
-            left: 0;
         }
 
-        /* REFACTOR UTILS */
-        .text-subtitle {
-            color: #94a3b8;
-            font-size: 0.9rem;
+        .toolkit-link:hover {
+            background-color: #32345a;
         }
 
-        .text-card-sub {
-            font-size: 0.8rem;
-            color: #94a3b8;
-        }
-
-        .border-green {
-            border-color: #10b981;
-        }
-
-        .section-separator {
-            grid-column: span 2;
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .toolkit-link span {
+            display: block;
+            color: #fff;
+            font-size: 1.1em;
             font-weight: bold;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 5px;
         }
     </style>
-    <link rel="manifest" href="manifest.json">
 </head>
-
 <body>
 
-    <div class="app-header">
-        <div class="logo-text">NEUROSHOT</div>
-        <div class="text-subtitle">Mobile Suite V1.0</div>
-    </div>
+<div class="container">
+    <header>
+        <h1>NEUROSHOT</h1>
+        <h2>Mobile Suite V1.0</h2>
+    </header>
 
-    <div class="app-grid">
-        <!-- PRIMARY APPS (The Core Loop) -->
-        <a href="tools/APPS_PRINCIPALES/coach_interface.html" class="app-card large">
-            <span class="icon">💻</span>
-            <span class="card-title">Torre de Control<br><span class="text-card-sub">Panel del
-                    Entrenador</span></span>
-        </a>
-
-        <a href="tools/APPS_PRINCIPALES/diario.html" class="app-card large border-green">
-            <span class="icon">📱</span>
-            <span class="card-title">Diario Inteligente<br><span class="text-card-sub">Atleta &
-                    Generador</span></span>
-        </a>
-
-        <!-- TOOLKIT (Specific Utilities) -->
-        <div class="section-separator">
-            NeuroShot Toolkit
+    <!-- MÓDULOS PRINCIPALES -->
+    <!-- CORRECCIÓN CLAVE: Enlaces en MINÚSCULA para que funcionen en GitHub/Linux -->
+    
+    <a href="torre_de_control/panel.html" class="module-link">
+        <div class="module-card">
+            <div>
+                <h3 class="module-title">Torre de Control</h3>
+                <p class="module-subtitle">Panel del Entrenador</p>
+            </div>
+            <span class="module-icon">💻</span>
         </div>
+    </a>
 
-        <a href="toolkit_index.html" class="app-card large" style="border-color:#3b82f6;">
-            <span class="icon">🛠️</span>
-            <span class="card-title">Caja de Herramientas<br><span class="text-card-sub">Calculadoras &
-                    Análisis</span></span>
+    <a href="apps_principales/diario.html" class="module-link">
+        <div class="module-card">
+            <div>
+                <h3 class="module-title">Diario Inteligente</h3>
+                <p class="module-subtitle">Atleta & Generador</p>
+            </div>
+            <span class="module-icon">🧠</span>
+        </div>
+    </a>
+    
+    <div class="separator"></div>
+
+    <!-- SECCIÓN DE TOOLKIT (CAJA DE HERRAMIENTAS) -->
+    <div class="toolkit-section">
+        <h2 class="toolkit-title">NEUROSHOT TOOLKIT</h2>
+        
+        <!-- CORRECCIÓN CLAVE: La caja de herramientas lleva a la misma página (index.html) o a la raíz (#) -->
+        <a href="index.html" class="toolkit-link">
+            <span>Caja de Herramientas</span>
         </a>
 
+        <!-- Módulos de la Caja de Herramientas -->
+        <a href="tools/herramienta_analisis_agrupacion.html" class="toolkit-link">
+            <span>Herramienta de Análisis de Agrupación</span>
+        </a>
+        <a href="tools/tool_diagnosticos_errores.html" class="toolkit-link">
+            <span>Diagnóstico de Errores Técnicos</span>
+        </a>
+        <a href="tools/tool_fundamentos_expres.html" class="toolkit-link">
+            <span>Fundamentos Express</span>
+        </a>
+        
+        <!-- Y los otros botones de la torre que fallaban -->
+        <a href="apps_principales/psicologia_aplicada.html" class="toolkit-link">
+            <span>Psicología Aplicada</span>
+        </a>
+        
     </div>
+    
+</div>
 
-    <!-- PWA Service Worker Registration -->
-    <div class="version">
-        Rendimiento • Psicología • Técnica
-    </div>
-
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                    })
-                    .catch(err => {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
-            });
-        }
-    </script>
 </body>
-
 </html>
